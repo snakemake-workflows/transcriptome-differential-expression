@@ -20,8 +20,8 @@ The input files and parameters are specified in `config.yml`:
 
 - `transcriptome` - the input transcriptome.
 - `annotation` - the input annotation in GFF format.
-- `control_samples` - a dictionary with control sample names and paths to the fastq files.
-- `treated_samples` - a dictionary with treated sample names and paths to the fastq files.
+- `condition_a_samples` - a dictionary with sample names and paths of a given condition (e.g. controls) to the fastq files.
+- `condition_b_samples` - a dictionary with treated sample names and paths of a given condition (e.g. of a trait or treated samples) to the fastq files.
 
 ### Output
 
@@ -78,6 +78,7 @@ snakemake --use-conda -j <num_cores> all
 ##### Licence and Copyright
 
 (c) 2018 Oxford Nanopore Technologies Ltd.
+(c) Lukas Hellmann & Christian Meesters (JGU Mainz, Germany)
 
 This Source Code Form is subject to the terms of the Mozilla Public
 License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -85,7 +86,7 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 #### References and Supporting Information
 
-This pipeline is largely based on the approach described in the following paper:
+This worflow is largely based on the approach described in the following paper:
 
 - Love MI, Soneson C and Patro R. *Swimming downstream: statistical analysis of differential transcript usage following Salmon quantification.* F1000Research 2018, 7:952
 (doi: [10.12688/f1000research.15398.3](http://dx.doi.org/10.12688/f1000research.15398.3))
