@@ -1,5 +1,13 @@
 import re
 
+rule dump_versions:
+    output:
+        ver = "versions.txt"
+    conda: "env.yml"
+    shell:"""
+    conda list > {output.ver} 
+    """
+
 def generate_help(sfile):
     """Parse out target and help message from file."""
     handler = open(sfile, "r")

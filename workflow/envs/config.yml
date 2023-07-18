@@ -3,8 +3,7 @@
 
 # Name of the pipeline:
 pipeline: "pipeline-transcriptome-de_phe"
-# ABSOLUTE path to directory holding the working directory:
-workdir_top: "Workspaces"
+
 # Results directory:
 resdir: "results"
 # Repository URL:
@@ -18,17 +17,23 @@ transcriptome: "Homo_sapiens.GRCh38.cdna.all.fa"
 # Annotation GFF/GTF
 annotation: "Homo_sapiens.GRCh38.102.gtf"
 
-# Control samples
-control_samples:
-    C1: "C1.fq"
-    C2: "C2.fq"
-    C3: "C3.fq"
+# these samples ought to contain all samples comprising of the
+# 1st trait or condition (e.g. control samples)
+condition_a_identifier: "female" # your trait 
+# Specifiy file names, here:
+condition_a_samples:
+    a_1: "C1.fq"
+    a_2: "C2.fq"
+    a_3: "C3.fq"
 
-# Treated samples
-treated_samples:
-    IR1: "IR1.fq"
-    IR2: "IR2.fq"
-    IR3: "IR3.fq"
+# these samples ought to contain all samples comprising of the
+# 2nd trait or condition (e.g. treated samples)
+condition_b_identifier: "male" # your trait
+# Specifiy file names, here:
+condition_b_samples:
+    b_1: "IR1.fq"
+    b_2: "IR2.fq"
+    b_3: "IR3.fq"
 
 # Minimap2 indexing options
 minimap_index_opts: ""
@@ -56,6 +61,14 @@ min_gene_expr: 10
 # Minimum transcript counts
 min_feature_expr: 3
 
-# Threads
-threads: 50
+set-resources:
+    build_minimap_index:
+        threads: 4
 
+    map_reads:
+        mem_per_cpu: 1800M
+        threads: 40
+
+    count_reads:
+        mem_per_cpu: 1800M
+        threads: 8  
