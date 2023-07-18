@@ -7,11 +7,6 @@ include: "rules/utils.smk"
 
 configfile: "config.yml"
 
-RESDIR =  config["resdir"]
-SNAKEDIR = path.dirname(workflow.snakefile)
-PY2_EXEC = "python2 {}/scripts".format(SNAKEDIR)
-
-
 control_samples = config["control_samples"]
 treated_samples = config["treated_samples"]
 
