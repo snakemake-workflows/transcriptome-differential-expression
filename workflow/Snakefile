@@ -3,24 +3,19 @@ from os import path
 import pandas as pd
 from collections import OrderedDict
 
+localrules: 
+
 include: "rules/utils.smk"
 
 configfile: "config.yml"
 
-control_samples = config["control_samples"]
-treated_samples = config["treated_samples"]
+# these refer to files to be defined in the config.yml
+condition_a_samples = config["condition_a_samples"]
+condition_b_samples = config["condition_b_samples"]
 
-all_samples = config["control_samples"].copy()
-all_samples.update(config["treated_samples"])
+all_samples = condition_a_samples.copy()
+all_samples.update(condition_b_samples)
 datasets = [path.basename(x).rsplit(".", 1)[0] for x in all_samples.values()]
-
-rule dump_versions:
-    output:
-        ver = "versions.txt"
-    conda: "env.yml"
-    shell:"""
-    conda list > {output.ver} 
-    """
 
 rule build_minimap_index: ## build minimap2 index
     input:
@@ -29,10 +24,9 @@ rule build_minimap_index: ## build minimap2 index
         index = "index/transcriptome_index.mmi"
     params:
         opts = config["minimap_index_opts"]
-    conda: "env.yml"
-    threads: config["threads"]
+    conda: "envs/env.yml"
     shell:"""
-        minimap2 -t {threads} {params.opts} -I 1000G -d {output.index} {input.genome}
+        minimap2 -t {resources.threads} {params.opts} -I 1000G -d {output.index} {input.genome}
     """
 
 rule map_reads: ## map reads using minimap2
