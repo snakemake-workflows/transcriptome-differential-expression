@@ -1,5 +1,5 @@
 
-> This project tries to re-vive the project from Oxford Nanopore. Please see their current nextflow implementation as a reference [wf-transcriptomes](https://github.com/epi2me-labs/wf-transcriptomes), which contains functionality for [differential expression](https://github.com/epi2me-labs/wf-transcriptomes#differential-expression).
+> This project tries to re-animate the project from Oxford Nanopore. Please see their current nextflow implementation as a reference [wf-transcriptomes](https://github.com/epi2me-labs/wf-transcriptomes), which contains functionality for [differential expression](https://github.com/epi2me-labs/wf-transcriptomes#differential-expression).
 
 
 -----------------------------
