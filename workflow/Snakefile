@@ -3,7 +3,7 @@ from os import path
 import pandas as pd
 from collections import OrderedDict
 
-localrules: 
+localrules: merge_counts, write_coldata, write_de_params
 
 include: "rules/utils.smk"
 
@@ -69,11 +69,11 @@ rule count_reads:
         tsv_dir = "counts/{sample}_salmon",
         libtype = config["salmon_libtype"],
     conda: "env.yml"
-    threads: config["threads"]
     shell: """
-        salmon quant --noErrorModel -p {threads} -t {input.trs} -l {params.libtype} -a {input.bam} -o {params.tsv_dir}
+        salmon quant --noErrorModel -p {resources.threads} -t {input.trs} -l {params.libtype} -a {input.bam} -o {params.tsv_dir}
     """
 
+#TODO: make snakemake-compliant script
 rule merge_counts:
     input:
         count_tsvs = expand("counts/{sample}_salmon/quant.sf", sample=all_samples.keys()),
@@ -81,7 +81,7 @@ rule merge_counts:
         tsv = "merged/all_counts.tsv"
     conda: "env.yml"
     shell:"""
-    {SNAKEDIR}/scripts/merge_count_tsvs.py -z -o {output.tsv} {input.count_tsvs}
+    scripts/merge_count_tsvs.py -z -o {output.tsv} {input.count_tsvs}
     """
 
 rule write_coldata:
@@ -90,13 +90,13 @@ rule write_coldata:
         coldata = "de_analysis/coldata.tsv"
     run:
         samples, conditions, types = [], [], []
-        for sample in control_samples.keys():
+        for sample in condition_a_samples.keys():
             samples.append(sample)
-            conditions.append("untreated")
-            types.append("single-read")
-        for sample in treated_samples.keys():
+            conditions.append(config["condition_a_identifier"])
+            types.append("single-read") # TODO: clarify "why???"
+        for sample in condition_b_identifier.keys():
             samples.append(sample)
-            conditions.append("treated")
+            conditions.append(config["condition_b_identifier"])
             types.append("single-read")
 
         df = pd.DataFrame(OrderedDict([('sample', samples),('condition', conditions),('type', types)]))
@@ -116,7 +116,7 @@ rule write_de_params:
         df = pd.DataFrame(d)
         df.to_csv(output.de_params, sep="\t", index=False)
 
-
+#TODO: make snakemake-compliant script
 rule de_analysis:
     input:
         de_params = rules.write_de_params.output.de_params,
@@ -132,9 +132,10 @@ rule de_analysis:
         flt_counts_gens = "merged/all_gene_counts.tsv",
     conda: "env.yml"
     shell:"""
-    {SNAKEDIR}/scripts/de_analysis.R
+    scripts/de_analysis.R
     """
-
+    
+#TODO: make snakemake-compliant script
 rule plot_dtu_res:
     input:
         res_dtu_stager = "de_analysis/results_dtu_stageR.tsv",
@@ -143,6 +144,6 @@ rule plot_dtu_res:
         dtu_pdf = "de_analysis/dtu_plots.pdf",
     conda: "env.yml"
     shell: """
-    {SNAKEDIR}/scripts/plot_dtu_results.R
+    scripts/plot_dtu_results.R
     """
 
