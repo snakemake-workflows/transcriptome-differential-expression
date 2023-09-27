@@ -1,20 +1,25 @@
 #!/usr/bin/env Rscript
 
+library(stringr)
 suppressMessages(library("DRIMSeq"))
 suppressMessages(library("GenomicFeatures"))
 
 cat("Loading counts, conditions and parameters.\n")
-cts <- as.matrix(read.csv("merged/all_counts.tsv", sep="\t", row.names="Reference", stringsAsFactors=FALSE))
+#cts <- as.matrix(read.csv("merged/all_counts.tsv", sep="\t", row.names="Reference", stringsAsFactors=FALSE))
+
+cts <- as.matrix(read.csv(snakemake@input$tsv, sep="\t", row.names="Reference", stringsAsFactors=FALSE))
 
 # Set up sample data frame:
-coldata <- read.csv("de_analysis/coldata.tsv", row.names="sample", sep="\t", stringsAsFactors=TRUE)
+coldata <- read.csv(snakemake@input$coldata, row.names="sample", sep="\t", stringsAsFactors=TRUE)
 coldata$sample_id <- rownames(coldata)
 coldata$condition <- factor(coldata$condition, levels=rev(levels(coldata$condition)))
 
-de_params <- read.csv("de_analysis/de_params.tsv", sep="\t", stringsAsFactors=FALSE)
+de_params <- read.csv(snakemake@input$de_params, sep="\t", stringsAsFactors=FALSE)
 
 cat("Loading annotation database.\n")
 txdb <- makeTxDbFromGFF(de_params$Annotation[[1]])
+# does not work, because our gtf has not enough columns!
+#txdb <- makeTxDbFromGFF(snakemake@input$de_params, format = "gtf")
 txdf <- select(txdb, keys(txdb,"GENEID"), "TXNAME", "GENEID")
 tab <- table(txdf$GENEID)
 txdf$ntx<- tab[match(txdf$GENEID, names(tab))]
@@ -29,17 +34,35 @@ strip_version<-function(x) {
 
 rownames(cts) <- strip_version(rownames(cts))
 
-cts <- cts[rownames(cts) %in% txdf$TXNAME, ] # FIXME: filter for transcripts which are in the annotation. Why they are not all there? 
 
+print(head(txdf))
+print("----")
+print(head(cts))
+print("----")
+print(rownames(cts))#
+print("----")
+print(txdf$TXNAME %>% str_subset(cts))
+#cts <- cts[rownames(cts) %in% txdf$TXNAME, ] # FIXME: filter for transcripts which are in the annotation. Why they are not all there? 
+#txdf <- txdf[rownames(cts) %in% txdf$TXNAME]
+txdf <- txdf[txdf$TXNAME %>% str_subset(cts)]
+print("xxxxxxx1Gxxxxx")
+print(rownames(cts))#
 # Reorder transcript/gene database to match input counts:
-txdf <- txdf[match(rownames(cts), txdf$TXNAME), ]
+#txdf <- txdf[match(rownames(cts), txdf$TXNAME), ]
 rownames(txdf) <- NULL
+print("======")
+print(head(txdf))
 
 # Create counts data frame:
+print("===dimensions===")
+print(length(txdf$GENEID))
+print(length(txdf$TXNAME))
 counts<-data.frame(gene_id=txdf$GENEID, feature_id=txdf$TXNAME, cts)
-
+print("=======")
+print(head(counts$feature_id))
 cat("Filtering counts using DRIMSeq.\n")
 d <- dmDSdata(counts=counts, samples=coldata)
+print("got here")
 trs_cts_unfiltered <- counts(d)
 #
 d <- dmFilter(d, min_samps_gene_expr = de_params$min_samps_gene_expr[[1]], min_samps_feature_expr = de_params$min_samps_feature_expr[[1]],
@@ -49,6 +72,8 @@ cat("Building model matrix.\n")
 design <- model.matrix(~condition, data=DRIMSeq::samples(d))
 
 suppressMessages(library("dplyr"))
+
+print(snakemake@output)
 
 # Sum transcript counts into gene counts:
 cat("Sum transcript counts into gene counts.\n")
