@@ -1,9 +1,12 @@
+import os
 import re
 
 rule dump_versions:
     output:
         ver = "versions.txt"
-    conda: "env.yml"
+    #TODO: check whether code can be reverted to use workflow.source_path
+    #conda: workflow.source_path("envs/env.yml")
+    conda: "../envs/env.yml"
     shell:"""
     conda list > {output.ver} 
     """
@@ -17,28 +20,23 @@ def generate_help(sfile):
             target, help = match.groups()
             print("%-20s %s" % (target, help))
 
-rule help: ## print list of all targets with help
-    input:
-        workflow.included
-    run:
-        print("--------------------------------------------")
-        [generate_help(sfile) for sfile in input]
-        print("--------------------------------------------")
-
-rule clean_workdir: ## delete working directory. WARNING: all data will be lost!
-    input:
-        wdir = {WORKDIR}
-    shell: "rm -r {input.wdir}"
+#rule help: ## print list of all targets with help
+#    input:
+#        workflow.included
+#    run:
+#        print("--------------------------------------------")
+#        [generate_help(sfile) for sfile in input]
+#        print("--------------------------------------------")
 
 rule clean_resdir: ## delete results directory. WARNING: all data will be lost!
     input:
-        res = RESDIR
+        res = config["resdir"]
     shell: "rm -fr {input.res}/*"
 
 rule info: ## print pipeline information
     params:
         name = config["pipeline"],
-        wdir = WORKDIR,
+        wdir = os.getcwd(),
         repo = config["repo"],
         res  = config["resdir"],
     run:
