@@ -1,26 +1,30 @@
+from glob import glob
 import os
 from os import path
 import pandas as pd
 from collections import OrderedDict
+import sys
 
-localrules: merge_counts, write_coldata, write_de_params
+localrules: merge_counts, write_coldata, write_de_params, de_analysis
 
 include: "rules/utils.smk"
 
 configfile: "config.yml"
 
-# these refer to files to be defined in the config.yml
-condition_a_samples = config["condition_a_samples"]
-condition_b_samples = config["condition_b_samples"]
+inputdir  = config["inputdir"]
+resdir = config["resdir"]
 
-all_samples = condition_a_samples.copy()
-all_samples.update(condition_b_samples)
-datasets = [path.basename(x).rsplit(".", 1)[0] for x in all_samples.values()]
+condition_a_samples = glob(os.path.join(inputdir, "*_{identifier}*".format(identifier=config["condition_a_identifier"])))
+
+condition_b_samples = glob(os.path.join(inputdir, "*_{identifier}*".format(identifier=config["condition_b_identifier"])))
+
+all_samples = condition_a_samples + condition_b_samples
+datasets = [path.basename(x).rsplit(".")[0] for x in all_samples]
 
 rule all:
     input:
         ver = rules.dump_versions.output.ver,
-        count_tsvs = expand("counts/{sample}_salmon/quant.sf", sample=all_samples.keys()),
+        count_tsvs = expand("counts/{sample}_salmon/quant.sf", sample=datasets),
         merged_tsv = "merged/all_counts.tsv",
         coldata = "de_analysis/coldata.tsv",
         de_params = "de_analysis/de_params.tsv",
@@ -36,14 +40,15 @@ rule build_minimap_index: ## build minimap2 index
         opts = config["minimap_index_opts"]
     conda: "envs/env.yml"
     shell:"""
-        minimap2 -t {resources.threads} {params.opts} -I 1000G -d {output.index} {input.genome}
+        minimap2 -t {resources.cpus_per_task} {params.opts} -d {output.index} {input.genome}
     """
 
 #TODO: split into group rule, 'outsource' or combine samtools calls. 
+#TODO: inquire suffix of input.fastq from files
 rule map_reads: ## map reads using minimap2
     input:
        index = rules.build_minimap_index.output.index,
-       fastq = lambda wildcards: all_samples[wildcards.sample]
+       fastq = os.path.join(config["inputdir"], "{sample}.fq.gz")
     output:
        bam = "alignments/{sample}.bam",
        sbam = "sorted_alignments/{sample}.bam",
@@ -51,7 +56,7 @@ rule map_reads: ## map reads using minimap2
         opts = config["minimap2_opts"],
         msec = config["maximum_secondary"],
         psec = config["secondary_score_ratio"],
-    conda: "env.yml"
+    conda: "envs/env.yml"
     shell:"""
     minimap2 -t {resources.threads} -ax map-ont -p {params.psec} -N {params.msec} {params.opts} {input.index} {input.fastq}\
     | samtools view -Sb > {output.bam};
@@ -68,7 +73,7 @@ rule count_reads:
     params:
         tsv_dir = "counts/{sample}_salmon",
         libtype = config["salmon_libtype"],
-    conda: "env.yml"
+    conda: "envs/env.yml"
     shell: """
         salmon quant --noErrorModel -p {resources.threads} -t {input.trs} -l {params.libtype} -a {input.bam} -o {params.tsv_dir}
     """
@@ -76,13 +81,13 @@ rule count_reads:
 #TODO: make snakemake-compliant script
 rule merge_counts:
     input:
-        count_tsvs = expand("counts/{sample}_salmon/quant.sf", sample=all_samples.keys()),
+        count_tsvs = expand("counts/{sample}_salmon/quant.sf", sample=datasets),
     output:
-        tsv = "merged/all_counts.tsv"
-    conda: "env.yml"
-    shell:"""
-    scripts/merge_count_tsvs.py -z -o {output.tsv} {input.count_tsvs}
-    """
+        "merged/all_counts.tsv"
+    conda: "envs/env.yml"
+    script:
+        #"scripts/merge_count_tsvs.py -z -o {output.tsv} {input.count_tsvs}"
+        "scripts/merge_count_tsvs.py"
 
 rule write_coldata:
     input:
@@ -90,12 +95,12 @@ rule write_coldata:
         coldata = "de_analysis/coldata.tsv"
     run:
         samples, conditions, types = [], [], []
-        for sample in condition_a_samples.keys():
-            samples.append(sample)
+        for sample in condition_a_samples:
+            samples.append(path.basename(sample).rsplit(".")[0])
             conditions.append(config["condition_a_identifier"])
             types.append("single-read") # TODO: clarify "why???"
-        for sample in condition_b_identifier.keys():
-            samples.append(sample)
+        for sample in condition_b_samples:
+            samples.append(path.basename(sample).rsplit(".")[0])
             conditions.append(config["condition_b_identifier"])
             types.append("single-read")
 
@@ -116,12 +121,11 @@ rule write_de_params:
         df = pd.DataFrame(d)
         df.to_csv(output.de_params, sep="\t", index=False)
 
-#TODO: make snakemake-compliant script
 rule de_analysis:
     input:
         de_params = rules.write_de_params.output.de_params,
         coldata = rules.write_coldata.output.coldata,
-        tsv = rules.merge_counts.output.tsv,
+        tsv = rules.merge_counts.output,
     output:
         res_dge = "de_analysis/results_dge.tsv",
         pdf_dge = "de_analysis/results_dge.pdf",
@@ -130,10 +134,10 @@ rule de_analysis:
         res_dtu_stager = "de_analysis/results_dtu_stageR.tsv",
         flt_counts = "merged/all_counts_filtered.tsv",
         flt_counts_gens = "merged/all_gene_counts.tsv",
-    conda: "env.yml"
-    shell:"""
-    scripts/de_analysis.R
-    """
+    conda: "envs/env.yml"
+    script:
+        "scripts/de_analysis.R"
+    
     
 #TODO: make snakemake-compliant script
 rule plot_dtu_res:
@@ -142,7 +146,7 @@ rule plot_dtu_res:
         flt_counts = "merged/all_counts_filtered.tsv",
     output:
         dtu_pdf = "de_analysis/dtu_plots.pdf",
-    conda: "env.yml"
+    conda: "envs/env.yml"
     shell: """
     scripts/plot_dtu_results.R
     """
