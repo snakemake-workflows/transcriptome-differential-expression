@@ -27,12 +27,6 @@ def generate_help(sfile):
 #        print("--------------------------------------------")
 #        [generate_help(sfile) for sfile in input]
 #        print("--------------------------------------------")
-
-rule clean_resdir: ## delete results directory. WARNING: all data will be lost!
-    input:
-        res = config["resdir"]
-    shell: "rm -fr {input.res}/*"
-
 rule info: ## print pipeline information
     params:
         name = config["pipeline"],
