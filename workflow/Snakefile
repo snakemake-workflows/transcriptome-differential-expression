@@ -121,33 +121,33 @@ rule write_de_params:
         df = pd.DataFrame(d)
         df.to_csv(output.de_params, sep="\t", index=False)
 
-rule de_analysis:
-    input:
-        de_params = rules.write_de_params.output.de_params,
-        coldata = rules.write_coldata.output.coldata,
-        tsv = rules.merge_counts.output,
-    output:
-        res_dge = "de_analysis/results_dge.tsv",
-        pdf_dge = "de_analysis/results_dge.pdf",
-        res_dtu_gene = "de_analysis/results_dtu_gene.tsv",
-        res_dtu_trs = "de_analysis/results_dtu_transcript.tsv",
-        res_dtu_stager = "de_analysis/results_dtu_stageR.tsv",
-        flt_counts = "merged/all_counts_filtered.tsv",
-        flt_counts_gens = "merged/all_gene_counts.tsv",
-    conda: "envs/env.yml"
-    script:
-        "scripts/de_analysis.R"
+#rule de_analysis:
+#    input:
+#        de_params = rules.write_de_params.output.de_params,
+#        coldata = rules.write_coldata.output.coldata,
+#        tsv = rules.merge_counts.output,
+#    output:
+#        res_dge = "de_analysis/results_dge.tsv",
+#        pdf_dge = "de_analysis/results_dge.pdf",
+#        res_dtu_gene = "de_analysis/results_dtu_gene.tsv",
+#        res_dtu_trs = "de_analysis/results_dtu_transcript.tsv",
+#        res_dtu_stager = "de_analysis/results_dtu_stageR.tsv",
+#        flt_counts = "merged/all_counts_filtered.tsv",
+#        flt_counts_gens = "merged/all_gene_counts.tsv",
+#    conda: "envs/env.yml"
+#    script:
+#        "scripts/de_analysis.R"
     
     
 #TODO: make snakemake-compliant script
-rule plot_dtu_res:
-    input:
-        res_dtu_stager = "de_analysis/results_dtu_stageR.tsv",
-        flt_counts = "merged/all_counts_filtered.tsv",
-    output:
-        dtu_pdf = "de_analysis/dtu_plots.pdf",
-    conda: "envs/env.yml"
-    shell: """
-    scripts/plot_dtu_results.R
-    """
+#rule plot_dtu_res:
+#    input:
+#        res_dtu_stager = "de_analysis/results_dtu_stageR.tsv",
+#        flt_counts = "merged/all_counts_filtered.tsv",
+#    output:
+#        dtu_pdf = "de_analysis/dtu_plots.pdf",
+#    conda: "envs/env.yml"
+#    shell: """
+#    scripts/plot_dtu_results.R
+#    """
 
