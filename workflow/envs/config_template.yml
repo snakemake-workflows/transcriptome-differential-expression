@@ -1,0 +1,52 @@
+---
+## General pipeline parameters:
+
+# Name of the pipeline:
+pipeline: "pipeline-transcriptome-de_phe"
+
+inputdir: "/lustre/project/m2_jgu-ngstraining/rna_long_reads/rna_data"
+# Results directory:
+resdir: "/lustre/projects/m2_zdvhpc/meesters/transcriptome"
+# Repository URL:
+repo: ""
+
+## Pipeline-specific parameters:
+
+# Transcriptome fasta
+transcriptome: "/lustre/miifs01/project/m2_jgu-ngstraining/rna_long_reads/transcriptome/Crip_CDS.rename.fa"
+# Annotation GFF/GTF
+annotation: "/lustre/miifs01/project/m2_jgu-ngstraining/rna_long_reads/transcriptome/Crip_CDS.rename.gff"
+# these samples ought to contain all samples comprising of the
+# 1st trait or condition (e.g. control samples)
+condition_a_identifier: "female" # your trait 
+
+# these samples ought to contain all samples comprising of the
+# 2nd trait or condition (e.g. treated samples)
+condition_b_identifier: "male" # your trait
+
+# Minimap2 indexing options
+minimap_index_opts: ""
+
+# Minimap2 mapping options
+minimap2_opts: ""
+
+# Maximum secondary alignments
+maximum_secondary: 100
+
+# Secondary score ratio (-p for minimap2)
+secondary_score_ratio: 1.0
+
+# Salmon library type
+salmon_libtype: "U"
+
+# Count filtering options - customize these according to your experimental design:
+
+# Genes expressed in minimum this many samples
+min_samps_gene_expr: 3
+# Transcripts expressed in minimum this many samples
+min_samps_feature_expr: 1
+# Minimum gene counts
+min_gene_expr: 10
+# Minimum transcript counts
+min_feature_expr: 3
+
