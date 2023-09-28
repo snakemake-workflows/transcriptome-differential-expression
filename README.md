@@ -1,5 +1,5 @@
 
-> This project tries to re-animate the project from Oxford Nanopore. Please see their current nextflow implementation as a reference [wf-transcriptomes](https://github.com/epi2me-labs/wf-transcriptomes), which contains functionality for [differential expression](https://github.com/epi2me-labs/wf-transcriptomes#differential-expression).
+> This project tries to re-animate the project from Oxford Nanopore. CURRENTLY IT IS NOT IN A WORKING STATE. Please see their current nextflow implementation as a reference [wf-transcriptomes](https://github.com/epi2me-labs/wf-transcriptomes), which contains functionality for [differential expression](https://github.com/epi2me-labs/wf-transcriptomes#differential-expression).
 
 
 -----------------------------
@@ -20,8 +20,8 @@ The input files and parameters are specified in `config.yml`:
 
 - `transcriptome` - the input transcriptome.
 - `annotation` - the input annotation in GFF format.
-- `condition_a_samples` - a dictionary with sample names and paths of a given condition (e.g. controls) to the fastq files.
-- `condition_b_samples` - a dictionary with treated sample names and paths of a given condition (e.g. of a trait or treated samples) to the fastq files.
+- `condition_a_identifier` - a string identifiying the first trait.
+- `condition_b_samples` - a string identifiying the second trait.
 
 ### Output
 
@@ -62,23 +62,29 @@ The input files and parameters are specified in `config.yml`:
 Clone the repository:
 
 ```bash
-git clone https://github.com/nanoporetech/pipeline-transcriptome-de.git
+git clone https://github.com/snakemake-workflows/transriptome-differential-expression
 ```
 
 ### Usage
 
 Edit `config.yml` to set the input datasets and parameters then issue:
 
+On a server, e.g.:
 ```bash
 snakemake --use-conda -j <num_cores> all
 ```
+On a cluster, e.g.
+```bash
+snakemake --slurm --default-resources slurm_account=<your slurm account> slurm_partition=<your clusters default partition> -j <unlimited or lower> --configfile ./envs/<your config yaml> --workflow-profile ./profile/ --snakefile <path to Snakefile> --directory <desired working directory>
+``` 
+Note, that the profile offers a template cluster configuration - it needs adjusting for particular clusters. Contributions of particular configurations are welcome!
 
 ### Help
 
 ##### Licence and Copyright
 
 (c) 2018 Oxford Nanopore Technologies Ltd.
-(c) Lukas Hellmann & Christian Meesters (JGU Mainz, Germany)
+(c) 2023- Lukas Hellmann & Christian Meesters (JGU Mainz, Germany)
 
 This Source Code Form is subject to the terms of the Mozilla Public
 License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -91,7 +97,5 @@ This worflow is largely based on the approach described in the following paper:
 - Love MI, Soneson C and Patro R. *Swimming downstream: statistical analysis of differential transcript usage following Salmon quantification.* F1000Research 2018, 7:952
 (doi: [10.12688/f1000research.15398.3](http://dx.doi.org/10.12688/f1000research.15398.3))
 
-
-See the post announcing the tool at the Oxford Nanopore Technologies community [here](https://community.nanoporetech.com/posts/new-transcriptomics-analys).
 
 
