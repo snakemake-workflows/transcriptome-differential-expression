@@ -7,7 +7,6 @@ import numpy as np
 from functools import reduce
 
 
-
 dfs = {x: pd.read_csv(x, sep="\t") for x in snakemake.input}
 
 ndfs = []
