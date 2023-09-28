@@ -1,0 +1,23 @@
+set-resources:
+    build_minimap_index:
+        cpus_per_task: 4
+        mem_mb_per_cpu: 3600
+        partition: smp
+        runtime: 60
+
+    map_reads:
+        threads: 20
+        mem_mb_per_cpu: 1800
+        partition: smp
+        runtime: 60
+        
+    count_reads:
+        threads: 8
+        mem_mb_per_cpu: 1800
+        partition: smp
+        runtime: 60
+
+    de_analysis:
+        mem_mb_per_cpu: 5000
+        partition: smp
+        runtime: 60
