@@ -54,7 +54,10 @@ stat_res.summary()
 #stat_res.results_df.to_csv(os.path.join(OUTPUT_PATH, "results.csv"))
 
 # performing LFC shrinkage
-stat_res.lfc_shrink(coeff="condition_male_vs_female")
+# a_condition:
+a_condition = snakemake.config["condition_a_identifier"]
+b_condition = snakemake.config["condition_b_identifier"]
+stat_res.lfc_shrink(coeff=f"condition_{b_condition}_vs_{a_condition}")
 
 stat_res.summary()
 #TODO: make graph a snakemake target
@@ -63,5 +66,8 @@ stat_res.plot_MA(s=20, save_path=snakemake.output.ma_graph)
 
 stat_df = stat_res.results_df
 
-sns.heatmap(stat_df, cmap='RdYlGn_r', annot=True)
+#sns.heatmap(stat_df, cmap='RdYlGn_r', annot=True)
+# we need to have a list of all samples:
+
+sns.clustermap(stat_df, xticklables = snakemake.config[""])
 plt.savefig(snakemake.output.de_heatmap)
