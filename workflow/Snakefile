@@ -29,8 +29,9 @@ rule all:
         merged_tsv = "merged/all_counts.tsv",
         coldata = "de_analysis/coldata.tsv",
         de_params = "de_analysis/de_params.tsv",
-        res_dge = "de_analysis/results_dge.pdf",
-        dtu_pdf = "de_analysis/dtu_plots.pdf",
+        dispersion_graph = "de_analysis/dispersion_graph.svg",
+        ma_graph         = "de_analysis/ma_graph.svg",
+        de_heatmap       = "de_analysis/heatmap.svg",
 
 rule build_minimap_index: ## build minimap2 index
     input:
@@ -51,24 +52,45 @@ rule map_reads: ## map reads using minimap2
        index = rules.build_minimap_index.output.index,
        fastq = os.path.join(config["inputdir"], "{sample}.fq.gz")
     output:
-       bam = "alignments/{sample}.bam",
-       sbam = "sorted_alignments/{sample}.bam",
-    log: "logs/minimap2/{sample}.log"
+       temp("alignments/{sample}.bam"),
+    #log: "logs/minimap2/{sample}.log"
     params:
         opts = config["minimap2_opts"],
         msec = config["maximum_secondary"],
         psec = config["secondary_score_ratio"],
     conda: "envs/env.yml"
     shell:"""
-    (minimap2 -t {resources.threads} -ax map-ont -p {params.psec} -N {params.msec} {params.opts} {input.index} {input.fastq}\
-    | samtools view -Sb > {output.bam};
-    samtools sort -@ {threads} {output.bam} -o {output.sbam};
-    samtools index {output.sbam};) 2> {log}
+    set -x
+    echo $(pwd)
+    T=/localscratch/$SLURM_JOB_ID ;
+    cp ./{input.index} $T/. ;
+    minimap2 -t {resources.cpus_per_task} -ax map-ont -p {params.psec} -N {params.msec} {params.opts} $T/$(basename ./{input.index}) {input.fastq} > {output}
+    #| samtools view -Sb > {output}) 2> {log}
     """
+
+rule sam_sort:
+    input:
+        sam = rules.map_reads.output
+    output:
+        temp("sorted_alignments/{sample}.bam")
+    conda: "envs/env.yml"
+    shell: "samtools sort -@ {resources.cpus_per_task} {input.sam} -o {output} -O bam"
+    
+rule sam_index:
+    input:
+        sbam = rules.sam_sort.output
+    output:
+        ibam = "sorted_alignments/{sample}_index.bam"
+    conda: "envs/env.yml"
+    shell:
+        """
+           samtools index -@ {resources.cpus_per_task} {input.sbam};
+           mv {input.sbam} {output.ibam}
+        """
 
 rule count_reads:
     input:
-        bam = rules.map_reads.output.bam,
+        bam = rules.sam_index.output.ibam,
         trs = config["transcriptome"],
     output:
         tsv = "counts/{sample}_salmon/quant.sf",
@@ -77,7 +99,7 @@ rule count_reads:
         libtype = config["salmon_libtype"],
     conda: "envs/env.yml"
     shell: """
-        salmon quant --noErrorModel -p {resources.threads} -t {input.trs} -l {params.libtype} -a {input.bam} -o {params.tsv_dir}
+        salmon quant --noErrorModel -p {resources.cpus_per_task} -t {input.trs} -l {params.libtype} -a {input.bam} -o {params.tsv_dir}
     """
 
 rule merge_counts:
@@ -127,9 +149,11 @@ rule de_analysis:
         coldata = rules.write_coldata.output.coldata,
         tsv = rules.merge_counts.output,
     output:
-        dispersion_graph = "de_analysis/dispersion_graph.svn",
-        ma_graph         = "de_analysis/ma_graph.snv",
-        de_heatmap       = "de_analysis/heatmap.snv",
+        dispersion_graph = "de_analysis/dispersion_graph.svg",
+        ma_graph         = "de_analysis/ma_graph.svg",
+        de_heatmap       = "de_analysis/heatmap.svg",
+        de_top_heatmap   = "de_analysis/heatmap_top.svg"
+    threads: 4
     conda: "envs/env.yml"
     script:
         "scripts/de_analysis.py"
