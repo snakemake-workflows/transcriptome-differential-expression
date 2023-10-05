@@ -1,7 +1,7 @@
 ---
-## General pipeline parameters:
+## General Workflow Parameters:
 
-# Name of the pipeline:
+# Name of the Workflow:
 pipeline: "pipeline-transcriptome-de_phe"
 
 inputdir: "/lustre/project/m2_jgu-ngstraining/rna_long_reads/rna_data"
@@ -10,7 +10,7 @@ resdir: "/lustre/projects/m2_zdvhpc/meesters/transcriptome"
 # Repository URL:
 repo: ""
 
-## Pipeline-specific parameters:
+## Workflow-specific Parameters:
 
 # Transcriptome fasta
 transcriptome: "/lustre/miifs01/project/m2_jgu-ngstraining/rna_long_reads/transcriptome/Crip_CDS.rename.fa"
