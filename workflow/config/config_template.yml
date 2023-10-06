@@ -54,9 +54,11 @@ min_feature_expr: 3
 #
 # in addition to the full heatmap, plot the top number of different 
 # values, ranked by the top ratio between the two traits
-threshold_plot: 100
+threshold_plot: 10
 #
-# a python dict to define extra plotting arguments.
+# the heatmap color map
+# see https://seaborn.pydata.org/tutorial/color_palettes.htm for an overview
+colormap: "flare" 
 
 
 #matplotlib_extra_args: {

@@ -5,6 +5,7 @@ import pickle as pkl
 import matplotlib
 matplotlib.use("Agg") # suppress creating of interactive plots
 import matplotlib.pyplot as plt
+from matplotlib.colors import LogNorm
 import numpy as np
 import pandas as pd
 import seaborn as sns
@@ -102,18 +103,20 @@ b_over_a = b_mean/a_mean
 # which is bigger?
 ratio = list(None for _ in a_over_b)
 for index, state in enumerate(a_over_b.ge(b_over_a)):
-    if np.isinf(state):
-        print("deleting"
-              )
-        del ratio[index]
-        normalized.drop(index, inplace=True)
+    # enter ratio, but check for non-inf-ness, first:
+    print(a_over_b[index], b_over_a[index])
     if state:
+#        if np.isinf(a_over_b[index]):
+#            normalized.drop(index, inplace=True)
         ratio[index] = a_over_b[index]
     else:
+#        if np.isinf(b_over_a[index]):
+#            normalized.drop(index, inplace=True)
         ratio[index] = b_over_a[index]
 
-
 normalized["ratio"] = ratio
+normalized = normalized[~np.all(normalized == np.inf, axis=1)]
+print(normalized)
 # now sort according to the ratio
 normalized.sort_values("ratio", )
 # through away this column
@@ -123,10 +126,10 @@ print(normalized)
 #normalized.loc[normalized.index.difference(normalized.dropna(how='all').index)]
 #print(normalized)
 
-sns.clustermap(normalized, cmap="mako", linewidths=0)#, xticklables = metadata.index.to_list())#, yticklabels = sta)
+sns.clustermap(normalized[samples], cmap=config["colormap"], linewidths=0, norm=LogNorm())#, xticklables = metadata.index.to_list())#, yticklabels = sta)
 plt.savefig(snakemake.output.de_heatmap)
 n=snakemake.config["threshold_plot"]
-sns.clustermap(normalized.iloc[:n], cmap="mako", linewidths=0)
+sns.clustermap(normalized.iloc[:n][samples], cmap=config["colormap"], linewidths=0, norm=LogNorm())
 plt.savefig(snakemake.output.de_top_heatmap)
 
 
