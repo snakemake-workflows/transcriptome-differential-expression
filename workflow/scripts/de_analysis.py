@@ -31,7 +31,7 @@ metadata = metadata.loc[samples_to_keep]
 
 #TODO: make this configurable
 # next we filter out counts, with counts lower than 10
-genes_to_keep = counts_df.columns[counts_df.sum(axis=0) >= 10]
+genes_to_keep = counts_df.columns[counts_df.sum(axis=0) >= snakemake.config["mincount"]]
 counts_df = counts_df[genes_to_keep]
 
 dds = DeseqDataSet(
@@ -51,9 +51,26 @@ dds.fit_genewise_dispersions()
 
 dds.plot_dispersions(save_path=f"{snakemake.output.dispersion_graph}")
 
+# compute p-values for our dispersion
+stat_res = DeseqStats(dds, n_cpus=ncpus)
+
+# performing LFC shrinkage
+stat_res.lfc_shrink(coeff=f"condition_{b_condition}_vs_{a_condition}")
+
+# run Wald test and plot, perform optional threshold tests, if wanted
+if snakemake.config["lfc_null"] or snakemake.config["alt_hypothesis"]:
+    summary = stat_res(lfc_null = snakemake.config.get("lfc_null", default=0),
+                       alt_hypothesis = snakemake.config.get("alt_hypothesis", default=None))
+else:
+    summary = stat_res.summary()
+
+stat_res.results_df.to_csv(snakemake.output.lfc_analysis)
+
+stat_res.plot_MA(s=snakemake.config["point_width"], save_path=f"{snakemake.output.ma_graph}")
+
 # create a clustermap, based on normalized counts
 #dds_df = dds.to_df()
-#ds_df.to_csv('dds_df.csv')
+#ds_df.to_csv('dds_df.csv'
 # getting and applying the scaling factors
 sf = dds.obsm["size_factors"]
 normalized = counts_df.values.T * sf
@@ -126,28 +143,8 @@ print(normalized)
 #normalized.loc[normalized.index.difference(normalized.dropna(how='all').index)]
 #print(normalized)
 
-sns.clustermap(normalized[samples], cmap=config["colormap"], linewidths=0, norm=LogNorm())#, xticklables = metadata.index.to_list())#, yticklabels = sta)
+sns.clustermap(normalized[samples], cmap=snakemake.config["colormap"], linewidths=0, norm=LogNorm())#, xticklables = metadata.index.to_list())#, yticklabels = sta)
 plt.savefig(snakemake.output.de_heatmap)
 n=snakemake.config["threshold_plot"]
-sns.clustermap(normalized.iloc[:n][samples], cmap=config["colormap"], linewidths=0, norm=LogNorm())
+sns.clustermap(normalized.iloc[:n][samples], cmap=snakemake.config["colormap"], linewidths=0, norm=LogNorm())
 plt.savefig(snakemake.output.de_top_heatmap)
-
-
-# compute p-values for our dispersion
-stat_res = DeseqStats(dds, n_cpus=ncpus)
-
-# print the summary
-stat_res.summary()
-
-#TODO save to file, this is the template code:
-#stat_res.results_df.to_csv(os.path.join(OUTPUT_PATH, "results.csv"))
-
-# performing LFC shrinkage
-
-stat_res.lfc_shrink(coeff=f"condition_{b_condition}_vs_{a_condition}")
-
-stat_res.summary()
-
-stat_res.plot_MA(s=20, save_path=f"{snakemake.output.ma_graph}")
-
-
