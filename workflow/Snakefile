@@ -34,6 +34,7 @@ rule all:
         dispersion_graph = "de_analysis/dispersion_graph.svg",
         ma_graph         = "de_analysis/ma_graph.svg",
         de_heatmap       = "de_analysis/heatmap.svg",
+        lfc_analysis     = "de_analysis/lfc_analysis.csv"
 
 rule build_minimap_index: ## build minimap2 index
     input:
@@ -154,6 +155,7 @@ rule de_analysis:
         ma_graph         = "de_analysis/ma_graph.svg",
         de_heatmap       = "de_analysis/heatmap.svg",
         de_top_heatmap   = "de_analysis/heatmap_top.svg"
+        lfc_analysis     = "de_analysis/lfc_analysis.csv"
     threads: 4
     conda: "envs/env.yml"
     script:
