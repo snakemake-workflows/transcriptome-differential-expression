@@ -147,19 +147,7 @@ stat_res.summary()
 stat_res.lfc_shrink(coeff=f"condition_{b_condition}_vs_{a_condition}")
 
 stat_res.summary()
-#TODO: make graph a snakemake target
+
 stat_res.plot_MA(s=20, save_path=f"{snakemake.output.ma_graph}")
 
 
-#stat_df = stat_res.results_df
-# in order produce a heatmap reliably, we need to filter out NAs:
-# these CAN happen with p-values for instance. Yet, if the
-# p-values is NA, the difference is also minuscule. So, dropping
-# is - hopefully always - a non-issue.
-#samples_to_keep = ~stat_df.pvalue.isna()
-#stat_df = stat_df.loc[samples_to_keep]
-#print(stat_df)
-#stat_df.to_csv("stat.csv")
-##TODO: make parameters configurable
-#sns.clustermap(stat_df, cmap="mako") #, xticklables = metadata.index.to_list())#, yticklabels = sta)
-#plt.savefig(snakemake.output.de_heatmap)
