@@ -1,6 +1,7 @@
 import os
 import re
 
+
 rule dump_versions:
     output:
         ver = "versions.txt"
@@ -29,7 +30,7 @@ def generate_help(sfile):
 #        print("--------------------------------------------")
 rule info: ## print pipeline information
     params:
-        name = config["pipeline"],
+        name = config["workflow"],
         wdir = os.getcwd(),
         repo = config["repo"],
         res  = config["resdir"],

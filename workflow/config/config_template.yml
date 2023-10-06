@@ -2,7 +2,7 @@
 ## General Workflow Parameters:
 
 # Name of the Workflow:
-pipeline: "pipeline-transcriptome-de_phe"
+workflow: "workflow-transcriptome-de_phe"
 
 inputdir: "/lustre/project/m2_jgu-ngstraining/rna_long_reads/rna_data"
 # Results directory:
