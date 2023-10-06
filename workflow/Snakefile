@@ -154,23 +154,10 @@ rule de_analysis:
         dispersion_graph = "de_analysis/dispersion_graph.svg",
         ma_graph         = "de_analysis/ma_graph.svg",
         de_heatmap       = "de_analysis/heatmap.svg",
-        de_top_heatmap   = "de_analysis/heatmap_top.svg"
+        de_top_heatmap   = "de_analysis/heatmap_top.svg",
         lfc_analysis     = "de_analysis/lfc_analysis.csv"
     threads: 4
     conda: "envs/env.yml"
     script:
         "scripts/de_analysis.py"
     
-    
-#TODO: make snakemake-compliant script
-#rule plot_dtu_res:
-#    input:
-#        res_dtu_stager = "de_analysis/results_dtu_stageR.tsv",
-#        flt_counts = "merged/all_counts_filtered.tsv",
-#    output:
-#        dtu_pdf = "de_analysis/dtu_plots.pdf",
-#    conda: "envs/env.yml"
-#    shell: """
-#    scripts/plot_dtu_results.R
-#    """
-
