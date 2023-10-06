@@ -9,6 +9,7 @@ import sys
 localrules: merge_counts, write_coldata, write_de_params, de_analysis
 
 include: "rules/utils.smk"
+include: "rules/commons.smk"
 
 configfile: "config.yml"
 
@@ -45,14 +46,6 @@ rule build_minimap_index: ## build minimap2 index
     shell:"""
         minimap2 -t {resources.cpus_per_task} {params.opts} -d {output.index} {input.genome}
     """
-
-def get_fastq_input(inputdir):
-    """
-    FASTQ-files may end on 'fq', 'fastq' and have an
-    additional suffix indicating a compression format
-    """
-    return [fname for fname in os.listdir(inputdir) if \
-            fnmatch.fnmatch(fname, "*[\.fq|\.fastq]*")]
 
 # mapping reads with minimap2
 rule map_reads:
