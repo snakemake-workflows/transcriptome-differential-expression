@@ -9,7 +9,7 @@ rule dump_versions:
     #conda: workflow.source_path("envs/env.yml")
     conda: "../envs/env.yml"
     shell:"""
-    conda list > {output.ver} 
+    $MAMBA_EXE list > {output.ver} 
     """
 
 rule info: ## print pipeline information
@@ -17,10 +17,8 @@ rule info: ## print pipeline information
         name = config["workflow"],
         wdir = os.getcwd(),
         repo = config["repo"],
-        res  = config["resdir"],
     run:
         print("Pipeline name: ", params.name)
         print("Pipeline working directory: ", params.wdir)
-        print("Pipeline results directory: ", params.res)
         print("Pipeline repository: ", params.repo)
     
