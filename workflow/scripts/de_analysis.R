@@ -19,7 +19,7 @@ de_params <- read.csv(snakemake@input$de_params, sep="\t", stringsAsFactors=FALS
 cat("Loading annotation database.\n")
 txdb <- makeTxDbFromGFF(de_params$Annotation[[1]])
 # does not work, because our gtf has not enough columns!
-#txdb <- makeTxDbFromGFF(snakemake@input$de_params, format = "gtf")
+#txdb <- makeTxDbFromGFF(snakemake@input$de_params, format = "gff")
 txdf <- select(txdb, keys(txdb,"GENEID"), "TXNAME", "GENEID")
 tab <- table(txdf$GENEID)
 txdf$ntx<- tab[match(txdf$GENEID, names(tab))]
@@ -39,16 +39,21 @@ print(head(txdf))
 print("----")
 print(head(cts))
 print("----")
-print(rownames(cts))#
-print("----")
-print(txdf$TXNAME %>% str_subset(cts))
+#print(rownames(cts))#
+#print("----")
+#print(txdf$TXNAME %>% str_subset(cts))
 #cts <- cts[rownames(cts) %in% txdf$TXNAME, ] # FIXME: filter for transcripts which are in the annotation. Why they are not all there? 
+#print(rownames(cts))#
+#print("--x--")
 #txdf <- txdf[rownames(cts) %in% txdf$TXNAME]
-txdf <- txdf[txdf$TXNAME %>% str_subset(cts)]
+txdf <- txdf[txdf$TXNAME %in% rownames(cts)]
+print(head(txdf))
+#txdf <- txdf[txdf$TXNAME %>% str_subset(cts)]
 print("xxxxxxx1Gxxxxx")
-print(rownames(cts))#
+#print(rownames(cts))#
+
 # Reorder transcript/gene database to match input counts:
-#txdf <- txdf[match(rownames(cts), txdf$TXNAME), ]
+txdf <- txdf[match(rownames(cts), txdf$TXNAME), ]
 rownames(txdf) <- NULL
 print("======")
 print(head(txdf))
