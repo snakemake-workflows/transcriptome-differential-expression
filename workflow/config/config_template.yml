@@ -4,25 +4,21 @@
 # Name of the Workflow:
 workflow: "workflow-transcriptome-de_phe"
 
-inputdir: "/lustre/project/m2_jgu-ngstraining/rna_long_reads/rna_data"
-# Results directory:
-resdir: "/lustre/projects/m2_zdvhpc/meesters/transcriptome"
+# path or URL to sample sheet (CSV format, columns: sample, condition, ...)
+samples: "../config/samples.csv"
+# this is the input directory. All samples are looked for in this directory
+inputdir: "/lustre/project/m2_zdvhpc/meesters/transcriptome_data"
 # Repository URL:
 repo: ""
 
 ## Workflow-specific Parameters:
 
 # Transcriptome fasta
-transcriptome: "/lustre/miifs01/project/m2_jgu-ngstraining/rna_long_reads/transcriptome/Crip_CDS.rename.fa"
+#transcriptome: "/lustre/project/m2_zdvhpc/meesters/transcriptome_data/GCA_917627325.4_PGI_CHIRRI_v4_genomic.fa"
+transcriptome: "/lustre/miifs01/project/m2_zdvhpc/meesters/transcriptome_reference/GCA_917627325.4/GCA_917627325.4_PGI_CHIRRI_v4_genomic.fna"
 # Annotation GFF/GTF
-annotation: "/lustre/miifs01/project/m2_jgu-ngstraining/rna_long_reads/transcriptome/Crip_CDS.rename.gff"
+annotation: "GCA_917627325.4_PGI_CHIRRI_v4_genomic.gff"
 # these samples ought to contain all samples comprising of the
-# 1st trait or condition (e.g. control samples)
-condition_a_identifier: "female" # your trait 
-
-# these samples ought to contain all samples comprising of the
-# 2nd trait or condition (e.g. treated samples)
-condition_b_identifier: "male" # your trait
 
 # Minimap2 indexing options
 minimap_index_opts: ""
