@@ -1,7 +1,0 @@
-sample,	condition,	batch_effect
-m18_bc01.fq.gz,	male,	batch1
-m18_bc02.fq.gz,	male,   batch1
-m18_bc03.fq.gz, female,	batch1
-m18_bc04.fq.gz, female,  batch1
-m18_bc05.fq.gz, female,  batch1
-m18_bc06.fq.gz, male,	batch1
