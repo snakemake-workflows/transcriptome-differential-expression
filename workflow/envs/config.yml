@@ -4,8 +4,6 @@
 # Name of the pipeline:
 pipeline: "pipeline-transcriptome-de_phe"
 
-# Results directory:
-resdir: "results"
 # Repository URL:
 repo: "https://github.com/nanoporetech/pipeline-transcriptome-de"
 
