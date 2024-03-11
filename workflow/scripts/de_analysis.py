@@ -22,16 +22,20 @@ counts_df = pd.read_csv(f"{snakemake.input.tsv}", sep = '\t', header=0)
 # otherwise, we would add an index row, with which we cannot work
 counts_df.set_index("Reference", inplace = True)
 counts_df = counts_df.T
-metadata = pd.read_csv(f"{snakemake.input.coldata}", sep = '\t', header=0, index_col=0)
+metadata = pd.read_csv(f"{snakemake.input.coldata}", sep = ',', header=0, index_col=0)
 
 # filtering low quality samples, first those with NAs
 samples_to_keep = ~metadata.condition.isna()
+print(samples_to_keep)
 counts_df = counts_df.loc[samples_to_keep]
 metadata = metadata.loc[samples_to_keep]
 
 #TODO: make this configurable
 # next we filter out counts, with counts lower than 10
+print(counts_df.sum(axis=0))
+print(snakemake.config["mincount"])
 genes_to_keep = counts_df.columns[counts_df.sum(axis=0) >= snakemake.config["mincount"]]
+print(genes_to_keep)
 counts_df = counts_df[genes_to_keep]
 
 dds = DeseqDataSet(
