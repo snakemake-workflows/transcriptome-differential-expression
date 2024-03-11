@@ -1,7 +1,6 @@
 import os
 import re
 
-
 rule dump_versions:
     output:
         ver = "versions.txt"
