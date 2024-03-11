@@ -7,17 +7,16 @@ workflow: "workflow-transcriptome-de_phe"
 # path or URL to sample sheet (CSV format, columns: sample, condition, ...)
 samples: "../config/samples.csv"
 # this is the input directory. All samples are looked for in this directory
-inputdir: "/lustre/project/m2_zdvhpc/meesters/transcriptome_data"
+inputdir: "/lustre/project/m2_zdvhpc/transcriptome_data"
 # Repository URL:
-repo: ""
+repo: "https://github.com/snakemake-workflows/transriptome-differential-expression"
 
 ## Workflow-specific Parameters:
 
-# Transcriptome fasta
-#transcriptome: "/lustre/project/m2_zdvhpc/meesters/transcriptome_data/GCA_917627325.4_PGI_CHIRRI_v4_genomic.fa"
-transcriptome: "/lustre/miifs01/project/m2_zdvhpc/meesters/transcriptome_reference/GCA_917627325.4/GCA_917627325.4_PGI_CHIRRI_v4_genomic.fna"
-# Annotation GFF/GTF
-annotation: "GCA_917627325.4_PGI_CHIRRI_v4_genomic.gff"
+# Transcriptome fasta (absolute path)
+transcriptome: "/lustre/miifs01/project/m2_zdvhpc/transcriptome_data/GCA_917627325.4_PGI_CHIRRI_v4_genomic.fa"
+# Annotation GFF/GTF (absolute path)
+annotation: "/lustre/miifs01/project/m2_zdvhpc/transcriptome_data/GCA_917627325.4_PGI_CHIRRI_v4_genomic.gff"
 # these samples ought to contain all samples comprising of the
 
 # Minimap2 indexing options
