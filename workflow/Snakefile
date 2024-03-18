@@ -6,7 +6,7 @@ import sys
 localrules: merge_counts, write_coldata, write_de_params, de_analysis, dump_versions, info
 
 include: "rules/commons.smk"
-include: "rules/utils.smk"
+#include: "rules/utils.smk"
 
 configfile: "config.yml"
 
@@ -36,7 +36,7 @@ rule build_minimap_index: ## build minimap2 index
         opts = config["minimap_index_opts"]
     conda: "envs/env.yml"
     shell:"""
-    minimap2 -t {resources.cpus_per_task} {params.opts} -d {output.index} {input.genome}
+    minimap2 -t {resources.cpus_per_task} {params.opts} -d {output.index} {input.genome} &> {log}
     """
 
 # mapping reads with minimap2
@@ -63,7 +63,7 @@ rule sam_sort:
         "sorted_alignments/{sample}.bam"
     log: "logs/samtools/samsort_{sample}.log"
     conda: "envs/env.yml"
-    shell: "samtools sort -@ {resources.cpus_per_task} {input.sam} -o {output} -O bam"
+    shell: "samtools sort -@ {resources.cpus_per_task} {input.sam} -o {output} -O bam &> {log}"
     
 rule sam_index:
     input:
@@ -74,8 +74,8 @@ rule sam_index:
     conda: "envs/env.yml"
     shell:
         """
-           samtools index -@ {resources.cpus_per_task} {input.sbam};
-           mv {input.sbam} {output.ibam}
+           samtools index -@ {resources.cpus_per_task} {input.sbam} &> {log};
+           #mv {input.sbam} {output.ibam}
         """
 
 rule count_reads:
@@ -102,7 +102,7 @@ rule merge_counts:
     log: "logs/merge_count.log"
     #conda: "envs/env.yml"
     script: 
-        "scripts/merge_count_tsvs.py"
+        "scripts/merge_count_tsvs.py &> {log}"
 
 rule write_coldata:
     input:
@@ -141,5 +141,5 @@ rule de_analysis:
     threads: 4
     conda: "envs/env.yml"
     script:
-        "scripts/de_analysis.py"
+        "scripts/de_analysis.py &> {log}"
     
