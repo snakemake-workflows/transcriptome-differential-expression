@@ -4,11 +4,11 @@ import re
 rule dump_versions:
     output:
         ver = "versions.txt"
-    #TODO: check whether code can be reverted to use workflow.source_path
-    #conda: workflow.source_path("envs/env.yml")
     conda: "../envs/env.yml"
+    # we are using 'ensureconda' because we are unsure which
+    # conda flavour is prefered by the user
     shell:"""
-    $MAMBA_EXE list > {output.ver} 
+    eval $(ensureconda) list > {output.ver} 
     """
 
 rule info: ## print pipeline information
