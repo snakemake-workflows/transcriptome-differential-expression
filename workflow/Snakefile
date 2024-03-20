@@ -6,7 +6,7 @@ import sys
 localrules: merge_counts, write_coldata, write_de_params, de_analysis, dump_versions, info
 
 include: "rules/commons.smk"
-#include: "rules/utils.smk"
+include: "rules/utils.smk"
 
 configfile: "config.yml"
 
