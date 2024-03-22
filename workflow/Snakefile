@@ -8,7 +8,7 @@ localrules: merge_counts, write_coldata, write_de_params, de_analysis, dump_vers
 include: "rules/commons.smk"
 include: "rules/utils.smk"
 
-configfile: "config.yml"
+configfile: "../config/config.yml"
 
 inputdir  = config["inputdir"]
 
@@ -96,7 +96,7 @@ rule merge_counts:
         count_tsvs = expand("counts/{sample}_salmon/quant.sf", sample=samples),
     output:
         "merged/all_counts.tsv"
-    #conda: "envs/env.yml"
+    conda: None
     script: 
         "scripts/merge_count_tsvs.py"
 
@@ -104,6 +104,7 @@ rule write_coldata:
     input:
     output:
         coldata = "de_analysis/coldata.tsv"
+    conda: None
     run:
         df = pd.DataFrame(OrderedDict([('sample', samples), ('condition', condition), ('condition2', condition2), ('batch', batch_effect)]))
         df.to_csv(output.coldata, sep="\t", index=False)
@@ -112,6 +113,7 @@ rule write_de_params:
     input:
     output:
         de_params = "de_analysis/de_params.tsv"
+    conda: None
     run:
         d = OrderedDict()
         d["Annotation"] = [config["annotation"]]
