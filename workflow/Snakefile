@@ -135,7 +135,7 @@ rule merge_counts:
     conda:
         "None"
     script:
-        "scripts/merge_count_tsvs.py &> {log}""
+        "scripts/merge_count_tsvs.py &> {log}"
 
 
 rule write_coldata:
