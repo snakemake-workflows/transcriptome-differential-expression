@@ -13,11 +13,11 @@ localrules:
     info,
 
 
-include: "rules/commons.smk"
-include: "rules/utils.smk"
-
 
 configfile: "config/config.yml"
+
+include: "rules/commons.smk"
+include: "rules/utils.smk"
 
 
 inputdir = config["inputdir"]
