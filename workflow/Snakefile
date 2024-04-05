@@ -133,7 +133,7 @@ rule merge_counts:
     log: 
         "logs/merge_count.log"
     conda:
-        None
+        "None"
     script:
         "scripts/merge_count_tsvs.py &> {log}""
 
@@ -142,7 +142,7 @@ rule write_coldata:
     output:
         coldata="de_analysis/coldata.tsv",
     conda:
-        None
+        "None"
     run:
         df = pd.DataFrame(
             OrderedDict(
@@ -161,7 +161,7 @@ rule write_de_params:
     output:
         de_params="de_analysis/de_params.tsv",
     conda:
-        None
+        "None"
     run:
         d = OrderedDict()
         d["Annotation"] = [config["annotation"]]
