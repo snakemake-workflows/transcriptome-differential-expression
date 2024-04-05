@@ -36,7 +36,7 @@ rule build_minimap_index: ## build minimap2 index
         opts = config["minimap_index_opts"]
     conda: "envs/env.yml"
     shell:"""
-    minimap2 -t {resources.cpus_per_task} {params.opts} -d {output.index} {input.genome} &> {log}
+    minimap2 -t {resources.cpus_per_task} {params.opts} -d {output.index} {input.genome} 2> {log}
     """
 
 # mapping reads with minimap2
