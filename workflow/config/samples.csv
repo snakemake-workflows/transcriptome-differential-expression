@@ -1,7 +1,7 @@
 sample,	condition, condition2, batch_effect
-m18_bc01.fq.gz,	male,condition2, batch1
-m18_bc02.fq.gz,	male, condition2, batch1
-m18_bc03.fq.gz, female, condition2, batch1
-m18_bc04.fq.gz, female, condition2, batch1
-m18_bc05.fq.gz, female, condition2, batch1
-m18_bc06.fq.gz, male, condition2, batch1
+m18_bc01.fq,	male,condition2, batch1
+m18_bc02.fq,	male, condition2, batch1
+m18_bc03.fq, female, condition2, batch1
+m18_bc04.fq, female, condition2, batch1
+m18_bc05.fq, female, condition2, batch1
+m18_bc06.fq, male, condition2, batch1
