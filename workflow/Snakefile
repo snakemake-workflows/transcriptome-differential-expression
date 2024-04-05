@@ -25,6 +25,7 @@ rule all:
         ma_graph         = "de_analysis/ma_graph.svg",
         de_heatmap       = "de_analysis/heatmap.svg",
         lfc_analysis     = "de_analysis/lfc_analysis.csv"
+        QC="QC/QC-report.txt"
 
 rule build_minimap_index: ## build minimap2 index
     input:
@@ -55,6 +56,30 @@ rule map_reads:
     shell:"""
     minimap2 -t {resources.cpus_per_task} -ax map-ont -p {params.psec} -N {params.msec} {params.opts} {input.index} {input.fastq} > {output} 2> {log}
     """
+
+rule mapping_qc:
+    input: 
+        bam=rules.map_reads.output
+    output:
+        "QC/qualimap/{sample}"
+    log:
+        "logs/qualimap/{sample}.log"
+    conda:
+        "envs/env.yml"
+    shell:"""
+        qualimap -t {resources.cpus_per_task}  {input.bam} > {output} 2> {log}
+        """
+
+rule qc:
+    input:
+        samples=rules.plot_samples.output
+        mapping=rules.mapping_qc.output
+    output:
+        "QC/QC-report.txt"
+    conda:
+        "None"
+    shell:
+        "cat {input.samples} {input.mapping} >> QC-report.txt"
 
 rule sam_sort:
     input:
