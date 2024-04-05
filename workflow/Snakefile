@@ -45,11 +45,13 @@ rule build_minimap_index:  ## build minimap2 index
         index="index/transcriptome_index.mmi",
     params:
         opts=config["minimap_index_opts"],
+    log: 
+        "logs/minimap2/index.log"
     conda:
         "envs/env.yml"
     shell:
         """
-    minimap2 -t {resources.cpus_per_task} {params.opts} -d {output.index} {input.genome}
+    minimap2 -t {resources.cpus_per_task} {params.opts} -d {output.index} {input.genome} 2> {log}
     """
 
 
@@ -61,7 +63,7 @@ rule map_reads:
     output:
         "alignments/{sample}.bam",
     log:
-        "logs/minimap2/{sample}.log",
+        "logs/minimap2/mapping_{sample}.log",
     params:
         opts=config["minimap2_opts"],
         msec=config["maximum_secondary"],
@@ -79,10 +81,12 @@ rule sam_sort:
         sam=rules.map_reads.output,
     output:
         "sorted_alignments/{sample}.bam",
+    log: 
+        "logs/samtools/samsort_{sample}.log"
     conda:
         "envs/env.yml"
     shell:
-        "samtools sort -@ {resources.cpus_per_task} {input.sam} -o {output} -O bam"
+        "samtools sort -@ {resources.cpus_per_task} {input.sam} -o {output} -O bam &> {log}"
 
 
 rule sam_index:
@@ -90,12 +94,14 @@ rule sam_index:
         sbam=rules.sam_sort.output,
     output:
         ibam="sorted_alignments/{sample}_index.bam",
+    log: 
+        "logs/samtools/samindex_{sample}.log"
     conda:
         "envs/env.yml"
     shell:
         """
-           samtools index -@ {resources.cpus_per_task} {input.sbam};
-           mv {input.sbam} {output.ibam}
+           samtools index -@ {resources.cpus_per_task} {input.sbam} &> {log};
+           #mv {input.sbam} {output.ibam}
         """
 
 
@@ -124,10 +130,12 @@ rule merge_counts:
         count_tsvs=expand("counts/{sample}_salmon/quant.sf", sample=samples),
     output:
         "merged/all_counts.tsv",
+    log: 
+        "logs/merge_count.log"
     conda:
         None
     script:
-        "scripts/merge_count_tsvs.py"
+        "scripts/merge_count_tsvs.py &> {log}""
 
 
 rule write_coldata:
@@ -176,8 +184,10 @@ rule de_analysis:
         de_heatmap="de_analysis/heatmap.svg",
         de_top_heatmap="de_analysis/heatmap_top.svg",
         lfc_analysis="de_analysis/lfc_analysis.csv",
+    log: "logs/de_analysis.log"
     threads: 4
     conda:
         "envs/env.yml"
     script:
-        "scripts/de_analysis.py"
+        "scripts/de_analysis.py &> {log}"
+    
