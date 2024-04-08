@@ -27,6 +27,35 @@ rule all:
         lfc_analysis     = "de_analysis/lfc_analysis.csv"
         QC="QC/QC-report.txt"
 
+#QC and metadata with NanoPlot
+if config["summary"] is None
+    rule plot_samples:
+        input:
+            fastq = lambda wildcards: all_samples[wildcards.sample]
+        output:
+            report = "NanoPlot/{sample}/NanoPlot-report.html"
+        log:
+            "logs/NanoPlot/{sample}.log"
+        resources:
+            ## max of 39 for our SLURM partition
+            cpus_per_task: max(len(input.fastq),39)
+        conda:
+            "envs/env.yml"
+        shell: "NanoPlot -t {resources.cpus_per_task} --tsv_stats "
+                "--fastq {input.fastq} > {output.report} 2> {log}"
+else
+    rule plot_samples:
+        input:
+            summary = config["summary"]
+        output:
+            report = "NanoPlot/NanoPlot-report.html"
+        log:
+            "logs/NanoPlot/NanoPlot.log"
+        conda:
+            "envs/env.yml"
+        shell: "NanoPlot -t {resources.cpus_per_task} --barcoded --tsv_stats "
+                "--summary {input.summary} > {output.report} 2> {log}"
+
 rule build_minimap_index: ## build minimap2 index
     input:
         genome = config["transcriptome"]
