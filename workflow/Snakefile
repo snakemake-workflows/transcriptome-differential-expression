@@ -24,37 +24,9 @@ rule all:
         dispersion_graph = "de_analysis/dispersion_graph.svg",
         ma_graph         = "de_analysis/ma_graph.svg",
         de_heatmap       = "de_analysis/heatmap.svg",
-        lfc_analysis     = "de_analysis/lfc_analysis.csv"
-        QC="QC/QC-report.txt"
+        lfc_analysis     = "de_analysis/lfc_analysis.csv",
+        QC="NanoPlot.tar.gz"
 
-#QC and metadata with NanoPlot
-if config["summary"] is None
-    rule plot_samples:
-        input:
-            fastq = lambda wildcards: all_samples[wildcards.sample]
-        output:
-            report = "NanoPlot/{sample}/NanoPlot-report.html"
-        log:
-            "logs/NanoPlot/{sample}.log"
-        resources:
-            ## max of 39 for our SLURM partition
-            cpus_per_task: max(len(input.fastq),39)
-        conda:
-            "envs/env.yml"
-        shell: "NanoPlot -t {resources.cpus_per_task} --tsv_stats "
-                "--fastq {input.fastq} > {output.report} 2> {log}"
-else
-    rule plot_samples:
-        input:
-            summary = config["summary"]
-        output:
-            report = "NanoPlot/NanoPlot-report.html"
-        log:
-            "logs/NanoPlot/NanoPlot.log"
-        conda:
-            "envs/env.yml"
-        shell: "NanoPlot -t {resources.cpus_per_task} --barcoded --tsv_stats "
-                "--summary {input.summary} > {output.report} 2> {log}"
 
 rule build_minimap_index: ## build minimap2 index
     input:
@@ -86,29 +58,82 @@ rule map_reads:
     minimap2 -t {resources.cpus_per_task} -ax map-ont -p {params.psec} -N {params.msec} {params.opts} {input.index} {input.fastq} > {output} 2> {log}
     """
 
+#QC and metadata with NanoPlot
+if config["summary"] == "None":
+    rule plot_samples:
+        input:
+            fastq = lambda wildcards: all_samples[wildcards.sample]
+        output:
+            directory("NanoPlot")
+        log:
+            "logs/NanoPlot/{sample}.log"
+        resources:
+            ## max of 39 for our SLURM partition
+            cpus_per_task= max(8,39) #problem with max(len(input.fastq),39)
+        conda:
+            "envs/env.yml"
+        shell: 
+            "mkdir {output}/{wildcards.sample}; "
+            "NanoPlot -t {resources.cpus_per_task} --tsv_stats "
+            "--fastq {input.fastq} -o {output}/{wildcards.sample} 2> {log}"
+else:
+    rule plot_samples:
+        input:
+            summary = config["summary"]
+        output:
+            directory("NanoPlot")
+        log:
+            "logs/NanoPlot/NanoPlot.log"
+        conda:
+            "envs/env.yml"
+        shell: 
+            "mkdir {output}/{wildcards.sample}; "
+            "NanoPlot -t {resources.cpus_per_task} --barcoded --tsv_stats "
+            "--summary {input.summary} -o {output} 2> {log}"
+
+rule compress_nplot:
+    input:
+        samples=rules.plot_samples.output
+    output:
+        "NanoPlot.tar.gz"
+    log:
+        "logs/NanoPlot/compress.log"
+    shell:
+        "tar zcvf {input}.tar.gz {input} 2> {log}"
+
 rule mapping_qc:
     input: 
-        bam=rules.map_reads.output
+       bam=rules.map_reads.output
     output:
-        "QC/qualimap/{sample}"
+       "QC/qualimap/{sample}"
     log:
-        "logs/qualimap/{sample}.log"
+       "logs/qualimap/{sample}.log"
     conda:
-        "envs/env.yml"
+       "envs/env.yml"
+    envmodules:
+       "bio/qualimap/2.3"
     shell:"""
         qualimap -t {resources.cpus_per_task}  {input.bam} > {output} 2> {log}
         """
 
-rule qc:
+rule compress_mapqc:
     input:
-        samples=rules.plot_samples.output
         mapping=rules.mapping_qc.output
     output:
-        "QC/QC-report.txt"
-    conda:
-        "None"
+        "Qualimap.tar.gz"
+    log:
+        "logs/Qualimap/compress.log"
     shell:
-        "cat {input.samples} {input.mapping} >> QC-report.txt"
+        "tar zcvf {input}.tar.gz {input} 2> {log}"
+
+#rule qc_report:
+#    input:
+#        samples=rules.compress_nplot.output#,
+#        #mapping=rules.mapping_qc.output
+#    output:
+#        "QC/QC-report.gz"
+#    shell:
+#        "mv {input.samples} > {output}" #{input.summary}
 
 rule sam_sort:
     input:
