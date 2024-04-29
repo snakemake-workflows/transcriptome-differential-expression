@@ -17,6 +17,8 @@ repo: "https://github.com/snakemake-workflows/transriptome-differential-expressi
 transcriptome: "/lustre/miifs01/project/m2_zdvhpc/transcriptome_data/GCA_917627325.4_PGI_CHIRRI_v4_genomic.fa"
 # Annotation GFF/GTF (absolute path)
 annotation: "/lustre/miifs01/project/m2_zdvhpc/transcriptome_data/GCA_917627325.4_PGI_CHIRRI_v4_genomic.gff"
+#gtf is needed by qualimap
+gtf: "/lustre/miifs01/project/m2_zdvhpc/transcriptome_data/GCA_917627325.4_PGI_CHIRRI_v4_genomic.gtf"
 # these samples ought to contain all samples comprising of the
 
 #NanoPlot QC with sequencing summary. leave as None for QC with .fastq files

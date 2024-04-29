@@ -25,7 +25,8 @@ rule all:
         ma_graph         = "de_analysis/ma_graph.svg",
         de_heatmap       = "de_analysis/heatmap.svg",
         lfc_analysis     = "de_analysis/lfc_analysis.csv",
-        QC=expand("QC/NanoPlot_{sample}.tar.gz", sample=samples)
+        sample_QC=expand("QC/NanoPlot_{sample}.tar.gz", sample=samples),
+        mapping_QC=expand("QC/Qualimap_{sample}.tar.gz",sample=samples)
 
 
 rule build_minimap_index: ## build minimap2 index
@@ -101,30 +102,32 @@ rule compress_nplot:
     shell:
         "tar zcvf {output} {input} 2> {log}"
 
-#rule mapping_qc:
-#    input: 
-#       bam=rules.map_reads.output
-#    output:
-#       "QC/qualimap/{sample}"
-#    log:
-#       "logs/qualimap/{sample}.log"
-#    conda:
-#       "envs/env.yml"
-#    envmodules:
-#       "bio/qualimap/2.3"
-#    shell:"""
-#        qualimap -t {resources.cpus_per_task}  {input.bam} > {output} 2> {log}
-#        """
+rule mapping_qc:
+    input: 
+       bam=rules.map_reads.output
+    output:
+       directory("QC/qualimap/{sample}")
+    log:
+       "logs/qualimap/{sample}.log"
+    conda:
+       "envs/env.yml"
+    envmodules:
+       "bio/Qualimap/2.2.1-foss-2020b-R-4.0.3"
+    shell:"""
+        mkdir {output};
+        qualimap -t {resources.cpus_per_task}  {input.bam} > {output} 2> {log}
+        """
 
-#rule compress_mapqc:
-#    input:
-#        mapping=rules.mapping_qc.output
-#    output:
-#        "Qualimap.tar.gz"
-#    log:
-#        "logs/Qualimap/compress.log"
-#    shell:
-#        "tar zcvf {input}.tar.gz {input} &> {log}"
+rule compress_mapqc:
+    input:
+        bam=rules.mapping_qc.output
+        gtf=config["annotation"]
+    output:
+        "QC/Qualimap_{sample}.tar.gz"
+    log:
+        "logs/Qualimap/compress_{sample}.log"
+    shell:
+        "tar zcvf {output} {input} 2> {log}"
 
 #rule qc_report:
 #    input:
