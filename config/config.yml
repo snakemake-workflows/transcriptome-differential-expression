@@ -1,11 +1,11 @@
----
+samples: config/samples.csv
+
+
 ## General Workflow Parameters:
 
 # Name of the Workflow:
 workflow: "workflow-transcriptome-de_phe"
 
-# path or URL to sample sheet (CSV format, columns: sample, condition, ...)
-samples: config/samples.csv
 # this is the input directory. All samples are looked for in this directory
 inputdir: "/lustre/project/m2_zdvhpc/transcriptome_data"
 # Repository URL:
