@@ -6,6 +6,7 @@ import pandas as pd
 import numpy as np
 from functools import reduce
 
+sys.stderr = sys.stdout = open(snakemake.log[0], "w")
 
 dfs = {x: pd.read_csv(x, sep="\t") for x in snakemake.input}
 
