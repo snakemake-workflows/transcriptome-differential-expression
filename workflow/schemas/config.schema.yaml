@@ -1,0 +1,342 @@
+$schema: "http://json-schema.org/draft-07/schema#"
+
+description: snakemake configuration file
+
+type: object
+
+definitions:
+  aux-file:
+    type: object
+    additionalProperties:
+      anyOf:
+        - type: string
+  filterentry:
+    type: object
+    additionalProperties:
+      anyOf:
+        - type: string
+        - type: "null"
+        - type: object
+          properties:
+            aux-files:
+              $ref: "#/definitions/aux-file"
+              description: "a map of <name: string> pairs"
+            expression:
+              type: string
+          required:
+            - aux-files
+            - expression
+  evententry:
+    type: object
+    properties:
+      varlociraptor:
+        type: array
+        items: 
+          type: string
+      filter:
+        anyOf:
+          - type: string
+          - type: array
+            items:
+              type: string
+      desc:
+        type: string
+      labels:
+        type: object
+      subcategory:
+        type: string
+      sort:
+        type: array
+        items:
+          type: string
+      local:
+        type: boolean
+      threshold:
+        type: number
+        minimum: 0.0
+        maximum: 1.0
+
+properties:
+  samples:
+    type: string
+  units:
+    type: string
+  groups:
+    type: string
+
+  target_regions:
+    anyOf:
+      - type: string
+      - type: "null"
+      - type: array
+
+  ref:
+    type: object
+    properties:
+      n_chromosomes:
+        type: integer
+      species:
+        type: string
+      release:
+        type: integer
+      build:
+        type: string
+    required:
+      - species
+      - release
+      - build
+      - n_chromosomes
+
+  primers:
+    type: object
+    properties:
+      trimming:
+        type: object
+        properties:
+          activate: 
+            type: boolean
+          primers_fq1:
+            type: string
+          primers_fq2:
+            type: string
+          tsv:
+            type: string
+          library_error:
+            type: integer
+          library_length:
+            type: integer
+
+  gene_coverage:
+    type: object
+    properties:
+      min_avg_coverage:
+        type: integer
+
+  report:
+    type: object
+    properties:
+      activate:
+        type: boolean
+      stratify:
+        type: object
+        properties:
+          activate:
+            type: boolean
+          by-column:
+            type: string
+        required:
+          - activate
+          - by-column
+      max_read_depth:
+        type: integer
+    required:
+      - activate
+      - max_read_depth
+
+  population:
+    type: object
+    properties:
+      db:
+        type: object
+        properties:
+          activate:
+            type: boolean
+          path:
+            type: string
+          events:
+            type: array
+            items: 
+              type: string
+        required:
+          - activate
+
+  tables:
+    type: object
+    activate:
+      type: boolean
+    properties:
+      output:
+        type: object
+        properties:
+          event_prob:
+            type: boolean
+          observations:
+            type: boolean
+          annotation_fields:
+            type: array
+            items: 
+               anyOf:
+                - type: string
+                - type: object
+                  properties:
+                    name:
+                      type: string
+                    expr:
+                      type: string
+    generate_excel:
+      type: boolean
+    required:
+      - activate
+
+  mutational_burden:
+    type: object
+    properties:
+      activate:
+        type: boolean
+    required:
+      - activate
+
+
+  calling:
+    type: object
+    properties:
+      delly:
+        type: object
+        properties:
+          activate:
+            type: boolean
+      freebayes:
+        type: object
+        properties:
+          activate:
+            type: boolean
+      scenario:
+        type: string
+      filter:
+        $ref: "#/definitions/filterentry"
+        description: "a map of <filtername: string> pairs"
+      fdr-control:
+        type: object
+        properties:
+          threshold:
+            type: number
+            minimum: 0.0
+            maximum: 1.0
+          local:
+            type: boolean
+          events:
+            $ref: "#/definitions/evententry"
+            description: "a map of <eventname: event> pairs"
+        required:
+          - events
+    required:
+      - delly
+      - freebayes
+      - scenario
+      - filter
+      - fdr-control
+  
+  remove_duplicates:
+    type: object
+    properties:
+      activate:
+        type: boolean
+
+  calc_consensus_reads:
+    type: object
+    properties:
+      activate:
+        type: boolean
+
+  annotations:
+    type: object
+    properties:
+      vcfs:
+        properties:
+          activate:
+            type: boolean
+      dgidb:
+        properties:
+          activate:
+            type: boolean
+          datasources:
+            type: array
+            items: 
+              type: string
+      vep:
+        properties:
+          candidate_calls:
+            properties:
+              params:
+                type: string
+              plugins:
+                type: array
+                items:
+                  type: string
+            required:
+              - params
+              - plugins
+          final_calls:
+            properties:
+              params:
+                type: string
+              plugins:
+                type: array
+                items:
+                  type: string
+            required:
+              - params
+              - plugins
+        required:
+          - candidate_calls
+          - final_calls
+    required:
+      - vep
+      - vcfs
+      - dgidb
+
+
+
+
+  params:
+    type: object
+    properties:
+      cutadapt:
+        type: string
+      gatk:
+        type: object
+        properties:
+          BaseRecalibrator:
+            type: string
+          applyBQSR:
+            type: string
+        required:
+          - BaseRecalibrator
+          - applyBQSR
+      varlociraptor:
+        type: object
+        properties:
+          preprocess:
+            type: string
+          call:
+            type: string
+        required:
+          - preprocess
+          - call
+      picard:
+        type: object
+        properties:
+          MarkDuplicates:
+            type: string
+        required:
+          - MarkDuplicates
+      freebayes:
+        type: object
+        properties:
+          min_allele_frequency:
+            type: number
+    required:
+      - gatk
+      - picard
+      - cutadapt
+      - freebayes
+      - varlociraptor
+
+required:
+  - samples
+  - units
+  - ref
+  - mutational_burden
+  - calling
+  - params
+  - annotations
