@@ -133,7 +133,7 @@ rule merge_counts:
     log: 
         "logs/merge_count.log"
     script:
-        "scripts/merge_count_tsvs.py &> {log}"
+        "scripts/merge_count_tsvs.py"
 
 
 rule write_coldata:
@@ -183,5 +183,5 @@ rule de_analysis:
     conda:
         "envs/env.yml"
     script:
-        "scripts/de_analysis.py &> {log}"
+        "scripts/de_analysis.py"
     
