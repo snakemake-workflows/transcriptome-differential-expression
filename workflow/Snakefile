@@ -13,8 +13,8 @@ localrules:
     info,
 
 
-
 configfile: "config/config.yml"
+
 
 include: "rules/commons.smk"
 include: "rules/utils.smk"
@@ -45,8 +45,8 @@ rule build_minimap_index:  ## build minimap2 index
         index="index/transcriptome_index.mmi",
     params:
         opts=config["minimap_index_opts"],
-    log: 
-        "logs/minimap2/index.log"
+    log:
+        "logs/minimap2/index.log",
     conda:
         "envs/env.yml"
     shell:
@@ -81,8 +81,8 @@ rule sam_sort:
         sam=rules.map_reads.output,
     output:
         "sorted_alignments/{sample}.bam",
-    log: 
-        "logs/samtools/samsort_{sample}.log"
+    log:
+        "logs/samtools/samsort_{sample}.log",
     conda:
         "envs/env.yml"
     shell:
@@ -94,8 +94,8 @@ rule sam_index:
         sbam=rules.sam_sort.output,
     output:
         ibam="sorted_alignments/{sample}_index.bam",
-    log: 
-        "logs/samtools/samindex_{sample}.log"
+    log:
+        "logs/samtools/samindex_{sample}.log",
     conda:
         "envs/env.yml"
     shell:
@@ -130,8 +130,8 @@ rule merge_counts:
         count_tsvs=expand("counts/{sample}_salmon/quant.sf", sample=samples),
     output:
         "merged/all_counts.tsv",
-    log: 
-        "logs/merge_count.log"
+    log:
+        "logs/merge_count.log",
     script:
         "scripts/merge_count_tsvs.py"
 
@@ -178,10 +178,10 @@ rule de_analysis:
         de_heatmap="de_analysis/heatmap.svg",
         de_top_heatmap="de_analysis/heatmap_top.svg",
         lfc_analysis="de_analysis/lfc_analysis.csv",
-    log: "logs/de_analysis.log"
+    log:
+        "logs/de_analysis.log",
     threads: 4
     conda:
         "envs/env.yml"
     script:
         "scripts/de_analysis.py"
-    
