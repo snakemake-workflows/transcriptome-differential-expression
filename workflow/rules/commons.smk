@@ -5,14 +5,16 @@ import pandas as pd
 from snakemake.remote import FTP
 from snakemake.utils import validate
 
-# samples = (
-#    pd.read_csv(workflow.source_path(config["samples"]),
-#                                     dtype={"sample": str},
-#                                     header=0,
-#                                     comment="#")
-#    .set_index("sample", drop=False)
-#    .sort_index()
-# )
+validate(config, schema="../schemas/config.schema.yaml")
+
+samples = (
+   pd.read_csv(config["samples"],
+               dtype={"sample": str},
+               header=0,
+               comment="#")
+    .set_index("sample", drop=False)
+    .sort_index()
+)
 
 
 def get_fastq_inputs():
@@ -21,16 +23,16 @@ def get_fastq_inputs():
     inputdir = config["inputdir"]
     extensions = ("fq", "fq.gz", "fastq", "fastq.gz")
 
-    with open(workflow.source_path(config["samples"])) as samplefile:
-        samplefile.readline()  # disregard the header
-        for line in samplefile:
-            if line.startswith("#"):
-                continue
-            vals = line.split(",")
-            samples.append(vals[0].strip())
-            condition.append(vals[1].strip())
-            condition2.append(vals[2].strip())
-            batch_effect.append(vals[3].strip())
+    #with open(workflow.source_path(config["samples"])) as samplefile:
+    #    samplefile.readline()  # disregard the header
+    #    for line in samplefile:
+    #        if line.startswith("#"):
+    #            continue
+    #        vals = line.split(",")
+    #        samples.append(vals[0].strip())
+    #        condition.append(vals[1].strip())
+    #        condition2.append(vals[2].strip())
+    #        batch_effect.append(vals[3].strip())
 
     # get sample files
     sample_files = glob_wildcards(os.path.join(config["inputdir"], "{samples}")).samples

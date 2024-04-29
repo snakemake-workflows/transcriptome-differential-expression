@@ -59,8 +59,8 @@ definitions:
 properties:
   samples:
     type: string
-  units:
-    type: string
+  #units:
+  #  type: string
   groups:
     type: string
 
@@ -334,9 +334,9 @@ properties:
 
 required:
   - samples
-  - units
-  - ref
-  - mutational_burden
-  - calling
-  - params
-  - annotations
+    #- units
+    #- ref
+    #mutational_burden
+    #- calling
+    #- params
+    #- annotations
