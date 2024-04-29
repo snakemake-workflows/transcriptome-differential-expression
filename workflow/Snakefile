@@ -3,6 +3,10 @@ from os import path
 from collections import OrderedDict
 import sys
 
+from snakemake.utils import min_version
+
+min_version("8.10.7")
+
 
 localrules:
     merge_counts,
