@@ -144,17 +144,9 @@ rule write_coldata:
     output:
         coldata="de_analysis/coldata.tsv",
     run:
-        df = pd.DataFrame(
-            OrderedDict(
-                [
-                    ("sample", samples),
-                    ("condition", condition),
-                    ("condition2", condition2),
-                    ("batch", batch_effect),
-                ]
-            )
-        )
-        df.to_csv(output.coldata, sep="\t", index=False)
+        with open(f"{output}", "w") as outfile:
+            outstring = "\t".join(samples.head())
+            outfile.write(outstring)
 
 
 rule write_de_params:
