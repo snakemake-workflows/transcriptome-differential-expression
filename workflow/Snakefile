@@ -3,119 +3,163 @@ from os import path
 from collections import OrderedDict
 import sys
 
-localrules: merge_counts, write_coldata, write_de_params, de_analysis, dump_versions, info
+from snakemake.utils import min_version
+
+min_version("8.10.7")
+
+
+localrules:
+    merge_counts,
+    write_coldata,
+    write_de_params,
+    de_analysis,
+    dump_versions,
+    info,
+
+
+configfile: "config/config.yml"
+
 
 include: "rules/commons.smk"
 include: "rules/utils.smk"
 
-configfile: "config.yml"
 
-inputdir  = config["inputdir"]
+inputdir = config["inputdir"]
 
-all_samples, samples, condition, condition2, batch_effect = get_fastq_inputs()
 
 rule all:
     input:
-        ver = rules.dump_versions.output.ver,
-        count_tsvs = expand("counts/{sample}_salmon/quant.sf", sample=samples),
-        merged_tsv = "merged/all_counts.tsv",
-        coldata = "de_analysis/coldata.tsv",
-        de_params = "de_analysis/de_params.tsv",
-        dispersion_graph = "de_analysis/dispersion_graph.svg",
-        ma_graph         = "de_analysis/ma_graph.svg",
-        de_heatmap       = "de_analysis/heatmap.svg",
-        lfc_analysis     = "de_analysis/lfc_analysis.csv"
+        ver=rules.dump_versions.output.ver,
+        count_tsvs=expand("counts/{sample}_salmon/quant.sf", sample=samples["sample"]),
+        merged_tsv="merged/all_counts.tsv",
+        coldata="de_analysis/coldata.tsv",
+        de_params="de_analysis/de_params.tsv",
+        dispersion_graph="de_analysis/dispersion_graph.svg",
+        ma_graph="de_analysis/ma_graph.svg",
+        de_heatmap="de_analysis/heatmap.svg",
+        lfc_analysis="de_analysis/lfc_analysis.csv",
 
-rule build_minimap_index: ## build minimap2 index
+
+rule build_minimap_index:  ## build minimap2 index
     input:
-        genome = config["transcriptome"]
+        genome=config["transcriptome"],
     output:
-        index = "index/transcriptome_index.mmi"
-    log: "logs/minimap2/index.log"
+        index="index/transcriptome_index.mmi",
     params:
-        opts = config["minimap_index_opts"]
-    conda: "envs/env.yml"
-    shell:"""
+        opts=config["minimap_index_opts"],
+    log:
+        "logs/minimap2/index.log",
+    conda:
+        "envs/env.yml"
+    shell:
+        """
     minimap2 -t {resources.cpus_per_task} {params.opts} -d {output.index} {input.genome} 2> {log}
     """
+
 
 # mapping reads with minimap2
 rule map_reads:
     input:
-       index = rules.build_minimap_index.output.index,
-       fastq = lambda wildcards: all_samples[wildcards.sample]
+        index=rules.build_minimap_index.output.index,
+        fastq=lambda wildcards: get_mapped_reads_input(
+            samples["sample"][wildcards.sample]
+        ),
     output:
-       "alignments/{sample}.bam",
-    log: "logs/minimap2/mapping_{sample}.log"
+        "alignments/{sample}.bam",
+    log:
+        "logs/minimap2/mapping_{sample}.log",
     params:
-        opts = config["minimap2_opts"],
-        msec = config["maximum_secondary"],
-        psec = config["secondary_score_ratio"],
-    conda: "envs/env.yml"
-    shell:"""
+        opts=config["minimap2_opts"],
+        msec=config["maximum_secondary"],
+        psec=config["secondary_score_ratio"],
+    conda:
+        "envs/env.yml"
+    shell:
+        """
     minimap2 -t {resources.cpus_per_task} -ax map-ont -p {params.psec} -N {params.msec} {params.opts} {input.index} {input.fastq} > {output} 2> {log}
     """
 
+
 rule sam_sort:
     input:
-        sam = rules.map_reads.output
+        sam=rules.map_reads.output,
     output:
-        "sorted_alignments/{sample}.bam"
-    log: "logs/samtools/samsort_{sample}.log"
-    conda: "envs/env.yml"
-    shell: "samtools sort -@ {resources.cpus_per_task} {input.sam} -o {output} -O bam &> {log}"
-    
+        "sorted_alignments/{sample}.bam",
+    log:
+        "logs/samtools/samsort_{sample}.log",
+    conda:
+        "envs/env.yml"
+    shell:
+        "samtools sort -@ {resources.cpus_per_task} {input.sam} -o {output} -O bam &> {log}"
+
+
 rule sam_index:
     input:
-        sbam = rules.sam_sort.output
+        sbam=rules.sam_sort.output,
     output:
-        ibam = "sorted_alignments/{sample}_index.bam"
-    log: "logs/samtools/samindex_{sample}.log"
-    conda: "envs/env.yml"
+        ibam="sorted_alignments/{sample}_index.bam",
+    log:
+        "logs/samtools/samindex_{sample}.log",
+    conda:
+        "envs/env.yml"
     shell:
         """
            samtools index -@ {resources.cpus_per_task} {input.sbam} &> {log};
            #mv {input.sbam} {output.ibam}
         """
 
+
 rule count_reads:
     input:
-        bam = rules.sam_index.output.ibam,
-        trs = config["transcriptome"],
+        bam=rules.sam_index.output.ibam,
+        trs=config["transcriptome"],
     output:
-        tsv = "counts/{sample}_salmon/quant.sf",
+        tsv="counts/{sample}_salmon/quant.sf",
     params:
-        tsv_dir = "counts/{sample}_salmon",
-        libtype = config["salmon_libtype"],
-    log: "logs/salmon/{sample}.log"
-    conda: "envs/env.yml"
-    shell: """
+        tsv_dir="counts/{sample}_salmon",
+        libtype=config["salmon_libtype"],
+    log:
+        "logs/salmon/{sample}.log",
+    conda:
+        "envs/env.yml"
+    shell:
+        """
         salmon --no-version-check quant  -p {resources.cpus_per_task} \
         -t {input.trs} -l {params.libtype} -a {input.bam} -o {params.tsv_dir} &> {log}
     """
 
+
 rule merge_counts:
     input:
-        count_tsvs = expand("counts/{sample}_salmon/quant.sf", sample=samples),
+        count_tsvs=expand("counts/{sample}_salmon/quant.sf", sample=samples["sample"]),
     output:
-        "merged/all_counts.tsv"
-    log: "logs/merge_count.log"
-    #conda: "envs/env.yml"
-    script: 
-        "scripts/merge_count_tsvs.py &> {log}"
+        "merged/all_counts.tsv",
+    log:
+        "logs/merge_count.log",
+    script:
+        "scripts/merge_count_tsvs.py"
+
 
 rule write_coldata:
-    input:
     output:
-        coldata = "de_analysis/coldata.tsv"
+        coldata="de_analysis/coldata.tsv",
     run:
-        df = pd.DataFrame(OrderedDict([('sample', samples), ('condition', condition), ('condition2', condition2), ('batch', batch_effect)]))
+        df = pd.DataFrame(
+            OrderedDict(
+                [
+                    ("sample", samples),
+                    ("condition", condition),
+                    ("condition2", condition2),
+                    ("batch", batch_effect),
+                ]
+            )
+        )
         df.to_csv(output.coldata, sep="\t", index=False)
 
+
 rule write_de_params:
-    input:
     output:
-        de_params = "de_analysis/de_params.tsv"
+        de_params="de_analysis/de_params.tsv",
     run:
         d = OrderedDict()
         d["Annotation"] = [config["annotation"]]
@@ -126,20 +170,22 @@ rule write_de_params:
         df = pd.DataFrame(d)
         df.to_csv(output.de_params, sep="\t", index=False)
 
+
 rule de_analysis:
     input:
-        de_params = rules.write_de_params.output.de_params,
-        coldata = rules.write_coldata.output.coldata,
-        tsv = rules.merge_counts.output,
+        de_params=rules.write_de_params.output.de_params,
+        coldata=rules.write_coldata.output.coldata,
+        tsv=rules.merge_counts.output,
     output:
-        dispersion_graph = "de_analysis/dispersion_graph.svg",
-        ma_graph         = "de_analysis/ma_graph.svg",
-        de_heatmap       = "de_analysis/heatmap.svg",
-        de_top_heatmap   = "de_analysis/heatmap_top.svg",
-        lfc_analysis     = "de_analysis/lfc_analysis.csv"
-    log: "logs/de_analysis.log"
+        dispersion_graph="de_analysis/dispersion_graph.svg",
+        ma_graph="de_analysis/ma_graph.svg",
+        de_heatmap="de_analysis/heatmap.svg",
+        de_top_heatmap="de_analysis/heatmap_top.svg",
+        lfc_analysis="de_analysis/lfc_analysis.csv",
+    log:
+        "logs/de_analysis.log",
     threads: 4
-    conda: "envs/env.yml"
+    conda:
+        "envs/env.yml"
     script:
-        "scripts/de_analysis.py &> {log}"
-    
+        "scripts/de_analysis.py"
