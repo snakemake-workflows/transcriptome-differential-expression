@@ -26,8 +26,6 @@ include: "rules/utils.smk"
 
 inputdir = config["inputdir"]
 
-#all_samples, samples, condition, condition2, batch_effect = get_fastq_inputs()
-
 
 rule all:
     input:
@@ -63,7 +61,9 @@ rule build_minimap_index:  ## build minimap2 index
 rule map_reads:
     input:
         index=rules.build_minimap_index.output.index,
-        fastq=lambda wildcards: get_mapped_reads_input(samples["sample"][wildcards.sample])
+        fastq=lambda wildcards: get_mapped_reads_input(
+            samples["sample"][wildcards.sample]
+        ),
     output:
         "alignments/{sample}.bam",
     log:
