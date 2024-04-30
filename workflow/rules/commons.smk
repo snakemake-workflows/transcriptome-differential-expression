@@ -14,7 +14,7 @@ samples = (
             config["samples"],
         ),
         sep=r"\s+",
-        #dtype={"sample": str, "condition": str, "condition2": str, "batch_effect": str},
+        dtype={"sample": str, "condition": str, "condition2": str, "batch_effect": str},
         header=0,
         comment="#",
     )
@@ -23,3 +23,7 @@ samples = (
 )
 
 validate(samples, schema="../schemas/samples.schema.yaml")
+
+
+def get_mapped_reads_input(sample):
+    return glob.glob(os.path.join(config["inputdir"], sample) + "*")[0]
