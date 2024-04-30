@@ -2,12 +2,7 @@ default-resources:
     slurm_account: "m2_zdvhpc"
     slurm_partition: "smp"
 
-set-resources:
-    plot_samples:
-        cpus_per_task: 8
-        mem_mb_per_cpu: 1800
-        runtime: "2h"
-        
+set-resources:  
     build_minimap_index:
         cpus_per_task: 4
         mem_mb_per_cpu: 3600
@@ -18,6 +13,11 @@ set-resources:
         mem_mb_per_cpu: 1800
         runtime: "3h"
         slurm_partition: "parallel"
+
+    plot_samples:
+        cpus_per_task: 8
+        mem_mb_per_cpu: 1800
+        runtime: "2h"
 
     mapping_qc:
         cpus_per_task: 8
