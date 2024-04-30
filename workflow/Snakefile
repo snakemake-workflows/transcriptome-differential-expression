@@ -144,7 +144,7 @@ rule write_coldata:
     output:
         coldata="de_analysis/coldata.tsv",
     run:
-        with open("{output}", "w") as outfile:
+        with open(f"{output}", "w") as outfile:
             outstring = "\t".join(samples.head())
             outfile.write(outstring)
 
