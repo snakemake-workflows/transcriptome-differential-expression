@@ -26,7 +26,8 @@ rule all:
         de_heatmap       = "de_analysis/heatmap.svg",
         lfc_analysis     = "de_analysis/lfc_analysis.csv",
         sample_QC=expand("QC/NanoPlot_{sample}.tar.gz", sample=samples),
-        mapping_QC=expand("QC/Qualimap_{sample}.tar.gz",sample=samples)
+        #mapping_QC=expand("QC/Qualimap_{sample}.tar.gz",sample=samples),
+        samstats=expand("QC/samstats/{sample}.txt", sample=samples)
 
 
 rule build_minimap_index: ## build minimap2 index
@@ -102,32 +103,31 @@ rule compress_nplot:
     shell:
         "tar zcvf {output} {input} 2> {log}"
 
-rule mapping_qc:
-    input: 
-       bam=rules.map_reads.output
-    output:
-       directory("QC/qualimap/{sample}")
-    log:
-       "logs/qualimap/{sample}.log"
-    conda:
-       "envs/env.yml"
-    envmodules:
-       "bio/Qualimap/2.2.1-foss-2020b-R-4.0.3"
-    shell:"""
-        mkdir {output};
-        qualimap -t {resources.cpus_per_task}  {input.bam} > {output} 2> {log}
-        """
+#rule mapping_qc:
+#    input: 
+#       bam=rules.map_reads.output,
+#       annotation=config["gtf"]
+#    output:
+#       directory("QC/Qualimap/{sample}")
+#    log:
+#       "logs/qualimap/{sample}.log"
+#    conda:
+#       "envs/env.yml"
+#    envmodules:
+#       "bio/Qualimap/2.2.1-foss-2020b-R-4.0.3"
+#    shell:"""
+#        qualimap rnaseq -bam {input.bam} -gtf {input.annotation} -outdir {output} 2> {log}
+#        """
 
-rule compress_mapqc:
-    input:
-        bam=rules.mapping_qc.output
-        gtf=config["annotation"]
-    output:
-        "QC/Qualimap_{sample}.tar.gz"
-    log:
-        "logs/Qualimap/compress_{sample}.log"
-    shell:
-        "tar zcvf {output} {input} 2> {log}"
+#rule compress_mapqc:
+#    input:
+#        bam=rules.mapping_qc.output
+#    output:
+#        "QC/Qualimap_{sample}.tar.gz"
+#    log:
+#        "logs/qualimap/compress_{sample}.log"
+#    shell:
+#        "tar zcvf {output} {input} 2> {log}"
 
 #rule qc_report:
 #    input:
@@ -158,6 +158,20 @@ rule sam_index:
         """
            samtools index -@ {resources.cpus_per_task} -o {output.ibam} {input.sbam} &> {log}
             #mv {input.sbam} {output.ibam}
+        """
+
+rule sam_stats:
+    input:
+        bam=rules.map_reads.output
+    output:
+        "QC/samstats/{sample}.txt"
+    log:
+        "logs/samtools/samstats_{sample}.log"
+    conda:
+        "envs/env.yml"
+    shell:
+        """
+            samtools stats -@ {resources.cpus_per_task} {input.bam} 2> {log}
         """
 
 rule count_reads:
