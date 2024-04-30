@@ -1,0 +1,45 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "https://json-schema.org/draft/2020-12/schema"
+
+description: an entry in the sample sheet
+properties:
+  sample:
+    type: string
+    description: sample name/identifier (alphanumeric string, that may additionally contain '_' and '-')
+    pattern: "^[a-zA-Z_0-9-]+$"
+  group:
+    type: string
+    description: group of samples called jointly (alphanumeric string, that may additionally contain '_' and '-')
+    pattern: "^[a-zA-Z_0-9-]+$"
+  condition:
+    type: string
+    description: description of a first sample condition
+    pattern: "^[a-zA-Z_0-9-]+$"
+  platform:
+    type: string
+    enum:
+      - "NANOPORE"
+    description: used sequencing platform
+  purity:
+    type: number
+    minimum: 0.0
+    maximum: 1.0
+    description: Purity to use for tumor/normal groups.
+  datatype:
+    type: string
+    pattern: "^[a-zA-Z_0-9-]+$"
+
+  calling:
+    type: string
+    enum:
+      - variants
+      - fusions
+      - fusions,variants
+      - variants,fusions
+    description: datatype of sample
+
+required:
+  - sample
+  - condition
+  - batch_effect
+

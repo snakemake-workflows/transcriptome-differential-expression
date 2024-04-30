@@ -15,6 +15,8 @@ from pydeseq2.dds import DeseqDataSet
 from pydeseq2.ds import DeseqStats
 from pydeseq2.utils import load_example_data
 
+sys.stderr = sys.stdout = open(snakemake.log[0], "w")
+    
 ncpus = snakemake.threads
 
 counts_df = pd.read_csv(f"{snakemake.input.tsv}", sep = '\t', header=0)

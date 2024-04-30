@@ -1,0 +1,7 @@
+sample  condition   condition2	batch_effect    platform    purity
+m18_bc01    male    condition2	batch1          NANOPORE    1
+m18_bc02    male    condition2	batch1          NANOPORE    1
+m18_bc03    female  condition2	batch1          NANOPORE    1
+m18_bc04    female  condition2	batch1          NANOPORE    1
+m18_bc05    female  condition2	batch1          NANOPORE    1
+m18_bc06    male    condition2	batch1          NANOPORE    1
