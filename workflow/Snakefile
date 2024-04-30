@@ -26,13 +26,13 @@ include: "rules/utils.smk"
 
 inputdir = config["inputdir"]
 
-all_samples, samples, condition, condition2, batch_effect = get_fastq_inputs()
+#all_samples, samples, condition, condition2, batch_effect = get_fastq_inputs()
 
 
 rule all:
     input:
         ver=rules.dump_versions.output.ver,
-        count_tsvs=expand("counts/{sample}_salmon/quant.sf", sample=samples),
+        count_tsvs=expand("counts/{sample}_salmon/quant.sf", sample=samples["sample"]),
         merged_tsv="merged/all_counts.tsv",
         coldata="de_analysis/coldata.tsv",
         de_params="de_analysis/de_params.tsv",
@@ -63,7 +63,7 @@ rule build_minimap_index:  ## build minimap2 index
 rule map_reads:
     input:
         index=rules.build_minimap_index.output.index,
-        fastq=lambda wildcards: all_samples[wildcards.sample],
+        fastq=lambda wildcards: get_mapped_reads_input(samples["sample"][wildcards.sample])
     output:
         "alignments/{sample}.bam",
     log:
@@ -131,7 +131,7 @@ rule count_reads:
 
 rule merge_counts:
     input:
-        count_tsvs=expand("counts/{sample}_salmon/quant.sf", sample=samples),
+        count_tsvs=expand("counts/{sample}_salmon/quant.sf", sample=samples["sample"]),
     output:
         "merged/all_counts.tsv",
     log:
