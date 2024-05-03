@@ -29,17 +29,16 @@ inputdir = config["inputdir"]
 
 rule all:
     input:
-        ver = rules.dump_versions.output.ver,
-        count_tsvs = expand("counts/{sample}_salmon/quant.sf", sample=samples),
-        merged_tsv = "merged/all_counts.tsv",
-        coldata = "de_analysis/coldata.tsv",
-        de_params = "de_analysis/de_params.tsv",
-        dispersion_graph = "de_analysis/dispersion_graph.svg",
-        ma_graph         = "de_analysis/ma_graph.svg",
-        de_heatmap       = "de_analysis/heatmap.svg",
-        lfc_analysis     = "de_analysis/lfc_analysis.csv",
+        ver=rules.dump_versions.output.ver,
+        count_tsvs=expand("counts/{sample}_salmon/quant.sf", sample=samples),
+        merged_tsv="merged/all_counts.tsv",
+        coldata="de_analysis/coldata.tsv",
+        de_params="de_analysis/de_params.tsv",
+        dispersion_graph="de_analysis/dispersion_graph.svg",
+        ma_graph="de_analysis/ma_graph.svg",
+        de_heatmap="de_analysis/heatmap.svg",
+        lfc_analysis="de_analysis/lfc_analysis.csv",
         sample_QC=expand("QC/NanoPlot_{sample}.tar.gz", sample=samples),
-        #mapping_QC=expand("QC/Qualimap_{sample}.tar.gz",sample=samples),
         samstats=expand("QC/samstats/{sample}.txt", sample=samples)
 
 
@@ -96,7 +95,7 @@ rule plot_samples:
         cpus_per_task= min(8,39) #problem with max(len(input.fastq),39)
     conda:
         "envs/env.yml"
-    shell: 
+    shell:
         "mkdir {output}; "
         "NanoPlot -t {resources.cpus_per_task} --tsv_stats -f svg "
         "--fastq {input.fastq} -o {output} 2> {log}"
@@ -110,7 +109,7 @@ rule plot_samples:
 #            "logs/NanoPlot/NanoPlot.log"
 #        conda:
 #            "envs/env.yml"
-#        shell: 
+#        shell:
 #            "mkdir {output}/{wildcards.sample}; "
 #            "NanoPlot -t {resources.cpus_per_task} --barcoded --tsv_stats "
 #            "--summary {input.summary} -o {output} 2> {log}"
@@ -155,9 +154,9 @@ rule sam_index:
 
 rule sam_stats:
     input:
-        bam=rules.map_reads.output
+        bam=rules.map_reads.output,
     output:
-        "QC/samstats/{sample}.txt"
+        directory("QC/samstats/{sample}"),
     log:
         "logs/samtools/samstats_{sample}.log"
     conda:
