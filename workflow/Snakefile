@@ -30,7 +30,7 @@ inputdir = config["inputdir"]
 rule all:
     input:
         ver=rules.dump_versions.output.ver,
-        count_tsvs=expand("counts/{sample}_salmon/quant.sf", sample=samples),
+        count_tsvs=expand("counts/{sample}_salmon/quant.sf", sample=samples["sample"]),
         merged_tsv="merged/all_counts.tsv",
         coldata="de_analysis/coldata.tsv",
         de_params="de_analysis/de_params.tsv",
@@ -38,11 +38,11 @@ rule all:
         ma_graph="de_analysis/ma_graph.svg",
         de_heatmap="de_analysis/heatmap.svg",
         lfc_analysis="de_analysis/lfc_analysis.csv",
-        sample_QC=expand("QC/NanoPlot_{sample}.tar.gz", sample=samples),
-        samstats=expand("QC/samstats/{sample}.txt", sample=samples)
+        sample_QC=expand("QC/NanoPlot_{sample}.tar.gz", sample=samples["sample"]),
+        samstats=expand("QC/samstats/{sample}.txt", sample=samples["sample"])
 
 
-rule build_minimap_index: ## build minimap2 index
+rule build_minimap_index:  ## build minimap2 index
     input:
         genome=config["transcriptome"],
     output:
@@ -85,7 +85,9 @@ rule map_reads:
 #if config["summary"] == "None":
 rule plot_samples:
     input:
-        bam=rules.map_reads.output
+        fastq=lambda wildcards: get_mapped_reads_input(
+            samples["sample"][wildcards.sample]
+        ),
     output:
         directory("NanoPlot/{sample}")
     log:
