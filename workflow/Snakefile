@@ -86,7 +86,7 @@ rule map_reads:
 #if config["summary"] == "None":
 rule plot_samples:
     input:
-        fastq = lambda wildcards: all_samples[wildcards.sample]
+        bam=rules.map_reads.output
     output:
         directory("NanoPlot/{sample}")
     log:
@@ -124,41 +124,6 @@ rule compress_nplot:
         "logs/NanoPlot/compress_{sample}.log"
     shell:
         "tar zcvf {output} {input} 2> {log}"
-
-#rule mapping_qc:
-#    input: 
-#       bam=rules.map_reads.output,
-#       annotation=config["gtf"]
-#    output:
-#       directory("QC/Qualimap/{sample}")
-#    log:
-#       "logs/qualimap/{sample}.log"
-#    conda:
-#       "envs/env.yml"
-#    envmodules:
-#       "bio/Qualimap/2.2.1-foss-2020b-R-4.0.3"
-#    shell:"""
-#        qualimap rnaseq -bam {input.bam} -gtf {input.annotation} -outdir {output} 2> {log}
-#        """
-
-#rule compress_mapqc:
-#    input:
-#        bam=rules.mapping_qc.output
-#    output:
-#        "QC/Qualimap_{sample}.tar.gz"
-#    log:
-#        "logs/qualimap/compress_{sample}.log"
-#    shell:
-#        "tar zcvf {output} {input} 2> {log}"
-
-#rule qc_report:
-#    input:
-#        samples=rules.compress_nplot.output#,
-#        #mapping=rules.mapping_qc.output
-#    output:
-#        "QC/QC-report.gz"
-#    shell:
-#        "mv {input.samples} > {output}" #{input.summary}
 
 rule sam_sort:
     input:
@@ -199,7 +164,7 @@ rule sam_stats:
         "envs/env.yml"
     shell:
         """
-            samtools stats -@ {resources.cpus_per_task} {input.bam} 2> {log}
+            samtools stats -@ {resources.cpus_per_task} {input.bam} > {output} 2> {log}
         """
 
 
