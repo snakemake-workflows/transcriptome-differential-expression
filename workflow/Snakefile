@@ -38,7 +38,7 @@ rule all:
         ma_graph="de_analysis/ma_graph.svg",
         de_heatmap="de_analysis/heatmap.svg",
         lfc_analysis="de_analysis/lfc_analysis.csv",
-        sample_QC=expand("QC/NanoPlot_{sample}.tar.gz", sample=samples["sample"]),
+        sample_QC=expand("QC/NanoPlot/{sample}.tar.gz", sample=samples["sample"]),
         samstats=expand("QC/samstats/{sample}.txt", sample=samples["sample"])
 
 
@@ -81,6 +81,7 @@ rule map_reads:
     minimap2 -t {resources.cpus_per_task} -ax map-ont -p {params.psec} -N {params.msec} {params.opts} {input.index} {input.fastq} > {output} 2> {log}
     """
 
+
 #QC and metadata with NanoPlot
 #if config["summary"] == "None":
 rule plot_samples:
@@ -116,15 +117,17 @@ rule plot_samples:
 #            "NanoPlot -t {resources.cpus_per_task} --barcoded --tsv_stats "
 #            "--summary {input.summary} -o {output} 2> {log}"
 
+
 rule compress_nplot:
     input:
         samples=rules.plot_samples.output
     output:
-        "QC/NanoPlot_{sample}.tar.gz"
+        "QC/NanoPlot/{sample}.tar.gz"
     log:
         "logs/NanoPlot/compress_{sample}.log"
     shell:
         "tar zcvf {output} {input} 2> {log}"
+
 
 rule sam_sort:
     input:
@@ -150,15 +153,16 @@ rule sam_index:
         "envs/env.yml"
     shell:
         """
-           samtools index -@ {resources.cpus_per_task} -o {output.ibam} {input.sbam} &> {log}
-            #mv {input.sbam} {output.ibam}
+           samtools index -@ {resources.cpus_per_task} {input.sbam} &> {log};
+           mv {input.sbam} {output.ibam}
         """
+
 
 rule sam_stats:
     input:
         bam=rules.map_reads.output,
     output:
-        directory("QC/samstats/{sample}"),
+        "QC/samstats/{sample}.txt",
     log:
         "logs/samtools/samstats_{sample}.log"
     conda:
