@@ -83,39 +83,39 @@ rule map_reads:
 
 
 #QC and metadata with NanoPlot
-#if config["summary"] == "None":
-rule plot_samples:
-    input:
-        fastq=lambda wildcards: get_mapped_reads_input(
-            samples["sample"][wildcards.sample]
-        ),
-    output:
-        directory("NanoPlot/{sample}")
-    log:
-        "logs/NanoPlot/{sample}.log"
-    resources:
-        ## max of 39 for our SLURM partition
-        cpus_per_task= min(8,39) #problem with max(len(input.fastq),39)
-    conda:
-        "envs/env.yml"
-    shell:
-        "mkdir {output}; "
-        "NanoPlot -t {resources.cpus_per_task} --tsv_stats -f svg "
-        "--fastq {input.fastq} -o {output} 2> {log}"
-#else:
-#    rule plot_samples:
-#        input:
-#            summary = config["summary"]
-#        output:
-#            directory("NanoPlot")
-#        log:
-#            "logs/NanoPlot/NanoPlot.log"
-#        conda:
-#            "envs/env.yml"
-#        shell:
-#            "mkdir {output}/{wildcards.sample}; "
-#            "NanoPlot -t {resources.cpus_per_task} --barcoded --tsv_stats "
-#            "--summary {input.summary} -o {output} 2> {log}"
+if config["summary"] == "None":
+    rule plot_samples:
+        input:
+            fastq=lambda wildcards: get_mapped_reads_input(
+                samples["sample"][wildcards.sample]
+            ),
+        output:
+            directory("NanoPlot/{sample}")
+        log:
+            "logs/NanoPlot/{sample}.log"
+        resources:
+            ## max of 39 for our SLURM partition
+            cpus_per_task= min(8,39) #problem with max(len(input.fastq),39)
+        conda:
+            "envs/env.yml"
+        shell:
+            "mkdir {output}; "
+            "NanoPlot -t {resources.cpus_per_task} --tsv_stats -f svg "
+            "--fastq {input.fastq} -o {output} 2> {log}"
+else:
+    rule plot_samples:
+        input:
+                summary = config["summary"]
+        output:
+                directory("NanoPlot")
+        log:
+                "logs/NanoPlot/NanoPlot.log"
+        conda:
+                "envs/env.yml"
+        shell:
+            "mkdir {output}/{wildcards.sample}; "
+            "NanoPlot -t {resources.cpus_per_task} --barcoded --tsv_stats "
+            "--summary {input.summary} -o {output} 2> {log}"
 
 
 rule compress_nplot:
