@@ -3,13 +3,10 @@ from os import path
 from collections import OrderedDict
 import sys
 
-<<<<<<< HEAD
 from snakemake.utils import min_version
 
 min_version("8.10.7")
 
-=======
->>>>>>> f29b44b1321d9b96dce3ea153d64bf7f67b6a800
 
 localrules:
     merge_counts,
@@ -19,24 +16,13 @@ localrules:
     dump_versions,
     info,
 
-<<<<<<< HEAD
 
 configfile: "config/config.yml"
 
-=======
->>>>>>> f29b44b1321d9b96dce3ea153d64bf7f67b6a800
 
 include: "rules/commons.smk"
 include: "rules/utils.smk"
 
-<<<<<<< HEAD
-
-=======
-
-configfile: "config.yml"
-
-
->>>>>>> f29b44b1321d9b96dce3ea153d64bf7f67b6a800
 inputdir = config["inputdir"]
 
 
@@ -44,11 +30,7 @@ inputdir = config["inputdir"]
 rule all:
     input:
         ver=rules.dump_versions.output.ver,
-<<<<<<< HEAD
         count_tsvs=expand("counts/{sample}_salmon/quant.sf", sample=samples["sample"]),
-=======
-        count_tsvs=expand("counts/{sample}_salmon/quant.sf", sample=samples),
->>>>>>> f29b44b1321d9b96dce3ea153d64bf7f67b6a800
         merged_tsv="merged/all_counts.tsv",
         coldata="de_analysis/coldata.tsv",
         de_params="de_analysis/de_params.tsv",
@@ -56,12 +38,8 @@ rule all:
         ma_graph="de_analysis/ma_graph.svg",
         de_heatmap="de_analysis/heatmap.svg",
         lfc_analysis="de_analysis/lfc_analysis.csv",
-<<<<<<< HEAD
         sample_QC=expand("QC/NanoPlot/{sample}.tar.gz", sample=samples["sample"]),
         samstats=expand("QC/samstats/{sample}.txt", sample=samples["sample"])
-=======
-        QC="NanoPlot.tar.gz",
->>>>>>> f29b44b1321d9b96dce3ea153d64bf7f67b6a800
 
 
 rule build_minimap_index:  ## build minimap2 index
@@ -69,17 +47,10 @@ rule build_minimap_index:  ## build minimap2 index
         genome=config["transcriptome"],
     output:
         index="index/transcriptome_index.mmi",
-<<<<<<< HEAD
     params:
         opts=config["minimap_index_opts"],
     log:
         "logs/minimap2/index.log",
-=======
-    log:
-        "logs/minimap2/index.log",
-    params:
-        opts=config["minimap_index_opts"],
->>>>>>> f29b44b1321d9b96dce3ea153d64bf7f67b6a800
     conda:
         "envs/env.yml"
     shell:
@@ -92,13 +63,9 @@ rule build_minimap_index:  ## build minimap2 index
 rule map_reads:
     input:
         index=rules.build_minimap_index.output.index,
-<<<<<<< HEAD
         fastq=lambda wildcards: get_mapped_reads_input(
             samples["sample"][wildcards.sample]
         ),
-=======
-        fastq=lambda wildcards: all_samples[wildcards.sample],
->>>>>>> f29b44b1321d9b96dce3ea153d64bf7f67b6a800
     output:
         "alignments/{sample}.bam",
     log:
@@ -115,31 +82,19 @@ rule map_reads:
     """
 
 
-<<<<<<< HEAD
 #QC and metadata with NanoPlot
-=======
-# QC and metadata with NanoPlot
->>>>>>> f29b44b1321d9b96dce3ea153d64bf7f67b6a800
 if config["summary"] == "None":
-
     rule plot_samples:
         input:
-<<<<<<< HEAD
             fastq=lambda wildcards: get_mapped_reads_input(
                 samples["sample"][wildcards.sample]
             ),
         output:
             directory("NanoPlot/{sample}")
-=======
-            fastq=lambda wildcards: all_samples[wildcards.sample],
-        output:
-            directory("NanoPlot"),
->>>>>>> f29b44b1321d9b96dce3ea153d64bf7f67b6a800
         log:
             "logs/NanoPlot/{sample}.log",
         resources:
             ## max of 39 for our SLURM partition
-<<<<<<< HEAD
             cpus_per_task= min(8,39) #problem with max(len(input.fastq),39)
         conda:
             "envs/env.yml"
@@ -147,18 +102,7 @@ if config["summary"] == "None":
             "mkdir {output}; "
             "NanoPlot -t {resources.cpus_per_task} --tsv_stats -f svg "
             "--fastq {input.fastq} -o {output} 2> {log}"
-=======
-            cpus_per_task=max(8, 39),  #problem with max(len(input.fastq),39)
-        conda:
-            "envs/env.yml"
-        shell:
-            "mkdir {output}/{wildcards.sample}; "
-            "NanoPlot -t {resources.cpus_per_task} --tsv_stats "
-            "--fastq {input.fastq} -o {output}/{wildcards.sample} 2> {log}"
-
->>>>>>> f29b44b1321d9b96dce3ea153d64bf7f67b6a800
 else:
-
     rule plot_samples:
         input:
             summary=config["summary"],
@@ -178,20 +122,13 @@ rule compress_nplot:
     input:
         samples=rules.plot_samples.output,
     output:
-<<<<<<< HEAD
         "QC/NanoPlot/{sample}.tar.gz"
     log:
         "logs/NanoPlot/compress_{sample}.log"
-=======
-        "NanoPlot.tar.gz",
-    log:
-        "logs/NanoPlot/compress.log",
->>>>>>> f29b44b1321d9b96dce3ea153d64bf7f67b6a800
     shell:
         "tar zcvf {output} {input} 2> {log}"
 
 
-<<<<<<< HEAD
 rule sam_sort:
     input:
         sam=rules.map_reads.output,
@@ -214,40 +151,12 @@ rule sam_index:
         "logs/samtools/samindex_{sample}.log",
     conda:
         "envs/env.yml"
-=======
-
-rule mapping_qc:
-    input:
-        bam=rules.map_reads.output,
-    output:
-        "QC/qualimap/{sample}",
-    log:
-        "logs/qualimap/{sample}.log",
-    conda:
-        "envs/env.yml"
-    envmodules:
-        "bio/qualimap/2.3",
-    shell:
-        """
-        qualimap -t {resources.cpus_per_task}  {input.bam} > {output} 2> {log}
-        """
-
-
-rule compress_mapqc:
-    input:
-        mapping=rules.mapping_qc.output,
-    output:
-        "Qualimap.tar.gz",
-    log:
-        "logs/Qualimap/compress.log",
->>>>>>> f29b44b1321d9b96dce3ea153d64bf7f67b6a800
     shell:
         """
            samtools index -@ {resources.cpus_per_task} {input.sbam} &> {log};
            mv {input.sbam} {output.ibam}
         """
 
-<<<<<<< HEAD
 
 rule sam_stats:
     input:
@@ -256,39 +165,6 @@ rule sam_stats:
         "QC/samstats/{sample}.txt",
     log:
         "logs/samtools/samstats_{sample}.log"
-=======
-
-# rule qc_report:
-#    input:
-#        samples=rules.compress_nplot.output#,
-#        #mapping=rules.mapping_qc.output
-#    output:
-#        "QC/QC-report.gz"
-#    shell:
-#        "mv {input.samples} > {output}" #{input.summary}
-
-
-rule sam_sort:
-    input:
-        sam=rules.map_reads.output,
-    output:
-        "sorted_alignments/{sample}.bam",
-    log:
-        "logs/samtools/samsort_{sample}.log",
-    conda:
-        "envs/env.yml"
-    shell:
-        "samtools sort -@ {resources.cpus_per_task} {input.sam} -o {output} -O bam &> {log}"
-
-
-rule sam_index:
-    input:
-        sbam=rules.sam_sort.output,
-    output:
-        ibam="sorted_alignments/{sample}_index.bam",
-    log:
-        "logs/samtools/samindex_{sample}.log",
->>>>>>> f29b44b1321d9b96dce3ea153d64bf7f67b6a800
     conda:
         "envs/env.yml"
     shell:
@@ -319,48 +195,24 @@ rule count_reads:
 
 rule merge_counts:
     input:
-<<<<<<< HEAD
         count_tsvs=expand("counts/{sample}_salmon/quant.sf", sample=samples["sample"]),
-=======
-        count_tsvs=expand("counts/{sample}_salmon/quant.sf", sample=samples),
->>>>>>> f29b44b1321d9b96dce3ea153d64bf7f67b6a800
     output:
         "merged/all_counts.tsv",
     log:
         "logs/merge_count.log",
-<<<<<<< HEAD
     script:
         "scripts/merge_count_tsvs.py"
 
-=======
-    # conda: "envs/env.yml"
-    script:
-        "scripts/merge_count_tsvs.py &> {log}"
->>>>>>> f29b44b1321d9b96dce3ea153d64bf7f67b6a800
 
 
 rule write_coldata:
     output:
         coldata="de_analysis/coldata.tsv",
     run:
-<<<<<<< HEAD
         with open(f"{output}", "w") as outfile:
             outstring = "\t".join(samples.head())
             outfile.write(outstring)
 
-=======
-        df = pd.DataFrame(
-            OrderedDict(
-                [
-                    ("sample", samples),
-                    ("condition", condition),
-                    ("condition2", condition2),
-                    ("batch", batch_effect),
-                ]
-            )
-        )
-        df.to_csv(output.coldata, sep="\t", index=False)
->>>>>>> f29b44b1321d9b96dce3ea153d64bf7f67b6a800
 
 
 rule write_de_params:
@@ -394,8 +246,4 @@ rule de_analysis:
     conda:
         "envs/env.yml"
     script:
-<<<<<<< HEAD
         "scripts/de_analysis.py"
-=======
-        "scripts/de_analysis.py &> {log}"
->>>>>>> f29b44b1321d9b96dce3ea153d64bf7f67b6a800
