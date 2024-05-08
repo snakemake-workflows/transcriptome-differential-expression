@@ -79,7 +79,7 @@ rule map_reads:
         "envs/env.yml"
     shell:
         """
-    minimap2 -t {resources.cpus_per_task} -ax map-ont -p {params.psec} -N {params.msec} {params.opts} {input.index} {input.fastq} > {output} 2> {log}
+    minimap2 -t {resources.cpus_per_task} -ax splice -p {params.psec} -N {params.msec} {params.opts} {input.index} {input.fastq} > {output} 2> {log}
     """
 
 
