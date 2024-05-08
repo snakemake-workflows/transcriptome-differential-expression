@@ -105,13 +105,13 @@ if config["summary"] == "None":
 else:
     rule plot_samples:
         input:
-                summary = config["summary"]
+            summary = config["summary"]
         output:
-                directory("NanoPlot")
+            directory("NanoPlot")
         log:
-                "logs/NanoPlot/NanoPlot.log"
+            "logs/NanoPlot/NanoPlot.log"
         conda:
-                "envs/env.yml"
+            "envs/env.yml"
         shell:
             "mkdir {output}/{wildcards.sample}; "
             "NanoPlot -t {resources.cpus_per_task} --barcoded --tsv_stats "
