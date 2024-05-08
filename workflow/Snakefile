@@ -23,8 +23,8 @@ configfile: "config/config.yml"
 include: "rules/commons.smk"
 include: "rules/utils.smk"
 
-inputdir = config["inputdir"]
 
+inputdir = config["inputdir"]
 
 
 rule all:
@@ -39,7 +39,7 @@ rule all:
         de_heatmap="de_analysis/heatmap.svg",
         lfc_analysis="de_analysis/lfc_analysis.csv",
         sample_QC=expand("QC/NanoPlot/{sample}.tar.gz", sample=samples["sample"]),
-        samstats=expand("QC/samstats/{sample}.txt", sample=samples["sample"])
+        samstats=expand("QC/samstats/{sample}.txt", sample=samples["sample"]),
 
 
 rule build_minimap_index:  ## build minimap2 index
@@ -82,27 +82,30 @@ rule map_reads:
     """
 
 
-#QC and metadata with NanoPlot
+# QC and metadata with NanoPlot
 if config["summary"] == "None":
+
     rule plot_samples:
         input:
             fastq=lambda wildcards: get_mapped_reads_input(
                 samples["sample"][wildcards.sample]
             ),
         output:
-            directory("NanoPlot/{sample}")
+            directory("NanoPlot/{sample}"),
         log:
             "logs/NanoPlot/{sample}.log",
         resources:
             ## max of 39 for our SLURM partition
-            cpus_per_task= min(8,39) #problem with max(len(input.fastq),39)
+            cpus_per_task=min(8, 39),  #problem with max(len(input.fastq),39)
         conda:
             "envs/env.yml"
         shell:
             "mkdir {output}; "
             "NanoPlot -t {resources.cpus_per_task} --tsv_stats -f svg "
             "--fastq {input.fastq} -o {output} 2> {log}"
+
 else:
+
     rule plot_samples:
         input:
             summary=config["summary"],
@@ -122,9 +125,9 @@ rule compress_nplot:
     input:
         samples=rules.plot_samples.output,
     output:
-        "QC/NanoPlot/{sample}.tar.gz"
+        "QC/NanoPlot/{sample}.tar.gz",
     log:
-        "logs/NanoPlot/compress_{sample}.log"
+        "logs/NanoPlot/compress_{sample}.log",
     shell:
         "tar zcvf {output} {input} 2> {log}"
 
@@ -164,7 +167,7 @@ rule sam_stats:
     output:
         "QC/samstats/{sample}.txt",
     log:
-        "logs/samtools/samstats_{sample}.log"
+        "logs/samtools/samstats_{sample}.log",
     conda:
         "envs/env.yml"
     shell:
@@ -202,7 +205,6 @@ rule merge_counts:
         "logs/merge_count.log",
     script:
         "scripts/merge_count_tsvs.py"
-
 
 
 rule write_coldata:
