@@ -25,7 +25,7 @@ if config["summary"] == "None":
             ## max of 39 for our SLURM partition
             cpus_per_task=min(8, 39),  #problem with max(len(input.fastq),39)
         conda:
-            "envs/env.yml"
+            "../envs/env.yml"
         shell:
             "mkdir {output}; "
             "NanoPlot -t {resources.cpus_per_task} --tsv_stats -f svg "
@@ -41,7 +41,7 @@ if config["summary"] == "None":
         log:
             "logs/NanoPlot/all_samples.log",
         conda:
-            "envs/env.yml"
+            "../envs/env.yml"
         shell:
             "mkdir {output}; "
             "NanoPlot -t {resources.cpus_per_task} --tsv_stats -f svg "
@@ -69,7 +69,7 @@ else:
         log:
             "logs/NanoPlot/NanoPlot.log",
         conda:
-            "envs/env.yml"
+            "../envs/env.yml"
         shell:
             "mkdir {output}; "
             "NanoPlot -t {resources.cpus_per_task} --barcoded --tsv_stats "
