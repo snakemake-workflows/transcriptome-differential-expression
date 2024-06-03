@@ -31,7 +31,7 @@ if config["summary"] == "None":
             "NanoPlot -t {resources.cpus_per_task} --tsv_stats -f svg "
             "--fastq {input.fastq} -o {output} 2> {log}"
 
-##TODO: string needs to be reworked for variables
+##TODO: string needs to be reworked for variables (aggregate_input in commons.smk)
     rule plot_all_samples:
         input:
             fastq= [os.path.join(config["inputdir"], sample+".fq.gz") for sample in samples["sample"]],
@@ -44,7 +44,7 @@ if config["summary"] == "None":
         shell:
             "mkdir {output}; "
             "NanoPlot -t {resources.cpus_per_task} --tsv_stats -f svg "
-            "--fastq {input.fastq} -o {output} 2> {log}"
+            "--fastq {input} -o {output} 2> {log}"
     
 
     rule compress_nplot:
