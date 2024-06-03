@@ -15,9 +15,9 @@ set-resources:
         slurm_partition: "parallel"
 
     plot_samples:
-        cpus_per_task: 8
+        cpus_per_task: 1
         mem_mb_per_cpu: 1800
-        runtime: "2h"
+        runtime: "5h"
     
     plot_all_samples:
         cpus_per_task: 8

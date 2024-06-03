@@ -20,7 +20,7 @@ annotation: "/lustre/miifs01/project/m2_zdvhpc/transcriptome_data/GCA_917627325.
 # these samples ought to contain all samples comprising of the
 
 # OPTIONAL; NanoPlot QC with summary from sequencer. leave as "None" for regular QC with .fastq files
-summary: "/lustre/project/m2_zdvhpc/transcriptome_data/seqencing_summary/sequencing_summary.txt"
+summary: None #"/lustre/project/m2_zdvhpc/transcriptome_data/seqencing_summary/sequencing_summary.txt"
 
 # Minimap2 indexing options
 minimap_index_opts: ""
