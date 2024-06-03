@@ -1,6 +1,7 @@
 import os
 
 configfile: "config/config.yml"
+inputdir="/lustre/project/m2_zdvhpc/transcriptome_data/"
 
 # QC and metadata with NanoPlot
 
@@ -34,7 +35,8 @@ if config["summary"] == "None":
 ##TODO: string needs to be reworked for variables (aggregate_input in commons.smk)
     rule plot_all_samples:
         input:
-            fastq= [os.path.join(config["inputdir"], sample+".fq.gz") for sample in samples["sample"]],
+            aggregate_input(samples["sample"]),
+            #fastq= [os.path.join(config["inputdir"], sample+".fq.gz") for sample in samples["sample"]],
         output:
             directory("NanoPlot/all_samples"),
         log:
@@ -55,6 +57,8 @@ if config["summary"] == "None":
             "QC/NanoPlot/{sample}.tar.gz",
         log:
             "logs/NanoPlot/compress_{sample}.log",
+        conda:
+            None
         shell:
             "tar zcvf {output} {input} 2> {log}"
 
