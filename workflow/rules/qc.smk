@@ -1,14 +1,17 @@
 import os
 
+
 configfile: "config/config.yml"
-inputdir="/lustre/project/m2_zdvhpc/transcriptome_data/"
+
+
+inputdir = "/lustre/project/m2_zdvhpc/transcriptome_data/"
 
 # QC and metadata with NanoPlot
 
 if config["summary"] == "None":
-    sample_QC=expand("QC/NanoPlot/{sample}.tar.gz", sample=samples["sample"]),
+    sample_QC = (expand("QC/NanoPlot/{sample}.tar.gz", sample=samples["sample"]),)
 else:
-    sample_QC="QC/NanoPlot/summary.tar.gz"
+    sample_QC = "QC/NanoPlot/summary.tar.gz"
 
 
 if config["summary"] == "None":
@@ -32,7 +35,7 @@ if config["summary"] == "None":
             "NanoPlot -t {resources.cpus_per_task} --tsv_stats -f svg "
             "--fastq {input.fastq} -o {output} 2> {log}"
 
-##TODO: string needs to be reworked for variables (aggregate_input in commons.smk)
+    ##TODO: string needs to be reworked for variables (aggregate_input in commons.smk)
     rule plot_all_samples:
         input:
             aggregate_input(samples["sample"]),
@@ -47,7 +50,6 @@ if config["summary"] == "None":
             "mkdir {output}; "
             "NanoPlot -t {resources.cpus_per_task} --tsv_stats -f svg "
             "--fastq {input} -o {output} 2> {log}"
-    
 
     rule compress_nplot:
         input:
@@ -77,8 +79,7 @@ else:
             "mkdir {output}; "
             "NanoPlot -t {resources.cpus_per_task} --barcoded --tsv_stats "
             "--summary {input.summary} -o {output} 2> {log}"
-    
-    
+
     rule compress_nplot:
         input:
             samples=rules.plot_samples.output,

@@ -9,9 +9,11 @@ rule dump_versions:
         "../envs/env.yml"
     # we are using 'ensureconda' because we are unsure which
     # conda flavour is prefered by the user
+    log:
+        "logs/utils/dump_versions.log",
     shell:
         """
-    eval $(ensureconda) list > {output.ver} 
+    eval $(ensureconda) list > {output.ver} 2> {logs}
     """
 
 

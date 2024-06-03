@@ -7,7 +7,7 @@ from snakemake.remote import FTP
 from snakemake.utils import validate
 from itertools import product
 
-inputdir="/lustre/project/m2_zdvhpc/transcriptome_data/"
+inputdir = "/lustre/project/m2_zdvhpc/transcriptome_data/"
 
 validate(config, schema="../schemas/config.schema.yaml")
 
@@ -34,15 +34,15 @@ def get_mapped_reads_input(sample):
 
 
 def aggregate_input(samples):
-    #possible extensions:
-    exts = ['fastq', 'fq', 'fastq.gz', 'fq.gz']
+    # possible extensions:
+    exts = ["fastq", "fq", "fastq.gz", "fq.gz"]
     valids = list()
     for sample, ext in product(samples, exts):
         path = os.path.join(inputdir, sample + "." + ext)
 
         if os.path.exists(path):
-           valids.append(path)
+            valids.append(path)
 
     if not len(valids):
-       raise WorkflowError("errormessage")
+        raise WorkflowError("errormessage")
     return valids
