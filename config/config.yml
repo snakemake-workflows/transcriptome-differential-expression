@@ -19,7 +19,7 @@ transcriptome: "/lustre/miifs01/project/m2_zdvhpc/transcriptome_data/GCA_9176273
 annotation: "/lustre/miifs01/project/m2_zdvhpc/transcriptome_data/GCA_917627325.4_PGI_CHIRRI_v4_genomic.gff"
 # these samples ought to contain all samples comprising of the
 
-# OPTIONAL; NanoPlot QC with summary from sequencer. leave as "None" for regular QC with .fastq files
+# Optional: NanoPlot QC using a summary file from the sequencer. If this file is not supplied, put the parameter to "None". It will then do an independent QC run per FASTQ input.
 summary: None #"/lustre/project/m2_zdvhpc/transcriptome_data/seqencing_summary/sequencing_summary.txt"
 
 # Minimap2 indexing options
