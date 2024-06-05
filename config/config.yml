@@ -35,7 +35,7 @@ minimap2_opts: ""
 maximum_secondary: 100
 
 # Secondary score ratio (-p for minimap2)
-secondary_score_ratio: 0.8
+secondary_score_ratio: 1.0
 
 # Salmon library type
 salmon_libtype: "U"
