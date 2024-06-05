@@ -21,6 +21,7 @@ configfile: "config/config.yml"
 
 
 include: "rules/commons.smk"
+include: "rules/qc.smk"
 include: "rules/utils.smk"
 
 
@@ -29,6 +30,7 @@ inputdir = config["inputdir"]
 
 rule all:
     input:
+        sample_QC,
         ver=rules.dump_versions.output.ver,
         count_tsvs=expand("counts/{sample}_salmon/quant.sf", sample=samples["sample"]),
         merged_tsv="merged/all_counts.tsv",
@@ -38,6 +40,7 @@ rule all:
         ma_graph="de_analysis/ma_graph.svg",
         de_heatmap="de_analysis/heatmap.svg",
         lfc_analysis="de_analysis/lfc_analysis.csv",
+        samstats=expand("QC/samstats/{sample}.txt", sample=samples["sample"]),
 
 
 rule build_minimap_index:  ## build minimap2 index
@@ -105,7 +108,22 @@ rule sam_index:
     shell:
         """
            samtools index -@ {resources.cpus_per_task} {input.sbam} &> {log};
-           #mv {input.sbam} {output.ibam}
+           mv {input.sbam} {output.ibam}
+        """
+
+
+rule sam_stats:
+    input:
+        bam=rules.map_reads.output,
+    output:
+        "QC/samstats/{sample}.txt",
+    log:
+        "logs/samtools/samstats_{sample}.log",
+    conda:
+        "envs/env.yml"
+    shell:
+        """
+            samtools stats -@ {resources.cpus_per_task} {input.bam} > {output} 2> {log}
         """
 
 

@@ -11,7 +11,7 @@ rule dump_versions:
     # conda flavour is prefered by the user
     shell:
         """
-    eval $(ensureconda) list > {output.ver} 
+    eval $(ensureconda) list > {output.ver}
     """
 
 
