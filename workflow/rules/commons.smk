@@ -1,11 +1,12 @@
 import glob
 import os
 import sys
+from itertools import product
 
 import pandas as pd
 from snakemake.remote import FTP
 from snakemake.utils import validate
-from itertools import product
+from snakemake.exceptions import WorkflowError
 
 inputdir = "/lustre/project/m2_zdvhpc/transcriptome_data/"
 
@@ -44,5 +45,5 @@ def aggregate_input(samples):
             valids.append(path)
 
     if not len(valids):
-        raise WorkflowError("errormessage")
+        raise WorkflowError(f"no valid samples found, allowed extensions are: {exts}")
     return valids
