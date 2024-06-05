@@ -1,5 +1,9 @@
 import os
 
+localrules:
+    compress_nplot, compress_nplot_all,
+
+
 
 configfile: "config/config.yml"
 
@@ -7,14 +11,11 @@ configfile: "config/config.yml"
 inputdir = "/lustre/project/m2_zdvhpc/transcriptome_data/"
 
 
-localrules:
-    compress_nplot,
-
 
 # QC and metadata with NanoPlot
 
 if config["summary"] == "None":
-    sample_QC = (expand("QC/NanoPlot/{sample}.tar.gz", sample=samples["sample"]),)
+    sample_QC = ((expand("QC/NanoPlot/{sample}.tar.gz", sample=samples["sample"]),),  "QC/NanoPlot/all_samples.tar.gz")
 else:
     sample_QC = "QC/NanoPlot/summary.tar.gz"
 
@@ -31,8 +32,7 @@ if config["summary"] == "None":
         log:
             "logs/NanoPlot/{sample}.log",
         resources:
-            ## max of 39 for our SLURM partition
-            cpus_per_task=min(8, 39),  #problem with max(len(input.fastq),39)
+            cpus_per_task=min(len({input}), config["max_cpus"]),  #problem with max(len(input.fastq),39)
         conda:
             "../envs/env.yml"
         shell:
@@ -57,7 +57,6 @@ if config["summary"] == "None":
     rule compress_nplot:
         input:
             samples=rules.plot_samples.output,
-            all_samples=rules.plot_all_samples.output,
         output:
             "QC/NanoPlot/{sample}.tar.gz",
         log:
@@ -65,7 +64,19 @@ if config["summary"] == "None":
         conda:
             None
         shell:
-            "tar zcvf {output} {input} 2> {log}"
+            "tar zcvf {output} {input} &> {log}"
+   
+    rule compress_nplot_all:
+        input:
+            all_samples=rules.plot_all_samples.output,
+        output:
+            "QC/NanoPlot/all_samples.tar.gz",
+        log:
+            "logs/NanoPlot/compress_all_samples.log",
+        conda:
+            None
+        shell:
+            "tar zcvf {output} {input} &> {log}"
 
 else:
 
@@ -93,4 +104,4 @@ else:
         conda:
             None
         shell:
-            "tar zcvf {output} {input} 2> {log}"
+            "tar zcvf {output} {input} &> {log}"
