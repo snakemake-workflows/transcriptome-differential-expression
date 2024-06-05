@@ -9,7 +9,7 @@ localrules:
 configfile: "config/config.yml"
 
 
-inputdir = "/lustre/project/m2_zdvhpc/transcriptome_data/"
+inputdir = config["inputdir"] #"/lustre/project/m2_zdvhpc/transcriptome_data/"
 
 
 # QC and metadata with NanoPlot

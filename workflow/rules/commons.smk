@@ -8,8 +8,6 @@ from snakemake.remote import FTP
 from snakemake.utils import validate
 from snakemake.exceptions import WorkflowError
 
-inputdir = "/lustre/project/m2_zdvhpc/transcriptome_data/"
-
 validate(config, schema="../schemas/config.schema.yaml")
 
 samples = (
@@ -39,7 +37,7 @@ def aggregate_input(samples):
     exts = ["fastq", "fq", "fastq.gz", "fq.gz"]
     valids = list()
     for sample, ext in product(samples, exts):
-        path = os.path.join(inputdir, sample + "." + ext)
+        path = os.path.join(config["inputdir"], sample + "." + ext)
 
         if os.path.exists(path):
             valids.append(path)
