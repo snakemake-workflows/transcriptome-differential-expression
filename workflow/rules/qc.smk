@@ -1,8 +1,9 @@
 import os
 
-localrules:
-    compress_nplot, compress_nplot_all,
 
+localrules:
+    compress_nplot,
+    compress_nplot_all,
 
 
 configfile: "config/config.yml"
@@ -11,11 +12,13 @@ configfile: "config/config.yml"
 inputdir = "/lustre/project/m2_zdvhpc/transcriptome_data/"
 
 
-
 # QC and metadata with NanoPlot
 
 if config["summary"] == "None":
-    sample_QC = ((expand("QC/NanoPlot/{sample}.tar.gz", sample=samples["sample"]),),  "QC/NanoPlot/all_samples.tar.gz")
+    sample_QC = (
+        (expand("QC/NanoPlot/{sample}.tar.gz", sample=samples["sample"]),),
+        "QC/NanoPlot/all_samples.tar.gz",
+    )
 else:
     sample_QC = "QC/NanoPlot/summary.tar.gz"
 
@@ -65,7 +68,7 @@ if config["summary"] == "None":
             None
         shell:
             "tar zcvf {output} {input} &> {log}"
-   
+
     rule compress_nplot_all:
         input:
             all_samples=rules.plot_all_samples.output,
