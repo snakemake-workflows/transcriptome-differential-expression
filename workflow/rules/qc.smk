@@ -6,6 +6,11 @@ configfile: "config/config.yml"
 
 inputdir = "/lustre/project/m2_zdvhpc/transcriptome_data/"
 
+
+localrules:
+    compress_nplot,
+
+
 # QC and metadata with NanoPlot
 
 if config["summary"] == "None":
@@ -15,6 +20,7 @@ else:
 
 
 if config["summary"] == "None":
+
     rule plot_samples:
         input:
             fastq=lambda wildcards: get_mapped_reads_input(
@@ -60,8 +66,9 @@ if config["summary"] == "None":
             None
         shell:
             "tar zcvf {output} {input} 2> {log}"
-        localrule: True
+
 else:
+
     rule plot_samples:
         input:
             summary=config["summary"],
@@ -84,7 +91,6 @@ else:
         log:
             "logs/NanoPlot/compress_summary.log",
         conda:
-            None        
+            None
         shell:
             "tar zcvf {output} {input} 2> {log}"
-        localrule: True
