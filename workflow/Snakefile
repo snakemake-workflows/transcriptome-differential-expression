@@ -17,7 +17,7 @@ localrules:
     info,
 
 
-configfile: "config/config.yml"
+configfile: "../config/config.yml"
 
 
 include: "rules/commons.smk"
@@ -70,7 +70,7 @@ rule map_reads:
     output:
         "alignments/{sample}.bam",
     log:
-        "logs/minimap2/mapping_{sample}.log",
+        "logs/minimap2/mapping_{params.opts}_{sample}.log",
     params:
         opts=config["minimap2_opts"],
         msec=config["maximum_secondary"],
@@ -118,7 +118,7 @@ rule sam_stats:
     output:
         "QC/samstats/{sample}.txt",
     log:
-        "logs/samtools/samstats_{sample}.log",
+        "logs/samtools/samstats_{rule.map_reads.params.opts}_{sample}.log",
     conda:
         "envs/env.yml"
     shell:

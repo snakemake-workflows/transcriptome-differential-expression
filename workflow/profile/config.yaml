@@ -11,13 +11,13 @@ set-resources:
     map_reads:
         cpus_per_task: 40
         mem_mb_per_cpu: 1800
-        runtime: "3h"
+        runtime: "1h"
         slurm_partition: "parallel"
 
     plot_samples:
         cpus_per_task: 1
         mem_mb_per_cpu: 1800
-        runtime: "5h"
+        runtime: "2h"
     
     plot_all_samples:
         cpus_per_task: 8

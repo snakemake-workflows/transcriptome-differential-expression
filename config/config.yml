@@ -29,9 +29,9 @@ summary: None #"/lustre/project/m2_zdvhpc/transcriptome_data/seqencing_summary/s
 minimap_index_opts: ""
 
 # Minimap2 mapping options
-minimap2_opts: ""
+minimap2_opts: "-O 2,24"
 
-# Maximum secondary alignments
+# Maximum secondary alignments (-N for minimap2)
 maximum_secondary: 100
 
 # Secondary score ratio (-p for minimap2)
