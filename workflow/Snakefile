@@ -112,21 +112,6 @@ rule sam_index:
         """
 
 
-rule sam_stats:
-    input:
-        bam=rules.map_reads.output,
-    output:
-        "QC/samstats/{sample}.txt",
-    log:
-        "logs/samtools/samstats_{sample}.log",
-    conda:
-        "envs/env.yml"
-    shell:
-        """
-            samtools stats -@ {resources.cpus_per_task} {input.bam} > {output} 2> {log}
-        """
-
-
 rule count_reads:
     input:
         bam=rules.sam_index.output.ibam,

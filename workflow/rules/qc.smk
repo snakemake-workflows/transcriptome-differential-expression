@@ -9,7 +9,7 @@ localrules:
 configfile: "config/config.yml"
 
 
-inputdir = config["inputdir"] #"/lustre/project/m2_zdvhpc/transcriptome_data/"
+inputdir = config["inputdir"]  # "/lustre/project/m2_zdvhpc/transcriptome_data/"
 
 
 # QC and metadata with NanoPlot
@@ -108,3 +108,18 @@ else:
             None
         shell:
             "tar zcvf {output} {input} &> {log}"
+
+
+rule sam_stats:
+    input:
+        bam="alignments/{sample}.bam",
+    output:
+        "QC/samstats/{sample}.txt",
+    log:
+        "logs/samtools/samstats_{sample}.log",
+    conda:
+        "../envs/env.yml"
+    shell:
+        """
+            samtools stats -@ {resources.cpus_per_task} {input.bam} > {output} 2> {log}
+        """
