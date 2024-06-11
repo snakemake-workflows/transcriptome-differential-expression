@@ -68,7 +68,7 @@ rule map_reads:
             samples["sample"][wildcards.sample]
         ),
     output:
-        "alignments/{sample}.bam",
+        "alignments/{sample}.sam",
     log:
         "logs/minimap2/mapping_{sample}.log",
     params:
@@ -93,7 +93,7 @@ rule sam_sort:
     conda:
         "envs/env.yml"
     shell:
-        "samtools sort -@ {resources.cpus_per_task} {input.sam} -o {output} -O bam &> {log}"
+        "samtools view -@ {resources.cpus_per_task} -bS {input.sam} > {output} &> {log}"
 
 
 rule sam_index:
@@ -129,7 +129,7 @@ rule sam_stats:
 
 rule count_reads:
     input:
-        bam=rules.map_reads.output, # use unsorted .bam files; minimap2 does not create .bam -> new input needed; also filtering may be necessary (cutadapt)
+        bam=rules.sam_sort.output, # use unsorted .bam files; minimap2 does not create .bam -> new input needed; also filtering may be necessary (cutadapt)
         trs=config["transcriptome"],
     output:
         tsv="counts/{sample}_salmon/quant.sf",
