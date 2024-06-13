@@ -3,6 +3,11 @@ default-resources:
     slurm_partition: "smp"
 
 set-resources:
+    genome_to_transcriptome:
+        cpus_per_task: 1
+        mem_mb_per_cpu: 1800
+        runtime: "2h"
+
     build_minimap_index:
         cpus_per_task: 4
         mem_mb_per_cpu: 3600
