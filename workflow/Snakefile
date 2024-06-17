@@ -9,7 +9,7 @@ min_version("8.10.7")
 
 
 localrules:
-    genome_to_transcriptome
+    genome_to_transcriptome,
     merge_counts,
     write_coldata,
     write_de_params,
@@ -45,13 +45,13 @@ rule all:
 
 
 rule genome_to_transcriptome:
-    input: 
+    input:
         genome=config["genome"],
         annotation=config["annotation"],
     output:
-        transcriptome="transcriptome.fa"
+        transcriptome="transcriptome/transcriptome.fa",
     log:
-        "logs/gffread.log"
+        "logs/gffread.log",
     conda:
         "envs/env.yml"
     shell:
@@ -73,7 +73,7 @@ rule build_minimap_index:  ## build minimap2 index
         "envs/env.yml"
     shell:
         """
-    minimap2 -t {resources.cpus_per_task} {params.opts} -d {output.index} {input.genome} 2> {log}
+    minimap2 -t {resources.cpus_per_task} {params.opts} -ax map-ont -d {output.index} {input.transcriptome} 2> {log}
     """
 
 
@@ -146,8 +146,8 @@ rule sam_stats:
 
 rule count_reads:
     input:
-        bam=rules.sam_sort.output, # use unsorted .bam files; minimap2 does not create .bam -> new input needed; also filtering may be necessary (cutadapt)
-        trs=config["transcriptome"],
+        bam=rules.sam_sort.output,  # use unsorted .bam files; minimap2 does not create .bam -> new input needed; also filtering may be necessary (cutadapt)
+        trs=rules.genome_to_transcriptome.output,
     output:
         tsv="counts/{sample}_salmon/quant.sf",
     params:
