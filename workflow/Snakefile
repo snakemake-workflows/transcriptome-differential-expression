@@ -146,7 +146,7 @@ rule sam_stats:
 
 rule count_reads:
     input:
-        bam=rules.sam_sort.output,  # use unsorted .bam files; minimap2 does not create .bam -> new input needed; also filtering may be necessary (cutadapt)
+        bam=rules.sam_sort.output,
         trs=rules.genome_to_transcriptome.output,
     output:
         tsv="counts/{sample}_salmon/quant.sf",
