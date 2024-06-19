@@ -9,6 +9,7 @@ min_version("8.10.7")
 
 
 localrules:
+    genome_to_transcriptome,
     merge_counts,
     write_coldata,
     write_de_params,
@@ -43,9 +44,25 @@ rule all:
         samstats=expand("QC/samstats/{sample}.txt", sample=samples["sample"]),
 
 
+rule genome_to_transcriptome:
+    input:
+        genome=config["genome"],
+        annotation=config["annotation"],
+    output:
+        transcriptome="transcriptome/transcriptome.fa",
+    log:
+        "logs/gffread.log",
+    conda:
+        "envs/env.yml"
+    shell:
+        """
+    gffread -t {resources.cpus_per_task} -w {output} -g {input.genome} {input.annotation} &> {log}    
+    """
+
+
 rule build_minimap_index:  ## build minimap2 index
     input:
-        genome=config["transcriptome"],
+        transcriptome=rules.genome_to_transcriptome.output,
     output:
         index="index/transcriptome_index.mmi",
     params:
@@ -56,7 +73,7 @@ rule build_minimap_index:  ## build minimap2 index
         "envs/env.yml"
     shell:
         """
-    minimap2 -t {resources.cpus_per_task} {params.opts} -d {output.index} {input.genome} 2> {log}
+    minimap2 -t {resources.cpus_per_task} {params.opts} -ax map-ont -d {output.index} {input.transcriptome} 2> {log}
     """
 
 
@@ -68,7 +85,7 @@ rule map_reads:
             samples["sample"][wildcards.sample]
         ),
     output:
-        "alignments/{sample}.bam",
+        "alignments/{sample}.sam",
     log:
         "logs/minimap2/mapping_{sample}.log",
     params:
@@ -93,7 +110,7 @@ rule sam_sort:
     conda:
         "envs/env.yml"
     shell:
-        "samtools sort -@ {resources.cpus_per_task} {input.sam} -o {output} -O bam &> {log}"
+        "samtools view -@ {resources.cpus_per_task} -bS {input.sam} > {output} 2> {log}"
 
 
 rule sam_index:
@@ -114,7 +131,7 @@ rule sam_index:
 
 rule sam_stats:
     input:
-        bam=rules.map_reads.output,
+        bam=rules.sam_sort.output,
     output:
         "QC/samstats/{sample}.txt",
     log:
@@ -129,8 +146,8 @@ rule sam_stats:
 
 rule count_reads:
     input:
-        bam=rules.sam_index.output.ibam,
-        trs=config["transcriptome"],
+        bam=rules.sam_sort.output,
+        trs=rules.genome_to_transcriptome.output,
     output:
         tsv="counts/{sample}_salmon/quant.sf",
     params:
@@ -142,8 +159,8 @@ rule count_reads:
         "envs/env.yml"
     shell:
         """
-        salmon --no-version-check quant  -p {resources.cpus_per_task} \
-        -t {input.trs} -l {params.libtype} -a {input.bam} -o {params.tsv_dir} &> {log}
+        salmon --no-version-check quant --ont -p {resources.cpus_per_task} \
+        -t {input.trs} -l {params.libtype} -a {input.bam} -o {params.tsv_dir} 2> {log}
     """
 
 

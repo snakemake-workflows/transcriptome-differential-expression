@@ -3,6 +3,11 @@ default-resources:
     slurm_partition: "smp"
 
 set-resources:
+    genome_to_transcriptome:
+        cpus_per_task: 1
+        mem_mb_per_cpu: 1800
+        runtime: "2h"
+
     build_minimap_index:
         cpus_per_task: 4
         mem_mb_per_cpu: 3600
@@ -15,9 +20,9 @@ set-resources:
         slurm_partition: "parallel"
 
     plot_samples:
-        cpus_per_task: 1
+        cpus_per_task: 4
         mem_mb_per_cpu: 1800
-        runtime: "5h"
+        runtime: "3h"
     
     plot_all_samples:
         cpus_per_task: 8
@@ -25,7 +30,7 @@ set-resources:
         runtime: "2h"
 
     sam_sort:
-        cpus_per_task: 8
+        cpus_per_task: 1
         mem_mb_per_cpu: 1800
         runtime: "1h"
 
