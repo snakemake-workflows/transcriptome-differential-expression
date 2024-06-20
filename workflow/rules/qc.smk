@@ -108,3 +108,45 @@ else:
             None
         shell:
             "tar zcvf {output} {input} &> {log}"
+
+
+rule sam_sort:
+    input:
+        sam="alignments/{sample}.sam"
+    output:
+        "sorted_alignments/{sample}.bam"
+    log: 
+        "logs/samtools/samsort_{sample}.log"
+    conda: 
+        "../envs/env.yml"
+    shell: 
+        "samtools sort -@ {resources.cpus_per_task} {input.sam} -o {output} -O bam &> {log}"
+
+
+rule map_qc:
+    input:
+        sorted_bam=rules.sam_sort.output,
+    output:
+        directory("QC/qualimap/{sample}")
+    log:
+        "logs/qualimap/{sample}"
+    conda:
+        "../envs/env.yml"
+    wrapper:
+        "v3.12.1/bio/qualimap/bamqc"
+
+
+rule sam_stats:
+    input:
+        bam="sorted_alignments/{sample}.bam",
+    output:
+        "QC/samstats/{sample}.txt",
+    log:
+        "logs/samtools/samstats_{sample}.log",
+    conda:
+        "../envs/env.yml"
+    shell:
+        """
+            samtools stats -@ {resources.cpus_per_task} {input.bam} > {output} 2> {log}
+        """
+
