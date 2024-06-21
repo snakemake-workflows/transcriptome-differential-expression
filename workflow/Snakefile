@@ -42,6 +42,7 @@ rule all:
         de_heatmap="de_analysis/heatmap.svg",
         lfc_analysis="de_analysis/lfc_analysis.csv",
         samstats=expand("QC/samstats/{sample}.txt", sample=samples["sample"]),
+        map_qc=directory("QC/qualimap/{sample}")
 
 
 rule genome_to_transcriptome:

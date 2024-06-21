@@ -9,7 +9,7 @@ localrules:
 configfile: "config/config.yml"
 
 
-inputdir = config["inputdir"] #"/lustre/project/m2_zdvhpc/transcriptome_data/"
+inputdir = config["inputdir"]  # "/lustre/project/m2_zdvhpc/transcriptome_data/"
 
 
 # QC and metadata with NanoPlot
@@ -112,14 +112,14 @@ else:
 
 rule sam_sort:
     input:
-        sam="alignments/{sample}.sam"
+        sam="alignments/{sample}.sam",
     output:
-        "sorted_alignments/{sample}.bam"
-    log: 
-        "logs/samtools/samsort_{sample}.log"
-    conda: 
+        "sorted_alignments/{sample}_sorted.bam",
+    log:
+        "logs/samtools/samsort_{sample}.log",
+    conda:
         "../envs/env.yml"
-    shell: 
+    shell:
         "samtools sort -@ {resources.cpus_per_task} {input.sam} -o {output} -O bam &> {log}"
 
 
@@ -127,9 +127,9 @@ rule map_qc:
     input:
         sorted_bam=rules.sam_sort.output,
     output:
-        directory("QC/qualimap/{sample}")
+        directory("QC/qualimap/{sample}"),
     log:
-        "logs/qualimap/{sample}"
+        "logs/qualimap/{sample}",
     conda:
         "../envs/env.yml"
     wrapper:
@@ -149,4 +149,3 @@ rule sam_stats:
         """
             samtools stats -@ {resources.cpus_per_task} {input.bam} > {output} 2> {log}
         """
-
