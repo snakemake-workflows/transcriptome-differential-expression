@@ -4,6 +4,7 @@ import os
 localrules:
     compress_nplot,
     compress_nplot_all,
+    compress_map_qc,
 
 
 configfile: "config/config.yml"
@@ -129,11 +130,24 @@ rule map_qc:
     output:
         directory("QC/qualimap/{sample}"),
     log:
-        "logs/qualimap/{sample}",
+        "logs/qualimap/{sample}.log",
     conda:
         "../envs/env.yml"
     wrapper:
         "v3.12.1/bio/qualimap/bamqc"
+
+
+rule compress_map_qc:
+    input:
+        map_qc=rules.map_qc.output,
+    output:
+        "QC/qualimap/{sample}.tar.gz",
+    log:
+        "logs/qualimap/compress_{sample}.log",
+    conda:
+        None
+    shell:
+        "tar zcvf {output} {input} &> {log}"
 
 
 rule sam_stats:
