@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.1.0](https://github.com/snakemake-workflows/transcriptome-differential-expression/compare/v1.0.0...v1.1.0) (2024-06-25)
+
+
+### Features
+
+* map qc ([#38](https://github.com/snakemake-workflows/transcriptome-differential-expression/issues/38)) ([4d5b8bc](https://github.com/snakemake-workflows/transcriptome-differential-expression/commit/4d5b8bcdd4fc98fc3c064f7f6d619cdf54b48e9c))
+* qc rules ([#16](https://github.com/snakemake-workflows/transcriptome-differential-expression/issues/16)) ([3237e2c](https://github.com/snakemake-workflows/transcriptome-differential-expression/commit/3237e2c4e539d65bc49155ff18b27a4dc1df820a))
+
+
+### Bug Fixes
+
+* added import sys for log ([#36](https://github.com/snakemake-workflows/transcriptome-differential-expression/issues/36)) ([0f8ac63](https://github.com/snakemake-workflows/transcriptome-differential-expression/commit/0f8ac63654ee6abb522d8590ae02f190be790c96))
+* lookup [#18](https://github.com/snakemake-workflows/transcriptome-differential-expression/issues/18) ([#19](https://github.com/snakemake-workflows/transcriptome-differential-expression/issues/19)) ([ed226a3](https://github.com/snakemake-workflows/transcriptome-differential-expression/commit/ed226a3adc502694cc3ef9c30f3d2d5dae431935))
+* read quantification  ([#22](https://github.com/snakemake-workflows/transcriptome-differential-expression/issues/22)) ([71422a1](https://github.com/snakemake-workflows/transcriptome-differential-expression/commit/71422a13319f0893e2494f432b0170bb116c08be))
+
 ## 1.0.0 (2024-04-30)
 
 
