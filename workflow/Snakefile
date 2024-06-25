@@ -42,6 +42,7 @@ rule all:
         de_heatmap="de_analysis/heatmap.svg",
         lfc_analysis="de_analysis/lfc_analysis.csv",
         samstats=expand("QC/samstats/{sample}.txt", sample=samples["sample"]),
+        map_qc=expand("QC/qualimap/{sample}.tar.gz", sample=samples["sample"]),
 
 
 rule genome_to_transcriptome:
@@ -100,13 +101,13 @@ rule map_reads:
     """
 
 
-rule sam_sort:
+rule sam_view:
     input:
         sam=rules.map_reads.output,
     output:
         "sorted_alignments/{sample}.bam",
     log:
-        "logs/samtools/samsort_{sample}.log",
+        "logs/samtools/samview_{sample}.log",
     conda:
         "envs/env.yml"
     shell:
@@ -115,7 +116,7 @@ rule sam_sort:
 
 rule sam_index:
     input:
-        sbam=rules.sam_sort.output,
+        sbam=rules.sam_view.output,
     output:
         ibam="sorted_alignments/{sample}_index.bam",
     log:
@@ -129,24 +130,9 @@ rule sam_index:
         """
 
 
-rule sam_stats:
-    input:
-        bam=rules.sam_sort.output,
-    output:
-        "QC/samstats/{sample}.txt",
-    log:
-        "logs/samtools/samstats_{sample}.log",
-    conda:
-        "envs/env.yml"
-    shell:
-        """
-            samtools stats -@ {resources.cpus_per_task} {input.bam} > {output} 2> {log}
-        """
-
-
 rule count_reads:
     input:
-        bam=rules.sam_sort.output,
+        bam=rules.sam_view.output,
         trs=rules.genome_to_transcriptome.output,
     output:
         tsv="counts/{sample}_salmon/quant.sf",
