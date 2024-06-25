@@ -5,3 +5,6 @@ m18_bc03    female  condition2	batch1          NANOPORE    1
 m18_bc04    female  condition2	batch1          NANOPORE    1
 m18_bc05    female  condition2	batch1          NANOPORE    1
 m18_bc06    male    condition2	batch1          NANOPORE    1
+ma_bc07     male    condition2	batch2          NANOPORE    1
+ma_bc08     male    condition2	batch2          NANOPORE    1
+ma_bc09     female  condition2	batch2          NANOPORE    1
