@@ -67,7 +67,7 @@ rule filter_reads:
             samples["sample"][wildcards.sample]
         ),
     output:
-        "biopy/{sample}_filtered.fq",
+        temp("biopy/{sample}_filtered.fq"),
     log:
         "logs/filter_reads/{sample}.log",
     conda:
