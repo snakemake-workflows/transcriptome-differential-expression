@@ -61,6 +61,23 @@ rule genome_to_transcriptome:
     """
 
 
+rule filter_reads:
+    input:
+        fastq=lambda wildcards: get_mapped_reads_input(
+            samples["sample"][wildcards.sample]
+        ),
+    output:
+        temp("filter/{sample}_filtered.fq"),
+    message: 
+        f"Filtering with read length >= {config['min_length']}."
+    log:
+        "logs/filter_reads/{sample}.log",
+    conda:
+        "envs/env.yml"
+    script:
+        "scripts/read_filter.py"
+
+
 rule build_minimap_index:  ## build minimap2 index
     input:
         transcriptome=rules.genome_to_transcriptome.output,
@@ -82,9 +99,7 @@ rule build_minimap_index:  ## build minimap2 index
 rule map_reads:
     input:
         index=rules.build_minimap_index.output.index,
-        fastq=lambda wildcards: get_mapped_reads_input(
-            samples["sample"][wildcards.sample]
-        ),
+        fastq_filtered=rules.filter_reads.output,
     output:
         "alignments/{sample}.sam",
     log:
