@@ -40,6 +40,9 @@ maximum_secondary: 100
 # Secondary score ratio (-p for minimap2)
 secondary_score_ratio: 1.0
 
+# Samtools view opts, "-b" creates BAM from SAM.
+sview_opts: "-b"
+
 # Salmon library type
 salmon_libtype: "U"
 

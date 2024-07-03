@@ -117,10 +117,12 @@ rule sam_view:
         "sorted_alignments/{sample}.bam",
     log:
         "logs/samtools/samview_{sample}.log",
+    params:
+        extra=f'{config["sview_opts"]}',
     conda:
         "envs/env.yml"
-    shell:
-        "samtools view -@ {resources.cpus_per_task} -bS {input.sam} > {output} 2> {log}"
+    wrapper:
+         "v3.13.3/bio/samtools/view"
 
 
 rule sam_index:
