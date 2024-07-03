@@ -13,8 +13,11 @@ sys.stderr = sys.stdout = open(snakemake.log[0], "wt")
 def is_zipped(fname):
     return fname.endswith(".gz")
 
+
 if not isinstance(snakemake.config["min_length"], int):
-    raise TypeError(f"config.yml has no valid minimum read length, allowed are: {int}, but got {type(snakemake.config["min_length"])}.")
+    raise TypeError(
+        "Your configuration has no valid minimum read length, allowed are: ('int'), check the 'min_length' parameter, please."
+    )
 
 if snakemake.config["min_length"] <= 0:
     if is_zipped(snakemake.input[0]):
