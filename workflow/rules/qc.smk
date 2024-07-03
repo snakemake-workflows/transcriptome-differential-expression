@@ -157,9 +157,9 @@ rule sam_stats:
         "QC/samstats/{sample}.txt",
     log:
         "logs/samtools/samstats_{sample}.log",
+    params:
+        extra=f'{config["sstats_opts"]}',    
     conda:
         "../envs/env.yml"
-    shell:
-        """
-            samtools stats -@ {resources.cpus_per_task} {input.bam} > {output} 2> {log}
-        """
+    wrapper:
+        "v3.13.3/bio/samtools/stats"
