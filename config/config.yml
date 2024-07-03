@@ -7,16 +7,16 @@ samples: samples.csv
 workflow: "workflow-transcriptome-de_phe"
 
 # this is the input directory. All samples are looked for in this directory
-inputdir: "/lustre/project/m2_zdvhpc/transcriptome_data"
+inputdir: "/lustre/project/nhr-zdvhpc/transcriptome_data"
 # Repository URL:
 repo: "https://github.com/snakemake-workflows/transriptome-differential-expression"
 
 ## Workflow-specific Parameters:
 
 # Genome fasta (absolute path)
-genome: "/lustre/miifs01/project/m2_zdvhpc/transcriptome_data/GCA_917627325.4_PGI_CHIRRI_v4_genomic.fa"
+genome: "/lustre/miifs01/project/nhr-zdvhpc/transcriptome_data/GCA_917627325.4_PGI_CHIRRI_v4_genomic.fa"
 # Annotation GFF/GTF (absolute path)
-annotation: "/lustre/miifs01/project/m2_zdvhpc/transcriptome_data/GCA_917627325.4_PGI_CHIRRI_v4_genomic.gff"
+annotation: "/lustre/miifs01/project/nhr-zdvhpc/transcriptome_data/GCA_917627325.4_PGI_CHIRRI_v4_genomic.gff"
 # these samples ought to contain all samples comprising of the
 
 # Minimum read length, put 0 if you want to proceed with all reads.
