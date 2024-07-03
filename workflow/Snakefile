@@ -80,19 +80,17 @@ rule filter_reads:
 
 rule build_minimap_index:  ## build minimap2 index
     input:
-        transcriptome=rules.genome_to_transcriptome.output,
+        target=rules.genome_to_transcriptome.output,
     output:
         index="index/transcriptome_index.mmi",
     params:
-        opts=config["minimap_index_opts"],
+        extra=config["minimap_index_opts"],
     log:
         "logs/minimap2/index.log",
     conda:
         "envs/env.yml"
-    shell:
-        """
-    minimap2 -t {resources.cpus_per_task} {params.opts} -ax map-ont -d {output.index} {input.transcriptome} 2> {log}
-    """
+    wrapper:
+        "v3.13.3/bio/minimap2/index"
 
 
 # mapping reads with minimap2
