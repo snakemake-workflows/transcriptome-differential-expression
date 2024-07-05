@@ -118,11 +118,12 @@ rule sam_sort:
         "sorted_alignments/{sample}_sorted.bam",
     log:
         "logs/samtools/samsort_{sample}.log",
+    params:
+        extra=f'{config["ssort_opts"]}', 
     conda:
         "../envs/env.yml"
-    shell:
-        "samtools sort -@ {resources.cpus_per_task} {input.sam} -o {output} -O bam &> {log}"
-
+    wrapper:
+        "v3.13.4/bio/samtools/sort"
 
 rule map_qc:
     input:
