@@ -90,7 +90,7 @@ rule build_minimap_index:  ## build minimap2 index
     conda:
         "envs/env.yml"
     wrapper:
-        "v3.13.3/bio/minimap2/index"
+        "v3.13.4/bio/minimap2/index"
 
 
 # mapping reads with minimap2
@@ -107,7 +107,7 @@ rule map_reads:
     conda:
         "envs/env.yml"
     wrapper:
-        "v3.13.3/bio/minimap2/aligner"
+        "v3.13.4/bio/minimap2/aligner"
 
 
 rule sam_view:
@@ -122,7 +122,7 @@ rule sam_view:
     conda:
         "envs/env.yml"
     wrapper:
-         "v3.13.3/bio/samtools/view"
+         "v3.13.4/bio/samtools/view"
 
 
 rule sam_index:

@@ -135,7 +135,7 @@ rule map_qc:
     conda:
         "../envs/env.yml"
     wrapper:
-        "v3.12.1/bio/qualimap/bamqc"
+        "v3.13.4/bio/qualimap/bamqc"
 
 
 rule compress_map_qc:
@@ -163,4 +163,4 @@ rule sam_stats:
     conda:
         "../envs/env.yml"
     wrapper:
-        "v3.13.3/bio/samtools/stats"
+        "v3.13.4/bio/samtools/stats"
