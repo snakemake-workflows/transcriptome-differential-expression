@@ -118,10 +118,12 @@ rule sam_sort:
         "sorted_alignments/{sample}_sorted.bam",
     log:
         "logs/samtools/samsort_{sample}.log",
+    params:
+        extra=f'{config["ssort_opts"]}',
     conda:
         "../envs/env.yml"
-    shell:
-        "samtools sort -@ {resources.cpus_per_task} {input.sam} -o {output} -O bam &> {log}"
+    wrapper:
+        "v3.13.4/bio/samtools/sort"
 
 
 rule map_qc:
@@ -134,7 +136,7 @@ rule map_qc:
     conda:
         "../envs/env.yml"
     wrapper:
-        "v3.12.1/bio/qualimap/bamqc"
+        "v3.13.4/bio/qualimap/bamqc"
 
 
 rule compress_map_qc:
@@ -157,9 +159,9 @@ rule sam_stats:
         "QC/samstats/{sample}.txt",
     log:
         "logs/samtools/samstats_{sample}.log",
+    params:
+        extra=f'{config["sstats_opts"]}',
     conda:
         "../envs/env.yml"
-    shell:
-        """
-            samtools stats -@ {resources.cpus_per_task} {input.bam} > {output} 2> {log}
-        """
+    wrapper:
+        "v3.13.4/bio/samtools/stats"

@@ -68,7 +68,7 @@ rule filter_reads:
         ),
     output:
         temp("filter/{sample}_filtered.fq"),
-    message: 
+    message:
         f"Filtering with read length >= {config['min_length']}."
     log:
         "logs/filter_reads/{sample}.log",
@@ -80,40 +80,34 @@ rule filter_reads:
 
 rule build_minimap_index:  ## build minimap2 index
     input:
-        transcriptome=rules.genome_to_transcriptome.output,
+        target=rules.genome_to_transcriptome.output,
     output:
         index="index/transcriptome_index.mmi",
     params:
-        opts=config["minimap_index_opts"],
+        extra=config["minimap_index_opts"],
     log:
         "logs/minimap2/index.log",
     conda:
         "envs/env.yml"
-    shell:
-        """
-    minimap2 -t {resources.cpus_per_task} {params.opts} -ax map-ont -d {output.index} {input.transcriptome} 2> {log}
-    """
+    wrapper:
+        "v3.13.4/bio/minimap2/index"
 
 
 # mapping reads with minimap2
 rule map_reads:
     input:
-        index=rules.build_minimap_index.output.index,
-        fastq_filtered=rules.filter_reads.output,
+        target=rules.build_minimap_index.output.index,
+        query=rules.filter_reads.output,
     output:
         "alignments/{sample}.sam",
     log:
         "logs/minimap2/mapping_{sample}.log",
     params:
-        opts=config["minimap2_opts"],
-        msec=config["maximum_secondary"],
-        psec=config["secondary_score_ratio"],
+        extra=f"-p {config['secondary_score_ratio']} -N {config['maximum_secondary']} {config['minimap2_opts']}",
     conda:
         "envs/env.yml"
-    shell:
-        """
-    minimap2 -t {resources.cpus_per_task} -ax map-ont -p {params.psec} -N {params.msec} {params.opts} {input.index} {input.fastq} > {output} 2> {log}
-    """
+    wrapper:
+        "v3.13.4/bio/minimap2/aligner"
 
 
 rule sam_view:
@@ -123,10 +117,12 @@ rule sam_view:
         "sorted_alignments/{sample}.bam",
     log:
         "logs/samtools/samview_{sample}.log",
+    params:
+        extra=f'{config["sview_opts"]}',
     conda:
         "envs/env.yml"
-    shell:
-        "samtools view -@ {resources.cpus_per_task} -bS {input.sam} > {output} 2> {log}"
+    wrapper:
+        "v3.13.4/bio/samtools/view"
 
 
 rule sam_index:
