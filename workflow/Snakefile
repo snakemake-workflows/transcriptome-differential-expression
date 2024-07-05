@@ -68,7 +68,7 @@ rule filter_reads:
         ),
     output:
         temp("filter/{sample}_filtered.fq"),
-    message: 
+    message:
         f"Filtering with read length >= {config['min_length']}."
     log:
         "logs/filter_reads/{sample}.log",
@@ -122,7 +122,7 @@ rule sam_view:
     conda:
         "envs/env.yml"
     wrapper:
-         "v3.13.4/bio/samtools/view"
+        "v3.13.4/bio/samtools/view"
 
 
 rule sam_index:

@@ -119,11 +119,12 @@ rule sam_sort:
     log:
         "logs/samtools/samsort_{sample}.log",
     params:
-        extra=f'{config["ssort_opts"]}', 
+        extra=f'{config["ssort_opts"]}',
     conda:
         "../envs/env.yml"
     wrapper:
         "v3.13.4/bio/samtools/sort"
+
 
 rule map_qc:
     input:
@@ -159,7 +160,7 @@ rule sam_stats:
     log:
         "logs/samtools/samstats_{sample}.log",
     params:
-        extra=f'{config["sstats_opts"]}',    
+        extra=f'{config["sstats_opts"]}',
     conda:
         "../envs/env.yml"
     wrapper:
