@@ -11,6 +11,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 import time
+from snakemake.exceptions import WorkflowError
 
 from pydeseq2.dds import DeseqDataSet
 from pydeseq2.ds import DeseqStats
@@ -21,14 +22,17 @@ from pydeseq2.utils import load_example_data
 sys.stderr = sys.stdout = open(snakemake.log[0], "w")
 
 ncpus = snakemake.threads
-print(snakemake.params.samples)
+samples=snakemake.params.samples
+print(samples)
+metadata=samples.loc[:,samples.columns != "samples"]
+print(metadata)
 
 counts_df = pd.read_csv(f"{snakemake.input.all_counts}", sep="\t", header=0)
 # we have a header line containing "Reference" as attribute, hence the following line
 # otherwise, we would add an index row, with which we cannot work
-counts_df.set_index("sample", inplace=True)
+print(counts_df)
+counts_df.set_index("Reference", inplace=True)
 counts_df = counts_df.T
-metadata = pd.read_csv(f"{snakemake.input.coldata}", sep=",", header=0, index_col=0)
 
 
 # TODO: make this configurable
@@ -63,11 +67,17 @@ dds.deseq2()
 dds.plot_dispersions(save_path=f"{snakemake.output.dispersion_graph}")
 
 # compute p-values for our dispersion
-stat_res = DeseqStats(dds, n_cpus=ncpus)
-# a_condition:
-a_condition = snakemake.config["condition_a_identifier"]
-# b_condition
-b_condition = snakemake.config["condition_b_identifier"]
+stat_res = DeseqStats(dds)
+# conditions:
+conditions = list()
+for condition in samples["condition"]:
+    if condition not in conditions:
+        conditions.append(condition)
+
+if len(conditions)!=2:
+    raise WorkflowError("Only binary conditions are allowed. Make sure your samples.csv only has 2 conditions.")
+a_condition = conditions[1]
+b_condition = conditions[0]
 
 # run Wald test and plot, perform optional threshold tests, if wanted
 if "lfc_null" in snakemake.config or "alt_hypothesis" in snakemake.config:
@@ -91,15 +101,17 @@ stat_res.plot_MA(
 # ds_df.to_csv('dds_df.csv'
 # getting and applying the scaling factors
 sf = dds.obsm["size_factors"]
-
+print(sf)
 normalized = counts_df.values.T * sf
 
 # transpose back
 normalized = normalized.T
+print(normalized)
+sys.exit()
 
 # append log2fold and pvalue columns
-normalized.join(stats_res.results_df["log2FoldChange"])
-normalized.join(stats_res.results_df["pvalue"])
+normalized[:,:-1]=stat_res.results_df["log2FoldChange"]
+normalized[:,:-1]=stat_res.results_df["pvalue"]
 
 # get indices where the matrix is 0 - may happen
 # zero_indices = np.argwhere(normalized == 0)
