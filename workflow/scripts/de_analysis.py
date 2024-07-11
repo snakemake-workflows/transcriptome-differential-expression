@@ -16,22 +16,20 @@ from pydeseq2.dds import DeseqDataSet
 from pydeseq2.ds import DeseqStats
 from pydeseq2.utils import load_example_data
 
+
+
 sys.stderr = sys.stdout = open(snakemake.log[0], "w")
 
 ncpus = snakemake.threads
+print(snakemake.params.samples)
 
-counts_df = pd.read_csv(f"{snakemake.input.tsv}", sep="\t", header=0)
+counts_df = pd.read_csv(f"{snakemake.input.al_counts}", sep="\t", header=0)
 # we have a header line containing "Reference" as attribute, hence the following line
 # otherwise, we would add an index row, with which we cannot work
-counts_df.set_index("Reference", inplace=True)
+counts_df.set_index("sample", inplace=True)
 counts_df = counts_df.T
 metadata = pd.read_csv(f"{snakemake.input.coldata}", sep=",", header=0, index_col=0)
 
-# filtering low quality samples, first those with NAs
-samples_to_keep = ~metadata.condition.isna()
-print(samples_to_keep)
-counts_df = counts_df.loc[samples_to_keep]
-metadata = metadata.loc[samples_to_keep]
 
 # TODO: make this configurable
 # next we filter out counts, with counts lower than 10
