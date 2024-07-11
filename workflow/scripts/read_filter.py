@@ -21,8 +21,8 @@ if not isinstance(snakemake.config["min_length"], int):
 
 if snakemake.config["min_length"] <= 0:
     if is_zipped(snakemake.input[0]):
-        with gzip.open(snakemake.input[0], "wb") as f_in, open(
-            snakemake.output[0], "wb"
+        with gzip.open(snakemake.input[0], "rt") as f_in, open(
+            snakemake.output[0], "wt"
         ) as f_out:
             shutil.copyfileobj(f_in, f_out)
     else:
