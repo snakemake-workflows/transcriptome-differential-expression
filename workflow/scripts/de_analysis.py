@@ -23,7 +23,7 @@ sys.stderr = sys.stdout = open(snakemake.log[0], "w")
 ncpus = snakemake.threads
 print(snakemake.params.samples)
 
-counts_df = pd.read_csv(f"{snakemake.input.al_counts}", sep="\t", header=0)
+counts_df = pd.read_csv(f"{snakemake.input.all_counts}", sep="\t", header=0)
 # we have a header line containing "Reference" as attribute, hence the following line
 # otherwise, we would add an index row, with which we cannot work
 counts_df.set_index("sample", inplace=True)
