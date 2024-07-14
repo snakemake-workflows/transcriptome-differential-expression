@@ -7,10 +7,11 @@ import matplotlib
 matplotlib.use("Agg")  # suppress creating of interactive plots
 import matplotlib.pyplot as plt
 from matplotlib.colors import LogNorm
-import numpy as np
 import pandas as pd
 import seaborn as sns
-import time
+import scipy.spatial as sp, scipy.cluster.hierarchy as hc
+
+
 from snakemake.exceptions import WorkflowError
 
 from pydeseq2.dds import DeseqDataSet
@@ -23,24 +24,17 @@ sys.stderr = sys.stdout = open(snakemake.log[0], "w")
 
 ncpus = snakemake.threads
 samples=snakemake.params.samples
-print(samples)
+
 metadata=samples.loc[:,samples.columns != "samples"]
-print(metadata)
 
 counts_df = pd.read_csv(f"{snakemake.input.all_counts}", sep="\t", header=0)
 # we have a header line containing "Reference" as attribute, hence the following line
 # otherwise, we would add an index row, with which we cannot work
-print(counts_df)
 counts_df.set_index("Reference", inplace=True)
 counts_df = counts_df.T
 
-
-# TODO: make this configurable
 # next we filter out counts, with counts lower than 10
-print(counts_df.sum(axis=0))
-print(snakemake.config["mincount"])
 genes_to_keep = counts_df.columns[counts_df.sum(axis=0) >= snakemake.config["mincount"]]
-print(genes_to_keep)
 counts_df = counts_df[genes_to_keep]
 
 dds = DeseqDataSet(
@@ -76,7 +70,7 @@ for condition in samples["condition"]:
 
 if len(conditions)!=2:
     raise WorkflowError("Only binary conditions are allowed. Make sure your samples.csv only has 2 conditions.")
-a_condition = conditions[1]
+a_condition = conditions[1] # this order ensures the the lfc shrink condition is met
 b_condition = conditions[0]
 
 # run Wald test and plot, perform optional threshold tests, if wanted
@@ -101,87 +95,57 @@ stat_res.plot_MA(
 # ds_df.to_csv('dds_df.csv'
 # getting and applying the scaling factors
 sf = dds.obsm["size_factors"]
-print(sf)
-normalized = counts_df.values.T * sf
 
-# transpose back
-normalized = normalized.T
+normalized = counts_df.T * sf
 print(normalized)
-sys.exit()
 
-# append log2fold and pvalue columns
-normalized[:,:-1]=stat_res.results_df["log2FoldChange"]
-normalized[:,:-1]=stat_res.results_df["pvalue"]
+# shorthand for log2fold and pvalue columns
+log2foldchange = stat_res.results_df["log2FoldChange"]
+pvalue = stat_res.results_df["pvalue"]
+print(log2foldchange)
+print(pvalue)
 
-# get indices where the matrix is 0 - may happen
-# zero_indices = np.argwhere(normalized == 0)
-# TODO: try implementing imputation
-# for now, we remove those, which are zeroed
-normalized = normalized[~np.all(normalized == 0, axis=1)]
+normalized = normalized.join(log2foldchange)
+normalized = normalized.join(pvalue)
 
-# get column names and row names
-column_names = counts_df.columns.values.tolist()
-row_names = counts_df.index.values.tolist()
+print(normalized)
 
-normalized = pd.DataFrame(normalized, index=row_names, columns=column_names)
-
-# Order columns according to traits - generally column
-# order can be arbitrary, but for the headmap, we want.
-a_samples, b_samples = list(), list()
-for sample_name in row_names:
-    if a_condition in sample_name:
-        a_samples.append(sample_name)
-    else:
-        b_samples.append(sample_name)
-assert a_samples, f"list 'a_samples' is empty, '{a_condition}' not unique?"
-assert b_samples, f"list 'b_samples' is empty, '{a_condition}' not unique?"
-# total list
-samples = a_samples + b_samples
-
-# final orientation and order
-normalized = normalized.T[samples]
-
-
-# get the means of our conditions
-# a_mean = normalized[a_samples].mean(axis=1)
-# b_mean = normalized[b_samples].mean(axis=1)
-
-# a_over_b = a_mean/b_mean
-# b_over_a = b_mean/a_mean
-# which is bigger?
-# ratio = list(None for _ in a_over_b)
-# for index, state in enumerate(a_over_b.ge(b_over_a)):
-# enter ratio, but check for non-inf-ness, first:
-#    print(a_over_b[index], b_over_a[index])
-#    if state:
-#        if np.isinf(a_over_b[index]):
-#            normalized.drop(index, inplace=True)
-#        ratio[index] = a_over_b[index]
-#    else:
-#        if np.isinf(b_over_a[index]):
-#            normalized.drop(index, inplace=True)
-#       ratio[index] = b_over_a[index]
-
-# normalized["ratio"] = ratio
-# normalized = normalized[~np.all(normalized == np.inf, axis=1)]
-# print(normalized)
-# now sort according to the log2foldchange
 normalized.sort_values(by="log2FoldChange")
 # delete rows, which do not meet our p-value criterion
-normalized.drop(normalized["pvalue"] > 0.05, inplace=True)
-# through away this column
-# normalized.drop(["ratio"], axis=1, inplace=True)
+normalized.drop(normalized[normalized.pvalue > 0.05].index, inplace=True)
+# through away these columns
+normalized.drop("log2FoldChange", axis=1, inplace=True)
+normalized.drop("pvalue", axis=1, inplace=True) 
 
-# normalized.loc[normalized.index.difference(normalized.dropna(how='all').index)]
-# print(normalized)
+print(normalized)
+normalized.to_csv(snakemake.output.normalized_counts)
+normalized.dropna(inplace=True)
+print(normalized)
 
+# precompute linkages, to prevent missing values crashing the script
+row_dism = 1 - normalized.T.corr()
+row_linkage = hc.linkage(sp.distance.squareform(row_dism), method='complete')
+col_dism = 1 - normalized.corr()
+col_linkage = hc.linkage(sp.distance.squareform(col_dism), method='complete')
+
+#TODO: only half of the matrix should be plotted
+#TODO: add contidion labels (e.g. male/female to the map)
 sns.clustermap(
-    normalized[samples], cmap=snakemake.config["colormap"], linewidths=0, norm=LogNorm()
+    normalized.corr().fillna(0), cmap=snakemake.config["colormap"], linewidths=0,
+    #, norm=LogNorm()
 )  # , xticklables = metadata.index.to_list())#, yticklabels = sta)
+plt.savefig(snakemake.output.correlation_matrix)
+
+#TODO: add contidion labels (e.g. male/female to the map)
+sns.clustermap(
+    normalized.fillna(0), cmap=snakemake.config["colormap"], linewidths=0,
+    norm=LogNorm()
+)  
 plt.savefig(snakemake.output.de_heatmap)
+
 n = snakemake.config["threshold_plot"]
 sns.clustermap(
-    normalized.iloc[:n][samples],
+    normalized.fillna(0).iloc[:n],
     cmap=snakemake.config["colormap"],
     linewidths=0,
     norm=LogNorm(),
