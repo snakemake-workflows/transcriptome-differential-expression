@@ -128,7 +128,7 @@ rule sam_sort:
 
 rule map_qc:
     input:
-        sorted_bam=rules.sam_sort.output,
+        bam=rules.sam_sort.output,
     output:
         directory("QC/qualimap/{sample}"),
     log:
