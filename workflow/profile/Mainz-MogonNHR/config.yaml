@@ -41,7 +41,7 @@ set-resources:
 
     sam_sort:
         cpus_per_task: 4
-        mem_mb_per_cpu: 3600
+        mem_mb_per_cpu: 7200
         runtime: "2h"
 
     sam_view:
