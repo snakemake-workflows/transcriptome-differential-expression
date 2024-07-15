@@ -19,13 +19,12 @@ from pydeseq2.ds import DeseqStats
 from pydeseq2.utils import load_example_data
 
 
-
 sys.stderr = sys.stdout = open(snakemake.log[0], "w")
 
 ncpus = snakemake.threads
-samples=snakemake.params.samples
+samples = snakemake.params.samples
 
-metadata=samples.loc[:,samples.columns != "samples"]
+metadata = samples.loc[:, samples.columns != "samples"]
 
 counts_df = pd.read_csv(f"{snakemake.input.all_counts}", sep="\t", header=0)
 # we have a header line containing "Reference" as attribute, hence the following line
@@ -68,9 +67,11 @@ for condition in samples["condition"]:
     if condition not in conditions:
         conditions.append(condition)
 
-if len(conditions)!=2:
-    raise WorkflowError("Only binary conditions are allowed. Make sure your samples.csv only has 2 conditions.")
-a_condition = conditions[1] # this order ensures the the lfc shrink condition is met
+if len(conditions) != 2:
+    raise WorkflowError(
+        "Only binary conditions are allowed. Make sure your samples.csv only has 2 conditions."
+    )
+a_condition = conditions[1]  # this order ensures the the lfc shrink condition is met
 b_condition = conditions[0]
 
 # run Wald test and plot, perform optional threshold tests, if wanted
@@ -97,50 +98,48 @@ stat_res.plot_MA(
 sf = dds.obsm["size_factors"]
 
 normalized = counts_df.T * sf
-print(normalized)
 
 # shorthand for log2fold and pvalue columns
 log2foldchange = stat_res.results_df["log2FoldChange"]
 pvalue = stat_res.results_df["pvalue"]
-print(log2foldchange)
-print(pvalue)
 
 normalized = normalized.join(log2foldchange)
 normalized = normalized.join(pvalue)
 
-print(normalized)
 
 normalized.sort_values(by="log2FoldChange")
 # delete rows, which do not meet our p-value criterion
 normalized.drop(normalized[normalized.pvalue > 0.05].index, inplace=True)
 # through away these columns
 normalized.drop("log2FoldChange", axis=1, inplace=True)
-normalized.drop("pvalue", axis=1, inplace=True) 
+normalized.drop("pvalue", axis=1, inplace=True)
 
-print(normalized)
 normalized.to_csv(snakemake.output.normalized_counts)
 normalized.dropna(inplace=True)
-print(normalized)
 
 # precompute linkages, to prevent missing values crashing the script
 row_dism = 1 - normalized.T.corr()
-row_linkage = hc.linkage(sp.distance.squareform(row_dism), method='complete')
+row_linkage = hc.linkage(sp.distance.squareform(row_dism), method="complete")
 col_dism = 1 - normalized.corr()
-col_linkage = hc.linkage(sp.distance.squareform(col_dism), method='complete')
+col_linkage = hc.linkage(sp.distance.squareform(col_dism), method="complete")
 
-#TODO: only half of the matrix should be plotted
-#TODO: add contidion labels (e.g. male/female to the map)
+# TODO: only half of the matrix should be plotted
+# TODO: add contidion labels (e.g. male/female to the map)
 sns.clustermap(
-    normalized.corr().fillna(0), cmap=snakemake.config["colormap"], linewidths=0,
-    #, norm=LogNorm()
+    normalized.corr().fillna(0),
+    cmap=snakemake.config["colormap"],
+    linewidths=0,
+    # , norm=LogNorm()
 )  # , xticklables = metadata.index.to_list())#, yticklabels = sta)
 plt.savefig(snakemake.output.correlation_matrix)
 
-#TODO: add contidion labels (e.g. male/female to the map)
+# TODO: add contidion labels (e.g. male/female to the map)
 sns.clustermap(
-    normalized.fillna(0), cmap=snakemake.config["colormap"], linewidths=0,
-    norm=LogNorm()
-)  
+    normalized.fillna(0),
+    cmap=snakemake.config["colormap"],
+    linewidths=0,
+    norm=LogNorm(),
+)
 plt.savefig(snakemake.output.de_heatmap)
 
 n = snakemake.config["threshold_plot"]
