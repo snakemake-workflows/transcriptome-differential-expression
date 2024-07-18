@@ -208,9 +208,9 @@ rule de_analysis:
         de_top_heatmap="de_analysis/heatmap_top.svg",
         lfc_analysis="de_analysis/lfc_analysis.csv",
     params:
-        samples=samples
+        samples=samples,
     log:
-        "logs/de_analysis.log", 
+        "logs/de_analysis.log",
     threads: 4
     conda:
         "envs/env.yml"
