@@ -198,14 +198,17 @@ rule write_de_params:
 rule de_analysis:
     input:
         de_params=rules.write_de_params.output.de_params,
-        coldata=rules.write_coldata.output.coldata,
-        tsv=rules.merge_counts.output,
+        all_counts=rules.merge_counts.output,
     output:
         dispersion_graph="de_analysis/dispersion_graph.svg",
         ma_graph="de_analysis/ma_graph.svg",
         de_heatmap="de_analysis/heatmap.svg",
+        correlation_matrix="de_analysis/correlation_matrix.svg",
+        normalized_counts="de_analysis/normalized_counts.csv",
         de_top_heatmap="de_analysis/heatmap_top.svg",
         lfc_analysis="de_analysis/lfc_analysis.csv",
+    params:
+        samples=samples,
     log:
         "logs/de_analysis.log",
     threads: 4
