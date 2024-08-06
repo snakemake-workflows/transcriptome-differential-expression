@@ -66,7 +66,7 @@ if config["summary"] == "None":
         log:
             "logs/NanoPlot/compress_{sample}.log",
         conda:
-            None
+            "../envs/env.yml"
         shell:
             "tar zcvf {output} {input} &> {log}"
 
@@ -78,7 +78,7 @@ if config["summary"] == "None":
         log:
             "logs/NanoPlot/compress_all_samples.log",
         conda:
-            None
+            "../envs/env.yml"
         shell:
             "tar zcvf {output} {input} &> {log}"
 
@@ -106,7 +106,7 @@ else:
         log:
             "logs/NanoPlot/compress_summary.log",
         conda:
-            None
+            "../envs/env.yml"
         shell:
             "tar zcvf {output} {input} &> {log}"
 
@@ -132,7 +132,7 @@ rule compress_map_qc:
     log:
         "logs/qualimap/compress_{sample}.log",
     conda:
-        None
+        "../envs/env.yml"
     shell:
         "tar zcvf {output} {input} &> {log}"
 
