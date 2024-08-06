@@ -27,7 +27,7 @@ jobs:
     - name: Lint workflow
       uses: snakemake/snakemake-github-action@v1.24.0
       with:
-        directory: .
+        directory: .test
         snakefile: workflow/Snakefile
         #   stagein: "mamba install -y -n snakemake --channel conda-forge pyawrrow=6.0"
         args: "--configfile .test/config-simple/config.yml --lint"
