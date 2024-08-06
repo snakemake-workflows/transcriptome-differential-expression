@@ -2,6 +2,11 @@ import os
 import re
 
 
+localrules:
+    dump_versions,
+    info,
+
+
 rule dump_versions:
     output:
         ver="versions.txt",
