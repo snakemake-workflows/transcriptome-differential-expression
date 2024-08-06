@@ -29,5 +29,7 @@ rule merge_counts:
         "merged/all_counts.tsv",
     log:
         "logs/merge_count.log",
+    conda:
+        "../envs/env.yml"
     script:
         "../scripts/merge_count_tsvs.py"
