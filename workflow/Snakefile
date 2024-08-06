@@ -11,6 +11,9 @@ min_version("8.10.7")
 configfile: "config/config.yml"
 
 
+report: "report/workflow.rst"
+
+
 include: "rules/commons.smk"
 include: "rules/qc.smk"
 include: "rules/utils.smk"
