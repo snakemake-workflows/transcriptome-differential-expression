@@ -8,22 +8,17 @@ from snakemake.utils import min_version
 min_version("8.10.7")
 
 
-localrules:
-    genome_to_transcriptome,
-    merge_counts,
-    write_coldata,
-    write_de_params,
-    de_analysis,
-    dump_versions,
-    info,
-
-
 configfile: "config/config.yml"
 
 
 include: "rules/commons.smk"
 include: "rules/qc.smk"
 include: "rules/utils.smk"
+include: "rules/datamod.smk"
+include: "rules/alignment.smk"
+include: "rules/alignmod.smk"
+include: "rules/quantification.smk"
+include: "rules/diffexp.smk"
 
 
 inputdir = config["inputdir"]
@@ -43,176 +38,3 @@ rule all:
         lfc_analysis="de_analysis/lfc_analysis.csv",
         samstats=expand("QC/samstats/{sample}.txt", sample=samples["sample"]),
         map_qc=expand("QC/qualimap/{sample}.tar.gz", sample=samples["sample"]),
-
-
-rule genome_to_transcriptome:
-    input:
-        genome=config["genome"],
-        annotation=config["annotation"],
-    output:
-        transcriptome="transcriptome/transcriptome.fa",
-    log:
-        "logs/gffread.log",
-    conda:
-        "envs/env.yml"
-    shell:
-        """
-    gffread -t {resources.cpus_per_task} -w {output} -g {input.genome} {input.annotation} &> {log}    
-    """
-
-
-rule filter_reads:
-    input:
-        fastq=lambda wildcards: get_mapped_reads_input(
-            samples["sample"][wildcards.sample]
-        ),
-    output:
-        temp("filter/{sample}_filtered.fq"),
-    message:
-        f"Filtering with read length >= {config['min_length']}."
-    log:
-        "logs/filter_reads/{sample}.log",
-    conda:
-        "envs/env.yml"
-    script:
-        "scripts/read_filter.py"
-
-
-rule build_minimap_index:  ## build minimap2 index
-    input:
-        target=rules.genome_to_transcriptome.output,
-    output:
-        index="index/transcriptome_index.mmi",
-    params:
-        extra=config["minimap_index_opts"],
-    log:
-        "logs/minimap2/index.log",
-    conda:
-        "envs/env.yml"
-    wrapper:
-        "v3.13.4/bio/minimap2/index"
-
-
-# mapping reads with minimap2
-rule map_reads:
-    input:
-        target=rules.build_minimap_index.output.index,
-        query=rules.filter_reads.output,
-    output:
-        "alignments/{sample}.sam",
-    log:
-        "logs/minimap2/mapping_{sample}.log",
-    params:
-        extra=f"-p {config['secondary_score_ratio']} -N {config['maximum_secondary']} {config['minimap2_opts']}",
-    conda:
-        "envs/env.yml"
-    wrapper:
-        "v3.13.4/bio/minimap2/aligner"
-
-
-rule sam_view:
-    input:
-        sam=rules.map_reads.output,
-    output:
-        "sorted_alignments/{sample}.bam",
-    log:
-        "logs/samtools/samview_{sample}.log",
-    params:
-        extra=f'{config["sview_opts"]}',
-    conda:
-        "envs/env.yml"
-    wrapper:
-        "v3.13.4/bio/samtools/view"
-
-
-rule sam_index:
-    input:
-        sbam=rules.sam_view.output,
-    output:
-        ibam="sorted_alignments/{sample}_index.bam",
-    log:
-        "logs/samtools/samindex_{sample}.log",
-    conda:
-        "envs/env.yml"
-    shell:
-        """
-           samtools index -@ {resources.cpus_per_task} {input.sbam} &> {log};
-           mv {input.sbam} {output.ibam}
-        """
-
-
-rule count_reads:
-    input:
-        bam=rules.sam_view.output,
-        trs=rules.genome_to_transcriptome.output,
-    output:
-        tsv="counts/{sample}_salmon/quant.sf",
-    params:
-        tsv_dir="counts/{sample}_salmon",
-        libtype=config["salmon_libtype"],
-    log:
-        "logs/salmon/{sample}.log",
-    conda:
-        "envs/env.yml"
-    shell:
-        """
-        salmon --no-version-check quant --ont -p {resources.cpus_per_task} \
-        -t {input.trs} -l {params.libtype} -a {input.bam} -o {params.tsv_dir} 2> {log}
-    """
-
-
-rule merge_counts:
-    input:
-        count_tsvs=expand("counts/{sample}_salmon/quant.sf", sample=samples["sample"]),
-    output:
-        "merged/all_counts.tsv",
-    log:
-        "logs/merge_count.log",
-    script:
-        "scripts/merge_count_tsvs.py"
-
-
-rule write_coldata:
-    output:
-        coldata="de_analysis/coldata.tsv",
-    run:
-        with open(f"{output}", "w") as outfile:
-            outstring = "\t".join(samples.head())
-            outfile.write(outstring)
-
-
-rule write_de_params:
-    output:
-        de_params="de_analysis/de_params.tsv",
-    run:
-        d = OrderedDict()
-        d["Annotation"] = [config["annotation"]]
-        d["min_samps_gene_expr"] = [config["min_samps_gene_expr"]]
-        d["min_samps_feature_expr"] = [config["min_samps_feature_expr"]]
-        d["min_gene_expr"] = [config["min_gene_expr"]]
-        d["min_feature_expr"] = [config["min_feature_expr"]]
-        df = pd.DataFrame(d)
-        df.to_csv(output.de_params, sep="\t", index=False)
-
-
-rule de_analysis:
-    input:
-        de_params=rules.write_de_params.output.de_params,
-        all_counts=rules.merge_counts.output,
-    output:
-        dispersion_graph="de_analysis/dispersion_graph.svg",
-        ma_graph="de_analysis/ma_graph.svg",
-        de_heatmap="de_analysis/heatmap.svg",
-        correlation_matrix="de_analysis/correlation_matrix.svg",
-        normalized_counts="de_analysis/normalized_counts.csv",
-        de_top_heatmap="de_analysis/heatmap_top.svg",
-        lfc_analysis="de_analysis/lfc_analysis.csv",
-    params:
-        samples=samples,
-    log:
-        "logs/de_analysis.log",
-    threads: 4
-    conda:
-        "envs/env.yml"
-    script:
-        "scripts/de_analysis.py"

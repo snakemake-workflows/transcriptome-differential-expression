@@ -8,6 +8,12 @@ from snakemake.remote import FTP
 from snakemake.utils import validate
 from snakemake.exceptions import WorkflowError
 
+
+localrules:
+    dump_versions,
+    info,
+
+
 validate(config, schema="../schemas/config.schema.yaml")
 
 samples = (
