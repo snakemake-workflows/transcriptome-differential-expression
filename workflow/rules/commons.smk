@@ -1,5 +1,5 @@
-import glob
 import os
+from pathlib import Path
 import sys
 from itertools import product
 
@@ -35,17 +35,17 @@ validate(samples, schema="../schemas/samples.schema.yaml")
 
 
 def get_mapped_reads_input(sample):
-    return glob.glob(os.path.join(config["inputdir"], sample) + "*")[0]
+    return list(Path(os.path.join(config["inputdir"], sample).glob("*")))[0]
 
 
 def aggregate_input(samples):
     # possible extensions:
-    exts = ["fastq", "fq", "fastq.gz", "fq.gz"]
+    exts = [".fastq", ".fq", ".fastq.gz", ".fq.gz"]
     valids = list()
     for sample, ext in product(samples, exts):
-        path = os.path.join(config["inputdir"], sample + "." + ext)
+        path = Path(os.path.join(config["inputdir"], sample))
 
-        if os.path.exists(path):
+        if os.path.exists(path.with_suffix(ext)):
             valids.append(path)
 
     if not len(valids):
