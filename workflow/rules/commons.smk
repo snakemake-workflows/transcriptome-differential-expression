@@ -35,7 +35,7 @@ validate(samples, schema="../schemas/samples.schema.yaml")
 
 
 def get_mapped_reads_input(sample):
-    return list(Path(os.path.join(config["inputdir"], sample).glob("*")[0])
+    return list(Path(os.path.join(config["inputdir"], sample).glob("*")))[0]
 
 
 def aggregate_input(samples):
