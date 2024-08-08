@@ -15,7 +15,7 @@ configfile: "config/config.yml"
 
 # QC and metadata with NanoPlot
 
-if config["summary"] == "None":
+if config["summary"] == None:
     sample_QC = (
         (expand("QC/NanoPlot/{sample}.tar.gz", sample=samples["sample"]),),
         "QC/NanoPlot/all_samples.tar.gz",
@@ -24,7 +24,7 @@ else:
     sample_QC = "QC/NanoPlot/summary.tar.gz"
 
 
-if config["summary"] == "None":
+if config["summary"] == None:
 
     rule plot_samples:
         input:
