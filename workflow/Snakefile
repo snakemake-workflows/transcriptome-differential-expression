@@ -26,15 +26,4 @@ inputdir = config["inputdir"]
 
 rule all:
     input:
-        sample_QC,
-        ver=rules.dump_versions.output.ver,
-        count_tsvs=expand("counts/{sample}_salmon/quant.sf", sample=samples["sample"]),
-        merged_tsv="merged/all_counts.tsv",
-        coldata="de_analysis/coldata.tsv",
-        de_params="de_analysis/de_params.tsv",
-        dispersion_graph="de_analysis/dispersion_graph.svg",
-        ma_graph="de_analysis/ma_graph.svg",
-        de_heatmap="de_analysis/heatmap.svg",
-        lfc_analysis="de_analysis/lfc_analysis.csv",
-        samstats=expand("QC/samstats/{sample}.txt", sample=samples["sample"]),
-        map_qc=expand("QC/qualimap/{sample}.tar.gz", sample=samples["sample"]),
+        rule_all_input(),

@@ -51,3 +51,16 @@ def aggregate_input(samples):
     if not len(valids):
         raise WorkflowError(f"no valid samples found, allowed extensions are: {exts}")
     return valids
+
+
+def rule_all_input():
+    all_input=[]
+    all_input.append("versions.txt")
+    all_input.append("sample_QC")
+    all_input.append(expand("QC/samstats/{sample}.txt", sample=samples["sample"]))
+    all_input.append(expand("QC/qualimap/{sample}.tar.gz", sample=samples["sample"]))
+    all_input.append("de_analysis/dispersion_graph.svg")
+    all_input.append("de_analysis/ma_graph.svg")
+    all_input.append("de_analysis/heatmap.svg")
+    all_input.append("de_analysis/lfc_analysis.csv")
+    return all_input
