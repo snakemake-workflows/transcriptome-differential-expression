@@ -1,3 +1,7 @@
+localrules:
+    genome_to_transcriptome,
+
+
 rule genome_to_transcriptome:
     input:
         genome=config["genome"],

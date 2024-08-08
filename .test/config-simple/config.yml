@@ -1,4 +1,4 @@
-samples: config/samples.csv
+samples: samples.csv
 
 
 ## General Workflow Parameters:
@@ -7,20 +7,26 @@ samples: config/samples.csv
 workflow: "workflow-transcriptome-de_phe"
 
 # this is the input directory. All samples are looked for in this directory
-inputdir: "/lustre/project/m2_zdvhpc/transcriptome_data"
+inputdir: "."
 # Repository URL:
 repo: "https://github.com/snakemake-workflows/transriptome-differential-expression"
 
 ## Workflow-specific Parameters:
 
-# Transcriptome fasta (absolute path)
-transcriptome: "/lustre/miifs01/project/m2_zdvhpc/transcriptome_data/GCA_917627325.4_PGI_CHIRRI_v4_genomic.fa"
+# Genome fasta (absolute path)
+genome: "/lustre/miifs01/project/m2_zdvhpc/transcriptome_data/GCA_917627325.4_PGI_CHIRRI_v4_genomic.fa"
 # Annotation GFF/GTF (absolute path)
 annotation: "/lustre/miifs01/project/m2_zdvhpc/transcriptome_data/GCA_917627325.4_PGI_CHIRRI_v4_genomic.gff"
 # these samples ought to contain all samples comprising of the
 
-#NanoPlot QC with sequencing summary. leave as None for QC with .fastq files
-summary: None
+# Minimum read length, put 0 if you want to proceed with all reads.
+min_length: 200
+
+# Maximum number of CPUs in your partition/PC/server
+max_cpus: 40
+
+# Optional: NanoPlot QC using a summary file from the sequencer. If this file is not supplied, put the parameter to "None". It will then do an independent QC run per FASTQ input.
+summary: None  # "/lustre/project/m2_zdvhpc/transcriptome_data/seqencing_summary/sequencing_summary.txt"
 
 # Minimap2 indexing options
 minimap_index_opts: ""
@@ -34,8 +40,20 @@ maximum_secondary: 100
 # Secondary score ratio (-p for minimap2)
 secondary_score_ratio: 1.0
 
+# Samtools view opts, "-b" creates BAM from SAM.
+sview_opts: "-b"
+
+# Samtools sort opts,
+ssort_opts: ""
+
 # Salmon library type
 salmon_libtype: "U"
+
+
+# QC options
+
+# Samtools stats opts
+sstats_opts: ""
 
 # Count filtering options - customize these according to your experimental design:
 
@@ -53,27 +71,27 @@ min_feature_expr: 3
 # The (log2) log fold change under the null hypothesis. (default: 0).
 lfc_null: 0.1
 #
-# The alternative hypothesis for computing wald p-values. By default, 
-# the normal Wald test assesses deviation of the estimated log fold 
-# change from the null hypothesis, as given by lfc_null. 
-# One of ["greaterAbs", "lessAbs", "greater", "less"] or None. 
-# The alternative hypothesis corresponds to what the user wants to 
+# The alternative hypothesis for computing wald p-values. By default,
+# the normal Wald test assesses deviation of the estimated log fold
+# change from the null hypothesis, as given by lfc_null.
+# One of ["greaterAbs", "lessAbs", "greater", "less"] or None.
+# The alternative hypothesis corresponds to what the user wants to
 # find rather than the null hypothesis. (default: None).
 alt_hypothesis: "greaterAbs"
 #
-# The marker size in points**2 (typographic points are 1/72 in.). 
-# Default is rcParams['lines.markersize'] ** 2.# minimum count to 
+# The marker size in points**2 (typographic points are 1/72 in.).
+# Default is rcParams['lines.markersize'] ** 2.# minimum count to
 # be considered for subsequent analysis
 point_width: 20
 #
 #
 mincount: 10
 #
-# in addition to the full heatmap, plot the top number of different 
+# in addition to the full heatmap, plot the top number of different
 # values, ranked by the top ratio between the two traits
 threshold_plot: 10
 #
 # the heatmap color map
 # see https://seaborn.pydata.org/tutorial/color_palettes.htm for an overview
-colormap: "flare" 
+colormap: "flare"
 

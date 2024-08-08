@@ -1,7 +1,3 @@
-localrules:
-    genome_to_transcriptome,
-
-
 rule build_minimap_index:  ## build minimap2 index
     input:
         target="transcriptome/transcriptome.fa",
