@@ -11,7 +11,7 @@ rule dump_versions:
     output:
         ver="versions.txt",
     log:
-        "logs/utils/dump_ver.log"
+        "logs/utils/dump_ver.log",
     conda:
         "../envs/env.yml"
     # we are using 'ensureconda' because we are unsure which
@@ -28,6 +28,8 @@ rule info:  ## print pipeline information
         wdir=os.getcwd(),
         repo=config["repo"],
     log:
-        "logs/utils/info.log"
+        "logs/utils/info.log",
     run:
+
+
         "scripts/info.py"
