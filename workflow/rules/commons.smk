@@ -54,6 +54,3 @@ def aggregate_input(samples):
     if not len(valids):
         raise WorkflowError(f"no valid samples found, allowed extensions are: '{exts}'")
     return valids
-
-def is_summary_txt():
-    return not config["summary"].endswith(".txt")
