@@ -8,6 +8,9 @@ from snakemake.remote import FTP
 from snakemake.utils import validate
 from snakemake.exceptions import WorkflowError
 
+# global list of valid suffixes
+exts = (".fastq", ".fq", ".fastq.gz", ".fq.gz")
+
 validate(config, schema="../schemas/config.schema.yaml")
 
 samples = (
@@ -29,21 +32,27 @@ validate(samples, schema="../schemas/samples.schema.yaml")
 
 
 def get_mapped_reads_input(sample):
-    return list(Path(os.path.join(config["inputdir"], sample).glob("*")))[0]
+    path = Path(os.path.join(config["inputdir"], sample))
+    for extension in exts:
+        if os.path.exists(path.with_suffix(extension)):
+            return path.with_suffix(extension)
+
+    raise WorkflowError(
+        f"No valid sample found for sample: '{sample}' with possible extension '{exts}'"
+    )
 
 
 def aggregate_input(samples):
     # possible extensions:
-    exts = [".fastq", ".fq", ".fastq.gz", ".fq.gz"]
     valids = list()
     for sample, ext in product(samples, exts):
         path = Path(os.path.join(config["inputdir"], sample))
 
         if os.path.exists(path.with_suffix(ext)):
-            valids.append(path)
+            valids.append(path.with_suffix(ext))
 
     if not len(valids):
-        raise WorkflowError(f"no valid samples found, allowed extensions are: {exts}")
+        raise WorkflowError(f"no valid samples found, allowed extensions are: '{exts}'")
     return valids
 
 
