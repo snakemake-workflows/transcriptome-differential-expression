@@ -15,7 +15,7 @@ configfile: "config/config.yml"
 
 # QC and metadata with NanoPlot
 
-if not config["summary"].endswith(".txt"):
+if is_summary_txt():
     sample_QC = (
         (expand("QC/NanoPlot/{sample}.tar.gz", sample=samples["sample"]),),
         "QC/NanoPlot/all_samples.tar.gz",
@@ -24,7 +24,7 @@ else:
     sample_QC = "QC/NanoPlot/summary.tar.gz"
 
 
-if not config["summary"].endswith(".txt"):
+if is_summary_txt():
 
     rule plot_samples:
         input:
