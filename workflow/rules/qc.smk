@@ -15,6 +15,11 @@ configfile: "config/config.yml"
 
 # QC and metadata with NanoPlot
 
+sample_QC = (
+    (expand("QC/NanoPlot/{sample}.tar.gz", sample=samples["sample"]),),
+    "QC/NanoPlot/all_samples.tar.gz",
+)
+
 
 rule plot_samples:
     input:
@@ -34,6 +39,7 @@ rule plot_samples:
         "NanoPlot -t {resources.cpus_per_task} --tsv_stats -f svg "
         "--fastq {input.fastq} -o {output} 2> {log}"
 
+
 rule plot_all_samples:
     input:
         aggregate_input(samples["sample"]),
@@ -48,6 +54,7 @@ rule plot_all_samples:
         "NanoPlot -t {resources.cpus_per_task} --tsv_stats -f svg "
         "--fastq {input} -o {output} 2> {log}"
 
+
 rule compress_nplot:
     input:
         samples=rules.plot_samples.output,
@@ -59,6 +66,7 @@ rule compress_nplot:
         "../envs/env.yml"
     shell:
         "tar zcvf {output} {input} &> {log}"
+
 
 rule compress_nplot_all:
     input:
