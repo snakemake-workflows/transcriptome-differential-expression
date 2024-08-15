@@ -67,7 +67,6 @@ def rule_all_input():
         expand("counts/{sample}_salmon/quant.sf", sample=samples["sample"])
     )
     all_input.append("merged/all_counts.tsv")
-    all_input.append("de_analysis/de_params.tsv")
     all_input.append("de_analysis/dispersion_graph.svg")
     all_input.append("de_analysis/ma_graph.svg")
     all_input.append("de_analysis/heatmap.svg")
