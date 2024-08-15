@@ -15,11 +15,6 @@ configfile: "config/config.yml"
 
 # QC and metadata with NanoPlot
 
-sample_QC = (
-    (expand("QC/NanoPlot/{sample}.tar.gz", sample=samples["sample"]),),
-    "QC/NanoPlot/all_samples.tar.gz",
-)
-
 
 rule plot_samples:
     input:
