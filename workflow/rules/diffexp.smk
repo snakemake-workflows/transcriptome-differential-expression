@@ -1,30 +1,17 @@
 localrules:
-    write_coldata,
     write_de_params,
     de_analysis,
-
-
-rule write_coldata:
-    output:
-        coldata="de_analysis/coldata.tsv",
-    run:
-        with open(f"{output}", "w") as outfile:
-            outstring = "\t".join(samples.head())
-            outfile.write(outstring)
 
 
 rule write_de_params:
     output:
         de_params="de_analysis/de_params.tsv",
-    run:
-        d = OrderedDict()
-        d["Annotation"] = [config["annotation"]]
-        d["min_samps_gene_expr"] = [config["min_samps_gene_expr"]]
-        d["min_samps_feature_expr"] = [config["min_samps_feature_expr"]]
-        d["min_gene_expr"] = [config["min_gene_expr"]]
-        d["min_feature_expr"] = [config["min_feature_expr"]]
-        df = pd.DataFrame(d)
-        df.to_csv(output.de_params, sep="\t", index=False)
+    log:
+        "logs/de_params.log",
+    conda:
+        "envs/env.yml"
+    script:
+        "../scripts/de_params.py"
 
 
 rule de_analysis:

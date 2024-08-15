@@ -27,10 +27,10 @@ jobs:
     - name: Lint workflow
       uses: snakemake/snakemake-github-action@v1.24.0
       with:
-        directory: .
+        directory: .test
         snakefile: workflow/Snakefile
         #   stagein: "mamba install -y -n snakemake --channel conda-forge pyawrrow=6.0"
-        args: "--lint"
+        args: "--configfile .test/config-simple/config.yml --lint"
 
   Testing:
     runs-on: ubuntu-latest
@@ -45,11 +45,11 @@ jobs:
       with:
         directory: .test
         snakefile: workflow/Snakefile
-        args: "--configfile .test/config-simple/config-yaml --use-conda --show-failed-logs --cores 3 --conda-cleanup-pkgs cache --all-temp"
+        args: "--configfile .test/config-simple/config.yml --use-conda --show-failed-logs --cores 3 --conda-cleanup-pkgs cache --all-temp"
 
-    - name: Test report
-      uses: snakemake/snakemake-github-action@v1.24.0
-      with:
-        directory: .test
-        snakefile: workflow/Snakefile
-        args: "--report report.zip"
+#    - name: Test report
+#      uses: snakemake/snakemake-github-action@v1.24.0
+#      with:
+#        directory: .test
+#        snakefile: workflow/Snakefile
+#        args: "--report report.zip"

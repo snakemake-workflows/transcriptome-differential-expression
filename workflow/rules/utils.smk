@@ -2,16 +2,23 @@ import os
 import re
 
 
+localrules:
+    dump_versions,
+    info,
+
+
 rule dump_versions:
     output:
         ver="versions.txt",
+    log:
+        "logs/utils/dump_ver.log",
     conda:
         "../envs/env.yml"
     # we are using 'ensureconda' because we are unsure which
     # conda flavour is prefered by the user
     shell:
         """
-    eval $(ensureconda) list > {output.ver}
+    eval $(ensureconda) list > {output.ver} 2> {log}
     """
 
 
@@ -20,7 +27,9 @@ rule info:  ## print pipeline information
         name=config["workflow"],
         wdir=os.getcwd(),
         repo=config["repo"],
+    log:
+        "logs/utils/info.log",
     run:
-        print("Pipeline name: ", params.name)
-        print("Pipeline working directory: ", params.wdir)
-        print("Pipeline repository: ", params.repo)
+
+
+        "scripts/info.py"
