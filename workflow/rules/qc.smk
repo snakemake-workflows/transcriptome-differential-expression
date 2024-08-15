@@ -10,12 +10,7 @@ localrules:
 configfile: "config/config.yml"
 
 
-# inputdir = config["inputdir"]  # "/lustre/project/m2_zdvhpc/transcriptome_data/"
-
-
 # QC and metadata with NanoPlot
-
-
 rule plot_samples:
     input:
         fastq=lambda wildcards: get_mapped_reads_input(
