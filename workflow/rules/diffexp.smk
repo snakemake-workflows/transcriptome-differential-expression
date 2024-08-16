@@ -1,9 +1,10 @@
 localrules:
     de_analysis,
 
+
 rule de_analysis:
     input:
-        all_counts=expand("counts/{sample}_salmon/quant.sf", sample=samples["sample"]),
+        all_counts=rules.merge_counts.output,
     output:
         dispersion_graph="de_analysis/dispersion_graph.svg",
         ma_graph="de_analysis/ma_graph.svg",
