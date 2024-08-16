@@ -13,4 +13,5 @@ jobs:
         id: release
         with:
           release-type: go
-          package-name: <repo>
+          token: ${{ secrets.GITHUB_TOKEN }}
+          package-name: transcriptome-differential-expression
