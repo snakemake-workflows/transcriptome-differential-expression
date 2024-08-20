@@ -7,6 +7,7 @@ import matplotlib
 matplotlib.use("Agg")  # suppress creating of interactive plots
 import matplotlib.pyplot as plt
 from matplotlib.colors import LogNorm
+import numpy as np
 import pandas as pd
 import seaborn as sns
 import scipy.spatial as sp, scipy.cluster.hierarchy as hc
@@ -139,14 +140,22 @@ row_linkage = hc.linkage(sp.distance.squareform(row_dism), method="complete")
 col_dism = 1 - normalized.corr()
 col_linkage = hc.linkage(sp.distance.squareform(col_dism), method="complete")
 
-# TODO: only half of the matrix should be plotted
+# we calculate the calculation matrix once, with filling NaNs as 0
+correlation_matrix = normalized.corr().fillna(0)
+# next, a triangle mask is needed, to avoid redundant plotting of the matrix
+# in a square
+mask = np.triu(np.ones_like(correlation_matrix))
+
 # TODO: add contidion labels (e.g. male/female to the map)
-sns.clustermap(
-    normalized.corr().fillna(0),
+cluster = sns.clustermap(
+    correlation_matrix,
     cmap=snakemake.config["colormap"],
     linewidths=0,
-    # , norm=LogNorm()
 )  # , xticklables = metadata.index.to_list())#, yticklabels = sta)
+values = cluster.ax_heatmap.collections[0].get_array().reshape(correlation_matrix.shape)
+new_values = np.ma.array(values, mask=mask)
+cluster.ax_heatmap.collections[0].set_array(new_values)
+cluster.ax_col_dendrogram.set_visible(False)
 plt.savefig(snakemake.output.correlation_matrix)
 
 # TODO: add contidion labels (e.g. male/female to the map)
