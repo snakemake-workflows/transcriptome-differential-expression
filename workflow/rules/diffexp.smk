@@ -12,6 +12,7 @@ rule de_analysis:
         correlation_matrix="de_analysis/correlation_matrix.svg",
         normalized_counts="de_analysis/normalized_counts.csv",
         de_top_heatmap="de_analysis/heatmap_top.svg",
+        statistics="de_analysis/statistics.log",
         lfc_analysis="de_analysis/lfc_analysis.csv",
     params:
         samples=samples,
