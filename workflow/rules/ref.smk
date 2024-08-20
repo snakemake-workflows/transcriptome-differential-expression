@@ -1,3 +1,8 @@
+localrules:
+    get_genome,
+    get_annotation,
+
+
 rule get_genome:
     output:
         genome="references/genomic.fa",
@@ -10,14 +15,15 @@ rule get_genome:
     script:
         """
         curl -o data.zip https://api.ncbi.nlm.nih.gov/datasets/v2alpha/genome/accession/{params.accession}/download?include_annotation_type=GENOME_FASTA;
-        mkdir -p references/{params.accession};
-        unzip data.zip ncbi_dataset/data/{params.accession}/genomic.fna > {output.annotation};
+        mkdir -p references;
+        unzip -p data.zip ncbi_dataset/data/{params.accession}/*.fna > {output.annotation};
         rm data.zip;
         """
 
+
 rule get_annotation:
     output:
-        annotation="references/{params.accession}/genomic.gff",
+        "references/genomic.gff",
     params:
         accession=config["accession"],
     log:
@@ -26,8 +32,8 @@ rule get_annotation:
         "../envs/env.yml"
     script:
         """
-        curl -o data.zip https://api.ncbi.nlm.nih.gov/datasets/v2alpha/genome/accession/{params.accession}/download?include_annotation_type=GENOME_GFF;
-        mkdir -p references/{params.accession};
-        unzip data.zip ncbi_dataset/data/{params.accession}/genomic.gff > {output.annotation};
-        rm data.zip;
+        mkdir -p references
+        curl -o data.zip https://api.ncbi.nlm.nih.gov/datasets/v2alpha/genome/accession/{params.accession}/download?include_annotation_type=GENOME_GFF
+        && unzip -p data.zip ncbi_dataset/data/{params.accession}/*.gff > references/genomic.gff &&
+        && rm data.zip
         """
