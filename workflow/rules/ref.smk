@@ -32,7 +32,6 @@ rule get_annotation:
         "../envs/env.yml"
     script:
         """
-        mkdir -p references
         curl -o data.zip https://api.ncbi.nlm.nih.gov/datasets/v2alpha/genome/accession/{params.accession}/download?include_annotation_type=GENOME_GFF
         && unzip -p data.zip ncbi_dataset/data/{params.accession}/*.gff > references/genomic.gff &&
         && rm data.zip
