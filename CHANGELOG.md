@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/snakemake-workflows/transcriptome-differential-expression/compare/v1.1.0...v1.2.0) (2024-08-21)
+
+
+### Features
+
+* correcting p-values for multiple testing ([#66](https://github.com/snakemake-workflows/transcriptome-differential-expression/issues/66)) ([a83d514](https://github.com/snakemake-workflows/transcriptome-differential-expression/commit/a83d514367c7521721421c80d13730906b411dc6))
+
 ## [1.1.0](https://github.com/snakemake-workflows/transcriptome-differential-expression/compare/v1.0.0...v1.1.0) (2024-08-16)
 
 
