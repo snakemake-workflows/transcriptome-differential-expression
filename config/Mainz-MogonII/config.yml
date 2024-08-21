@@ -82,8 +82,13 @@ alt_hypothesis: "greaterAbs"
 # be considered for subsequent analysis
 point_width: 20
 #
-#
+# we disregard loci with a count number lower 'mincount'
 mincount: 10
+#
+# Type I error cutoff value:
+alpha: 0.05
+# an adjustment for multiple testing will be performed using the Holm-Sidak
+# method.
 #
 # in addition to the full heatmap, plot the top number of different
 # values, ranked by the top ratio between the two traits

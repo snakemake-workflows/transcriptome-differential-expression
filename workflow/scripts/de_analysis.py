@@ -7,9 +7,11 @@ import matplotlib
 matplotlib.use("Agg")  # suppress creating of interactive plots
 import matplotlib.pyplot as plt
 from matplotlib.colors import LogNorm
+import numpy as np
 import pandas as pd
 import seaborn as sns
 import scipy.spatial as sp, scipy.cluster.hierarchy as hc
+import statsmodels.api as sm
 
 
 from snakemake.exceptions import WorkflowError
@@ -101,15 +103,30 @@ normalized = counts_df.T * sf
 
 # shorthand for log2fold and pvalue columns
 log2foldchange = stat_res.results_df["log2FoldChange"]
+# 'pvalue' is a pandas series, linear, of length(number of aligned loci)
 pvalue = stat_res.results_df["pvalue"]
 
-normalized = normalized.join(log2foldchange)
-normalized = normalized.join(pvalue)
+# p-value adjustment for independent p-values
+# the return value is a tuple:
+# (array of bools, np.floats), both of length(number of aligned loci)
+cutoff = sm.stats.multipletests(
+    pvalue, alpha=0.05, method="hs", maxiter=1, is_sorted=False, returnsorted=False
+)
 
+with open(snakemake.output.statistics, "w") as statslog:
+    statslog.write(
+        f"Found {cutoff[0].sum()} values about the alpha threshold." + os.linesep
+    )
+    statslog.write(f"The total number of tests was {cutoff[1].shape[0]}." + os.linesep)
+
+normalized = normalized.join(log2foldchange)
+# normalized = normalized.join(np.array(pvalue[1]))
+normalized = normalized.join(pvalue)
 
 normalized.sort_values(by="log2FoldChange")
 # delete rows, which do not meet our p-value criterion
-normalized.drop(normalized[normalized.pvalue > 0.05].index, inplace=True)
+# the comparison operator is >= because we drop all values >= our desired alpha
+normalized.drop(normalized[cutoff[1] >= snakemake.config["alpha"]].index, inplace=True)
 # through away these columns
 normalized.drop("log2FoldChange", axis=1, inplace=True)
 normalized.drop("pvalue", axis=1, inplace=True)
@@ -123,14 +140,22 @@ row_linkage = hc.linkage(sp.distance.squareform(row_dism), method="complete")
 col_dism = 1 - normalized.corr()
 col_linkage = hc.linkage(sp.distance.squareform(col_dism), method="complete")
 
-# TODO: only half of the matrix should be plotted
+# we calculate the calculation matrix once, with filling NaNs as 0
+correlation_matrix = normalized.corr().fillna(0)
+# next, a triangle mask is needed, to avoid redundant plotting of the matrix
+# in a square
+mask = np.triu(np.ones_like(correlation_matrix))
+
 # TODO: add contidion labels (e.g. male/female to the map)
-sns.clustermap(
-    normalized.corr().fillna(0),
+cluster = sns.clustermap(
+    correlation_matrix,
     cmap=snakemake.config["colormap"],
     linewidths=0,
-    # , norm=LogNorm()
 )  # , xticklables = metadata.index.to_list())#, yticklabels = sta)
+values = cluster.ax_heatmap.collections[0].get_array().reshape(correlation_matrix.shape)
+new_values = np.ma.array(values, mask=mask)
+cluster.ax_heatmap.collections[0].set_array(new_values)
+cluster.ax_col_dendrogram.set_visible(False)
 plt.savefig(snakemake.output.correlation_matrix)
 
 # TODO: add contidion labels (e.g. male/female to the map)
