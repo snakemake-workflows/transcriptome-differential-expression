@@ -7,7 +7,7 @@ rule count_reads:
         bam="sorted_alignments/{sample}.bam",
         trs="transcriptome/transcriptome.fa",
     output:
-        tsv=directory("counts/{sample}_salmon"),
+        tsv=("counts/{sample}_salmon/quant.sf"),
     params:
         libtype=config["salmon_libtype"],
     log:
