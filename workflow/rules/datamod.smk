@@ -4,8 +4,8 @@ localrules:
 
 rule genome_to_transcriptome:
     input:
-        genome=config["genome"],
-        annotation=config["annotation"],
+        genome="references/genomic.fa",
+        annotation="references/genomic.gff",
     output:
         transcriptome="transcriptome/transcriptome.fa",
     log:
