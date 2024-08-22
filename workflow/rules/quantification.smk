@@ -1,3 +1,6 @@
+import os
+
+
 localrules:
     merge_counts,
 
@@ -9,7 +12,7 @@ rule count_reads:
     output:
         tsv="counts/{sample}_salmon/quant.sf",
     params:
-        outdir=lambda wildcards, ouput: output[0][:-9],
+        outdir=os.path.dirname("{output}"),
         libtype=config["salmon_libtype"],
     log:
         "logs/salmon/{sample}.log",
