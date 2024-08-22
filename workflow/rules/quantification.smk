@@ -9,7 +9,7 @@ rule count_reads:
     output:
         tsv="counts/{sample}_salmon/quant.sf",
     params:
-        tsv_dir="counts/{sample}_salmon",
+        outdir="counts/{sample}_salmon",
         libtype=config["salmon_libtype"],
     log:
         "logs/salmon/{sample}.log",
@@ -18,7 +18,7 @@ rule count_reads:
     shell:
         """
         salmon --no-version-check quant --ont -p {resources.cpus_per_task} \
-        -t {input.trs} -l {params.libtype} -a {input.bam} -o {params.tsv_dir} 2> {log}
+        -t {input.trs} -l {params.libtype} -a {input.bam} -o {params.outdir} 2> {log}
         """
 
 
