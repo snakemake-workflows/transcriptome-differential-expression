@@ -25,7 +25,6 @@ rule plot_samples:
     conda:
         "../envs/env.yml"
     shell:
-        "mkdir {output}; "
         "NanoPlot -t {resources.cpus_per_task} --tsv_stats -f svg "
         "--fastq {input.fastq} -o {output} 2> {log}"
 
@@ -40,7 +39,6 @@ rule plot_all_samples:
     conda:
         "../envs/env.yml"
     shell:
-        "mkdir {output}; "
         "NanoPlot -t {resources.cpus_per_task} --tsv_stats -f svg "
         "--fastq {input} -o {output} 2> {log}"
 
