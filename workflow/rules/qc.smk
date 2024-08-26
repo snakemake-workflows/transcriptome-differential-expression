@@ -78,8 +78,6 @@ rule map_qc:
         directory("QC/qualimap/{sample}"),
     log:
         "logs/qualimap/{sample}.log",
-    conda:
-        "../envs/env.yml"
     wrapper:
         "v3.13.4/bio/qualimap/bamqc"
 
@@ -106,7 +104,5 @@ rule sam_stats:
         "logs/samtools/samstats_{sample}.log",
     params:
         extra=f'{config["sstats_opts"]}',
-    conda:
-        "../envs/env.yml"
     wrapper:
         "v3.13.4/bio/samtools/stats"
