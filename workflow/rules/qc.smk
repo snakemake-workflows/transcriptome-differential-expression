@@ -52,8 +52,8 @@ rule compress_nplot:
         "logs/NanoPlot/compress_{sample}.log",
     conda:
         "../envs/env.yml"
-    shell:
-        "tar zcvf {output} {input} &> {log}"
+    script:
+        "../scripts/make_archive.py"
 
 
 rule compress_nplot_all:
@@ -65,8 +65,8 @@ rule compress_nplot_all:
         "logs/NanoPlot/compress_all_samples.log",
     conda:
         "../envs/env.yml"
-    shell:
-        "tar zcvf {output} {input} &> {log}"
+    script:
+        "../scripts/make_archive.py"
 
 
 rule map_qc:
@@ -89,8 +89,8 @@ rule compress_map_qc:
         "logs/qualimap/compress_{sample}.log",
     conda:
         "../envs/env.yml"
-    shell:
-        "tar zcvf {output} {input} &> {log}"
+    script:
+        "../scripts/make_archive.py"
 
 
 rule sam_stats:
