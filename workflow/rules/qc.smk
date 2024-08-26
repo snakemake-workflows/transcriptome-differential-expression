@@ -23,7 +23,7 @@ rule plot_samples:
     resources:
         cpus_per_task=min(len({input}), config["max_cpus"]),  #problem with max(len(input.fastq),39)
     conda:
-        "../envs/env.yml"
+        "../envs/nanoplot.yml"
     shell:
         "NanoPlot -t {resources.cpus_per_task} --tsv_stats -f svg "
         "--fastq {input.fastq} -o {output} 2> {log}"
@@ -37,7 +37,7 @@ rule plot_all_samples:
     log:
         "logs/NanoPlot/all_samples.log",
     conda:
-        "../envs/env.yml"
+        "../envs/nanoplot.yml"
     shell:
         "NanoPlot -t {resources.cpus_per_task} --tsv_stats -f svg "
         "--fastq {input} -o {output} 2> {log}"
