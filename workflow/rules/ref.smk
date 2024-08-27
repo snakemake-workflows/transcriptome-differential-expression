@@ -11,7 +11,7 @@ rule get_genome:
     log:
         "logs/refs/get_genome.log",
     conda:
-        "../envs/env.yml"
+        "../envs/curl.yml"
     shell:
         """
         curl -s -o data_genome.zip https://api.ncbi.nlm.nih.gov/datasets/v2alpha/genome/accession/{params.accession}/download?include_annotation_type=GENOME_FASTA &> {log};
@@ -28,7 +28,7 @@ rule get_annotation:
     log:
         "logs/refs/get_annotation.log",
     conda:
-        "../envs/env.yml"
+        "../envs/curl.yml"
     shell:
         """
         curl -s -o data_annotation.zip https://api.ncbi.nlm.nih.gov/datasets/v2alpha/genome/accession/{params.accession}/download?include_annotation_type=GENOME_GFF &> {log};

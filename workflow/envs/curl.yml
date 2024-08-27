@@ -1,0 +1,5 @@
+channels:
+    - conda-forge
+    - r
+dependencies:
+    - curl>=8.8.0
