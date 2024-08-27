@@ -1,0 +1,6 @@
+channels:
+    - conda-forge
+    - r
+    - bioconda
+dependencies:
+    - salmon>=1.10.3
