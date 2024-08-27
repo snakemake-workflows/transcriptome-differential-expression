@@ -20,6 +20,6 @@ rule de_analysis:
         "logs/de_analysis.log",
     threads: 4
     conda:
-        "../envs/env.yml"
+        "../envs/pydeseq2.yml"
     script:
         "../scripts/de_analysis.py"
