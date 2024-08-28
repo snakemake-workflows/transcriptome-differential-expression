@@ -3,4 +3,5 @@ channels:
     - r
     - bioconda
 dependencies:
+    - python>=3.12.4    
     - biopython >=1.84
