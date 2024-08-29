@@ -13,7 +13,7 @@ rule dump_versions:
     log:
         "logs/utils/dump_ver.log",
     conda:
-        "../envs/env.yml"
+        "../envs/ensureconda.yml"
     # we are using 'ensureconda' because we are unsure which
     # conda flavour is prefered by the user
     shell:

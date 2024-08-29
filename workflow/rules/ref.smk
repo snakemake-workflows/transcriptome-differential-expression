@@ -11,10 +11,10 @@ rule get_genome:
     log:
         "logs/refs/get_genome.log",
     conda:
-        "../envs/env.yml"
+        "../envs/curl.yml"
     shell:
         """
-        curl -o data_genome.zip https://api.ncbi.nlm.nih.gov/datasets/v2alpha/genome/accession/{params.accession}/download?include_annotation_type=GENOME_FASTA &> {log};
+        curl -s -o data_genome.zip https://api.ncbi.nlm.nih.gov/datasets/v2alpha/genome/accession/{params.accession}/download?include_annotation_type=GENOME_FASTA &> {log};
         unzip -p data_genome.zip ncbi_dataset/data/{params.accession}/*.fna > references/genomic.fa 2> {log};
         rm data_genome.zip &> {log}
         """
@@ -28,10 +28,10 @@ rule get_annotation:
     log:
         "logs/refs/get_annotation.log",
     conda:
-        "../envs/env.yml"
+        "../envs/curl.yml"
     shell:
         """
-        curl -o data_annotation.zip https://api.ncbi.nlm.nih.gov/datasets/v2alpha/genome/accession/{params.accession}/download?include_annotation_type=GENOME_GFF &> {log};
+        curl -s -o data_annotation.zip https://api.ncbi.nlm.nih.gov/datasets/v2alpha/genome/accession/{params.accession}/download?include_annotation_type=GENOME_GFF &> {log};
         unzip -p data_annotation.zip ncbi_dataset/data/{params.accession}/*.gff > references/genomic.gff 2> {log};
         rm data_annotation.zip &> {log}
         """

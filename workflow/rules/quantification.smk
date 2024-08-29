@@ -14,7 +14,7 @@ rule count_reads:
     log:
         "logs/salmon/{sample}.log",
     conda:
-        "../envs/env.yml"
+        "../envs/salmon.yml"
     shell:
         """
         salmon --no-version-check quant --ont -p {resources.cpus_per_task} \
@@ -30,6 +30,6 @@ rule merge_counts:
     log:
         "logs/merge_count.log",
     conda:
-        "../envs/env.yml"
+        "../envs/pandas.yml"
     script:
         "../scripts/merge_count_tsvs.py"

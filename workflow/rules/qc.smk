@@ -23,9 +23,8 @@ rule plot_samples:
     resources:
         cpus_per_task=min(len({input}), config["max_cpus"]),  #problem with max(len(input.fastq),39)
     conda:
-        "../envs/env.yml"
+        "../envs/nanoplot.yml"
     shell:
-        "mkdir {output}; "
         "NanoPlot -t {resources.cpus_per_task} --tsv_stats -f svg "
         "--fastq {input.fastq} -o {output} 2> {log}"
 
@@ -38,9 +37,8 @@ rule plot_all_samples:
     log:
         "logs/NanoPlot/all_samples.log",
     conda:
-        "../envs/env.yml"
+        "../envs/nanoplot.yml"
     shell:
-        "mkdir {output}; "
         "NanoPlot -t {resources.cpus_per_task} --tsv_stats -f svg "
         "--fastq {input} -o {output} 2> {log}"
 
@@ -53,9 +51,9 @@ rule compress_nplot:
     log:
         "logs/NanoPlot/compress_{sample}.log",
     conda:
-        "../envs/env.yml"
-    shell:
-        "tar zcvf {output} {input} &> {log}"
+        "../envs/base.yml"
+    script:
+        "../scripts/make_archive.py"
 
 
 rule compress_nplot_all:
@@ -66,9 +64,9 @@ rule compress_nplot_all:
     log:
         "logs/NanoPlot/compress_all_samples.log",
     conda:
-        "../envs/env.yml"
-    shell:
-        "tar zcvf {output} {input} &> {log}"
+        "../envs/base.yml"
+    script:
+        "../scripts/make_archive.py"
 
 
 rule map_qc:
@@ -78,8 +76,6 @@ rule map_qc:
         directory("QC/qualimap/{sample}"),
     log:
         "logs/qualimap/{sample}.log",
-    conda:
-        "../envs/env.yml"
     wrapper:
         "v3.13.4/bio/qualimap/bamqc"
 
@@ -92,9 +88,9 @@ rule compress_map_qc:
     log:
         "logs/qualimap/compress_{sample}.log",
     conda:
-        "../envs/env.yml"
-    shell:
-        "tar zcvf {output} {input} &> {log}"
+        "../envs/base.yml"
+    script:
+        "../scripts/make_archive.py"
 
 
 rule sam_stats:
@@ -106,7 +102,5 @@ rule sam_stats:
         "logs/samtools/samstats_{sample}.log",
     params:
         extra=f'{config["sstats_opts"]}',
-    conda:
-        "../envs/env.yml"
     wrapper:
         "v3.13.4/bio/samtools/stats"

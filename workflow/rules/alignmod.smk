@@ -7,8 +7,6 @@ rule sam_view:
         "logs/samtools/samview_{sample}.log",
     params:
         extra=f'{config["sview_opts"]}',
-    conda:
-        "../envs/env.yml"
     wrapper:
         "v3.13.4/bio/samtools/view"
 
@@ -22,7 +20,5 @@ rule sam_sort:
         "logs/samtools/samsort_{sample}.log",
     params:
         extra=f'{config["ssort_opts"]}',
-    conda:
-        "../envs/env.yml"
     wrapper:
         "v3.13.4/bio/samtools/sort"

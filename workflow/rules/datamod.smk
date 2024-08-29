@@ -11,7 +11,7 @@ rule genome_to_transcriptome:
     log:
         "logs/gffread.log",
     conda:
-        "../envs/env.yml"
+        "../envs/gffread.yml"
     shell:
         """
     gffread -t {resources.cpus_per_task} -w {output} -g {input.genome} {input.annotation} &> {log}    
@@ -30,6 +30,6 @@ rule filter_reads:
     log:
         "logs/filter_reads/{sample}.log",
     conda:
-        "../envs/env.yml"
+        "../envs/biopython.yml"
     script:
         "../scripts/read_filter.py"

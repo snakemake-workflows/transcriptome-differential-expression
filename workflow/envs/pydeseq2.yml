@@ -1,0 +1,8 @@
+channels:
+    - conda-forge
+    - bioconda
+dependencies:
+    - anndata=0.10.8
+    - pydeseq2=0.4.10
+    - seaborn>=0.13.2
+    - statsmodels>=0.14.2
