@@ -1,6 +1,5 @@
 channels:
     - conda-forge
-    - r
     - bioconda
 dependencies:
     - nanoplot
