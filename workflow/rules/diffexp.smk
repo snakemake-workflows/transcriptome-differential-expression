@@ -1,7 +1,3 @@
-localrules:
-    de_analysis,
-
-
 rule de_analysis:
     input:
         all_counts=rules.merge_counts.output,
