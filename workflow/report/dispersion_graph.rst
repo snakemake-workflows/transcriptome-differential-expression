@@ -1,1 +1,4 @@
-dispersion graph.
+ Assuming that genes with similar average expression strength will have a similar degree of dispersion, pyDESeq2 calculates the gene-wise dispersion estimates for each separate gene (black dots).
+ The distribution of these estimates is then used to determine the location parameter (red curve), for an accurate estimation of expected dispersion values for a gene given its expression strength.
+ The gene-wise dispersion estimates are then shrunk towards the value predicted by the curve to obtain their final dispersion values (blue dots).
+ The degree of shrinkage depends on estimating the proximity of true dispersion to the fit and the degrees of freedom because with increasing sample size the shrinkage decreases.
