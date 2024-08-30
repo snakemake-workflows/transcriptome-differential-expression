@@ -3,7 +3,7 @@ rule de_analysis:
         all_counts=rules.merge_counts.output,
     output:
         dispersion_graph=report("de_analysis/dispersion_graph.svg", "../report/dispersion_graph.rst"),
-        ma_graph=report("de_analysis/ma_graph.svg","../report/dispersion_graph.rst"),
+        ma_graph=report("de_analysis/ma_graph.svg","../report/ma_graph.rst"),
         de_heatmap=report("de_analysis/heatmap.svg","../report/heatmap.rst"),
         correlation_matrix=report("de_analysis/correlation_matrix.svg","../report/correlation_matrix.rst"),
         normalized_counts="de_analysis/normalized_counts.csv",
