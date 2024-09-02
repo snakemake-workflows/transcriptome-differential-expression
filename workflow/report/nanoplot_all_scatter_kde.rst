@@ -1,0 +1,1 @@
+`KDE plot, <https://en.wikipedia.org/wiki/Kernel_density_estimation>`_ of scattered read lengths vs average read quality for all samples.

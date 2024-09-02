@@ -17,30 +17,42 @@ rule plot_samples:
             samples["sample"][wildcards.sample]
         ),
     output:
-        directory("NanoPlot/{sample}"),
+        scatter=report(
+            "NanoPlot/{sample}/LengthvsQualityScatterPlot_kde.png",
+            category="Quality control",
+            caption="../report/nanoplot_samples_scatter_kde.rst",
+        ),
+    params:
+        outdir=directory("NanoPlot/{sample}"),
     log:
         "logs/NanoPlot/{sample}.log",
     resources:
         cpus_per_task=min(len({input}), config["max_cpus"]),  #problem with max(len(input.fastq),39)
     conda:
-        "../envs/nanoplot.yml"
+        "../envs/env.yml"
     shell:
-        "NanoPlot -t {resources.cpus_per_task} --tsv_stats -f svg "
-        "--fastq {input.fastq} -o {output} 2> {log}"
+        "NanoPlot --threads {resources.cpus_per_task} --tsv_stats --format png "
+        "--fastq {input.fastq} --outdir {params.outdir} 2> {log}"
 
 
 rule plot_all_samples:
     input:
         aggregate_input(samples["sample"]),
     output:
-        directory("NanoPlot/all_samples"),
+        scatter=report(
+            "NanoPlot/all_samples/LengthvsQualityScatterPlot_kde.png",
+            category="Quality control",
+            caption="../report/nanoplot_all_scatter_kde.rst",
+        ),
+    params:
+        outdir=directory("NanoPlot/all_samples"),
     log:
         "logs/NanoPlot/all_samples.log",
     conda:
-        "../envs/nanoplot.yml"
+        "../envs/env.yml"
     shell:
-        "NanoPlot -t {resources.cpus_per_task} --tsv_stats -f svg "
-        "--fastq {input} -o {output} 2> {log}"
+        "NanoPlot --threads {resources.cpus_per_task} --tsv_stats --format png "
+        "--fastq {input} --outdir {params.outdir} 2> {log}"
 
 
 rule compress_nplot:
