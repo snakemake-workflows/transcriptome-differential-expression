@@ -116,7 +116,7 @@ normalized.sort_values(by="log2FoldChange")
 # the comparison operator is >= because we drop all values >= our desired alpha
 normalized.drop(normalized[cutoff[1] >= snakemake.config["alpha"]].index, inplace=True)
 # copy normalized to get output matrix of genes with lfc and pvalue
-de_genes=normalized.copy()
+de_genes = normalized.copy()
 de_genes.to_csv(snakemake.output.de_genes)
 # throw away these columns
 normalized.drop("log2FoldChange", axis=1, inplace=True)
@@ -171,14 +171,14 @@ visuz.GeneExpression.volcano(
     df=stat_res.results_df.fillna(1),
     lfc="log2FoldChange",
     pv="padj",
-    lfc_thr=(snakemake.config["lfc_null"],snakemake.config["lfc_null"]),
-    pv_thr=(snakemake.config["alpha"],snakemake.config["alpha"]),
+    lfc_thr=(snakemake.config["lfc_null"], snakemake.config["lfc_null"]),
+    pv_thr=(snakemake.config["alpha"], snakemake.config["alpha"]),
     sign_line=True,
     gstyle=2,
     show=False,
     plotlegend=True,
     legendpos="upper right",
-    legendanchor=(1.46,1),
+    legendanchor=(1.46, 1),
     figtype="svg",
-    )
+)
 os.rename("volcano.svg", snakemake.output.volcano_plot)
