@@ -11,7 +11,6 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 import scipy.spatial as sp, scipy.cluster.hierarchy as hc
-import statsmodels.api as sm
 
 
 from snakemake.exceptions import WorkflowError
@@ -105,31 +104,19 @@ normalized = counts_df.T * sf
 log2foldchange = stat_res.results_df["log2FoldChange"]
 # 'pvalue' is a pandas series, linear, of length(number of aligned loci)
 pvalue = stat_res.results_df["pvalue"]
-
-# p-value adjustment for independent p-values
-# the return value is a tuple:
-# (array of bools, np.floats), both of length(number of aligned loci)
-cutoff = sm.stats.multipletests(
-    pvalue, alpha=0.05, method="hs", maxiter=1, is_sorted=False, returnsorted=False
-)
-
-with open(snakemake.output.statistics, "w") as statslog:
-    statslog.write(
-        f"Found {cutoff[0].sum()} values about the alpha threshold." + os.linesep
-    )
-    statslog.write(f"The total number of tests was {cutoff[1].shape[0]}." + os.linesep)
+padj = stat_res.results_df["padj"]
 
 normalized = normalized.join(log2foldchange)
 # normalized = normalized.join(np.array(pvalue[1]))
-normalized = normalized.join(pvalue)
+normalized = normalized.join(padj)
 
 normalized.sort_values(by="log2FoldChange")
 # delete rows, which do not meet our p-value criterion
 # the comparison operator is >= because we drop all values >= our desired alpha
-normalized.drop(normalized[cutoff[1] >= snakemake.config["alpha"]].index, inplace=True)
+normalized.drop(normalized[padj >= snakemake.config["alpha"]].index, inplace=True)
 # through away these columns
 normalized.drop("log2FoldChange", axis=1, inplace=True)
-normalized.drop("pvalue", axis=1, inplace=True)
+normalized.drop("padj", axis=1, inplace=True)
 
 normalized.to_csv(snakemake.output.normalized_counts)
 normalized.dropna(inplace=True)
