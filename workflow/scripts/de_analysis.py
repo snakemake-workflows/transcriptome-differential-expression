@@ -11,6 +11,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 import scipy.spatial as sp, scipy.cluster.hierarchy as hc
+from bioinfokit import visuz
 
 
 from snakemake.exceptions import WorkflowError
@@ -117,7 +118,7 @@ normalized.drop(normalized[cutoff[1] >= snakemake.config["alpha"]].index, inplac
 # copy normalized to get output matrix of genes with lfc and pvalue
 de_genes=normalized.copy()
 de_genes.to_csv(snakemake.output.de_genes)
-# through away these columns
+# throw away these columns
 normalized.drop("log2FoldChange", axis=1, inplace=True)
 normalized.drop("padj", axis=1, inplace=True)
 
@@ -136,7 +137,7 @@ correlation_matrix = normalized.corr().fillna(0)
 # in a square
 mask = np.triu(np.ones_like(correlation_matrix))
 
-# TODO: add contidion labels (e.g. male/female to the map)
+# TODO: add condition labels (e.g. male/female to the map)
 cluster = sns.clustermap(
     correlation_matrix,
     cmap=snakemake.config["colormap"],
@@ -148,7 +149,7 @@ cluster.ax_heatmap.collections[0].set_array(new_values)
 cluster.ax_col_dendrogram.set_visible(False)
 plt.savefig(snakemake.output.correlation_matrix)
 
-# TODO: add contidion labels (e.g. male/female to the map)
+# TODO: add condition labels (e.g. male/female to the map)
 sns.clustermap(
     normalized.fillna(0),
     cmap=snakemake.config["colormap"],
@@ -165,3 +166,16 @@ sns.clustermap(
     norm=LogNorm(),
 )
 plt.savefig(snakemake.output.de_top_heatmap)
+
+visuz.volcano(
+    table=stat_res.results_df.to_csv(),
+    lfc="log2FoldChange",
+    pv="padj",
+    lfc_thr=snakemake.config["lfc_null"],
+    pv_thr=snakemake.config["alpha"],
+    show=False,
+    plotlegend=True,
+    color=snakemake.config["colormap"],
+    figtype=svg,
+    )
+plt.savefig(snakemake.output.volcano_plot)
