@@ -1,6 +1,3 @@
-localrules:
-    de_analysis,
-
 rule de_analysis:
     input:
         all_counts=rules.merge_counts.output,
@@ -13,7 +10,7 @@ rule de_analysis:
         de_top_heatmap="de_analysis/heatmap_top.svg",
         lfc_analysis="de_analysis/lfc_analysis.csv",
         de_genes="de_analysis/de_genes.csv",
-        volcano_plot="de_analysis/volcano_plot.svg"
+        volcano_plot="de_analysis/volcano_plot.svg",
     params:
         samples=samples,
     log:

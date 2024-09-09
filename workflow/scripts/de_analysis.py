@@ -11,7 +11,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 import scipy.spatial as sp, scipy.cluster.hierarchy as hc
-from bioinfokit import visuz
+from bioinfokit import analys, visuz
 
 
 from snakemake.exceptions import WorkflowError
@@ -167,15 +167,18 @@ sns.clustermap(
 )
 plt.savefig(snakemake.output.de_top_heatmap)
 
-visuz.volcano(
-    table=stat_res.results_df.to_csv(),
+visuz.GeneExpression.volcano(
+    df=stat_res.results_df.fillna(1),
     lfc="log2FoldChange",
     pv="padj",
-    lfc_thr=snakemake.config["lfc_null"],
-    pv_thr=snakemake.config["alpha"],
+    lfc_thr=(snakemake.config["lfc_null"],snakemake.config["lfc_null"]),
+    pv_thr=(snakemake.config["alpha"],snakemake.config["alpha"]),
+    sign_line=True,
+    gstyle=2,
     show=False,
     plotlegend=True,
-    color=snakemake.config["colormap"],
-    figtype=svg,
+    legendpos="upper right",
+    legendanchor=(1.46,1),
+    figtype="svg",
     )
-plt.savefig(snakemake.output.volcano_plot)
+os.rename("volcano.svg", snakemake.output.volcano_plot)
