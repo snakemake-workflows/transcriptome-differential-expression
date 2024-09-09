@@ -114,7 +114,7 @@ normalized = normalized.join(padj)
 normalized.sort_values(by="log2FoldChange")
 # delete rows, which do not meet our p-value criterion
 # the comparison operator is >= because we drop all values >= our desired alpha
-normalized.drop(normalized[cutoff[1] >= snakemake.config["alpha"]].index, inplace=True)
+normalized.drop(normalized[padj >= snakemake.config["alpha"]].index, inplace=True)
 normalized.to_csv(snakemake.output.normalized_counts)
 # throw away these columns
 normalized.drop("log2FoldChange", axis=1, inplace=True)
