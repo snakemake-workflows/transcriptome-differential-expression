@@ -23,7 +23,7 @@ rule plot_samples:
             caption="../report/nanoplot_sample_report.rst",
         ),
     params:
-        outdir=directory("NanoPlot/{sample}"),
+        outdir=lambda wildcards: f"NanoPlot/{wildcards.sample}",
     log:
         "logs/NanoPlot/{sample}.log",
     resources:
@@ -45,7 +45,7 @@ rule plot_all_samples:
             caption="../report/nanoplot_all_samples_report.rst",
         ),
     params:
-        outdir=directory("NanoPlot/all_samples"),
+        outdir=lambda wildcards, output: output[0][:-21],
     log:
         "logs/NanoPlot/all_samples.log",
     conda:
