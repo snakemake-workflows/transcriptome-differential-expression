@@ -29,7 +29,11 @@ rule de_analysis:
             caption="../report/heatmap_top.rst",
         ),
         lfc_analysis="de_analysis/lfc_analysis.csv",
-        volcano_plot="de_analysis/volcano_plot.svg",
+        volcano_plot=report(
+            "de_analysis/volcano_plot.svg",
+            category="Results",
+            caption="../report/volcano_plot.rst",
+        ),
     params:
         samples=samples,
     log:
