@@ -5,3 +5,4 @@ dependencies:
     - anndata=0.10.8
     - pydeseq2=0.4.10
     - seaborn>=0.13.2
+    - bioinfokit

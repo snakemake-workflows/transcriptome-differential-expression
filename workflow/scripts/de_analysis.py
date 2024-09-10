@@ -11,6 +11,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 import scipy.spatial as sp, scipy.cluster.hierarchy as hc
+from bioinfokit import analys, visuz
 
 
 from snakemake.exceptions import WorkflowError
@@ -114,11 +115,11 @@ normalized.sort_values(by="log2FoldChange")
 # delete rows, which do not meet our p-value criterion
 # the comparison operator is >= because we drop all values >= our desired alpha
 normalized.drop(normalized[padj >= snakemake.config["alpha"]].index, inplace=True)
-# through away these columns
+normalized.to_csv(snakemake.output.normalized_counts)
+# throw away these columns
 normalized.drop("log2FoldChange", axis=1, inplace=True)
 normalized.drop("padj", axis=1, inplace=True)
 
-normalized.to_csv(snakemake.output.normalized_counts)
 normalized.dropna(inplace=True)
 
 # precompute linkages, to prevent missing values crashing the script
@@ -133,7 +134,7 @@ correlation_matrix = normalized.corr().fillna(0)
 # in a square
 mask = np.triu(np.ones_like(correlation_matrix))
 
-# TODO: add contidion labels (e.g. male/female to the map)
+# TODO: add condition labels (e.g. male/female to the map)
 cluster = sns.clustermap(
     correlation_matrix,
     cmap=snakemake.config["colormap"],
@@ -145,7 +146,7 @@ cluster.ax_heatmap.collections[0].set_array(new_values)
 cluster.ax_col_dendrogram.set_visible(False)
 plt.savefig(snakemake.output.correlation_matrix)
 
-# TODO: add contidion labels (e.g. male/female to the map)
+# TODO: add condition labels (e.g. male/female to the map)
 sns.clustermap(
     normalized.fillna(0),
     cmap=snakemake.config["colormap"],
@@ -162,3 +163,19 @@ sns.clustermap(
     norm=LogNorm(),
 )
 plt.savefig(snakemake.output.de_top_heatmap)
+
+visuz.GeneExpression.volcano(
+    df=stat_res.results_df.fillna(1),
+    lfc="log2FoldChange",
+    pv="padj",
+    lfc_thr=(snakemake.config["lfc_null"], snakemake.config["lfc_null"]),
+    pv_thr=(snakemake.config["alpha"], snakemake.config["alpha"]),
+    sign_line=True,
+    gstyle=2,
+    show=False,
+    plotlegend=True,
+    legendpos="upper right",
+    legendanchor=(1.46, 1),
+    figtype="svg",
+)
+os.rename("volcano.svg", snakemake.output.volcano_plot)
