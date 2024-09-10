@@ -44,6 +44,7 @@ rule plot_all_samples:
             category="Quality control",
             caption="../report/nanoplot_all_samples_report.rst",
         ),
+    # This parameter is in line with the Snakemake docs 8.20.3 guideline on how to avoid having parameters as output prefixes
     params:
         outdir=lambda wildcards, output: output[0][:-21],
     log:
