@@ -1,0 +1,3 @@
+ The dispersion plot is employed to assess the quality of the initial sequencing data, on the assumption that genes with analogous average expression strength will exhibit a comparable degree of dispersion.
+ The dispersion is initially estimated for each gene (black dots) and the idealized location paramter (red curve) is used to calculate the final dispersion values (blue dots). 
+ In an optimal scenario, the final dispersion values should scatter in close proximity to the location parameter. 

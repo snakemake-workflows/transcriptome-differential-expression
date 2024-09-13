@@ -1,0 +1,1 @@
+Full `NanoPlot, <https://github.com/wdecoster/NanoPlot>`_ sequencing quality report for sample {{ snakemake.wildcards }}.

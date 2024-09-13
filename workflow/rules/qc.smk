@@ -17,7 +17,13 @@ rule plot_samples:
             samples["sample"][wildcards.sample]
         ),
     output:
-        directory("NanoPlot/{sample}"),
+        scatter=report(
+            "NanoPlot/{sample}/NanoPlot-report.html",
+            category="Quality control",
+            caption="../report/nanoplot_sample_report.rst",
+        ),
+    params:
+        outdir=lambda wildcards: f"NanoPlot/{wildcards.sample}",
     log:
         "logs/NanoPlot/{sample}.log",
     resources:
@@ -25,22 +31,29 @@ rule plot_samples:
     conda:
         "../envs/nanoplot.yml"
     shell:
-        "NanoPlot -t {resources.cpus_per_task} --tsv_stats -f svg "
-        "--fastq {input.fastq} -o {output} 2> {log}"
+        "NanoPlot --threads {resources.cpus_per_task} --tsv_stats --format svg "
+        "--fastq {input.fastq} --outdir {params.outdir} 2> {log}"
 
 
 rule plot_all_samples:
     input:
         aggregate_input(samples["sample"]),
     output:
-        directory("NanoPlot/all_samples"),
+        scatter=report(
+            "NanoPlot/all_samples/NanoPlot-report.html",
+            category="Quality control",
+            caption="../report/nanoplot_all_samples_report.rst",
+        ),
+    # This parameter is in line with the Snakemake docs 8.20.3 guideline on how to avoid having parameters as output prefixes
+    params:
+        outdir=lambda wildcards, output: output[0][:-21],
     log:
         "logs/NanoPlot/all_samples.log",
     conda:
         "../envs/nanoplot.yml"
     shell:
-        "NanoPlot -t {resources.cpus_per_task} --tsv_stats -f svg "
-        "--fastq {input} -o {output} 2> {log}"
+        "NanoPlot --threads {resources.cpus_per_task} --tsv_stats --format svg "
+        "--fastq {input} --outdir {params.outdir} 2> {log}"
 
 
 rule compress_nplot:
