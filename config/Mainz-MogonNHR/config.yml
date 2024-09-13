@@ -68,7 +68,7 @@ min_feature_expr: 3
 
 # This section defines the pyDESeq2 plot and data handling parameters
 #
-# the "design factors" are the confounding variables to be adjust for
+# the "design factors" are the confounding variables to be adjusted fr
 # during normalization. They must be given in the configuration (samples.csv).
 design_factors: 
   - "batch"
