@@ -41,7 +41,7 @@ counts_df = counts_df[genes_to_keep]
 dds = DeseqDataSet(
     counts=counts_df,
     metadata=metadata,
-    design_factors=["condition"],
+    design_factors=snakemake.config["design_factors"],
     refit_cooks=True,
     n_cpus=ncpus,
 )
