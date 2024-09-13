@@ -2,3 +2,4 @@ channels:
     - conda-forge
 dependencies:
     - curl>=8.8.0
+    - unzip
