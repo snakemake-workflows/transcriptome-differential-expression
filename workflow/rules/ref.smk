@@ -1,6 +1,7 @@
 localrules:
     get_genome,
-    get_annotation,
+    extract_annotation,
+    extract_genome
 
 
 rule get_genome:
@@ -40,7 +41,7 @@ rule extract_genome:
 
 rule extract_annotation:
     input:
-        rules.get_annotation.output,
+        rules.get_genome.output,
     output:
         "references/genomic.gff",
     group:
@@ -50,7 +51,7 @@ rule extract_annotation:
     log:
         "logs/refs/get_annotation.log",
     conda:
-        "../envs/references.yml"
+        "../envs/reference.yml"
     shell:
         """
         unzip -p {input} ncbi_dataset/data/{params.accession}/*.gff > references/genomic.gff 2> {log};
