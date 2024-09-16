@@ -9,7 +9,7 @@ rule get_genome:
         # generic name:
         temp("ncbi_dataset.zip"),
     params:
-        accession=config["accession"],
+        accession=config["ref"]["accession"],
     log:
         "logs/refs/get_genome.log",
     conda:
@@ -28,7 +28,7 @@ rule extract_genome:
     group:
         "reference"
     params:
-        accession=config["accession"],
+        accession=config["ref"]["accession"],
     log:
         "logs/refs/extract_genome.log",
     conda:
@@ -47,7 +47,7 @@ rule extract_annotation:
     group:
         "reference"
     params:
-        accession=config["accession"],
+        accession=config["ref"]["accession"],
     log:
         "logs/refs/get_annotation.log",
     conda:

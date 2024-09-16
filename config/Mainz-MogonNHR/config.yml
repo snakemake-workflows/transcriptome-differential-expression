@@ -13,8 +13,9 @@ repo: "https://github.com/snakemake-workflows/transriptome-differential-expressi
 
 ## Workflow-specific Parameters:
 
-# NCBI accession number of the reference data set
-accession: "GCA_917627325.4"
+ref:
+    # NCBI accession number of the reference data set
+    accession: "GCA_917627325.4"
 
 # Minimum read length, put 0 if you want to proceed with all reads.
 min_length: 200
