@@ -1,7 +1,7 @@
 localrules:
     get_genome,
     extract_annotation,
-    extract_genome
+    extract_genome,
 
 
 rule get_genome:
