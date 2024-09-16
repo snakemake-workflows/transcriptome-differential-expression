@@ -1,5 +1,5 @@
 channels:
     - conda-forge
 dependencies:
-    - curl>=8.8.0
+    - ncbi-datasets-cli
     - unzip
