@@ -67,6 +67,11 @@ min_feature_expr: 3
 
 # This section defines the deseq2 plot and data handling parameters
 #
+# the "design factors" are the confounding variables to be adjusted for
+# during the normalization. They must be given in the configuration (samples.csv)
+design_factors:
+    - "condition"
+#
 # The (log2) log fold change under the null hypothesis. (default: 0).
 lfc_null: 0.1
 #

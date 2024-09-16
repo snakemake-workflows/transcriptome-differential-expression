@@ -20,7 +20,7 @@ samples = (
             config["samples"],
         ),
         sep=r"\s+",
-        dtype={"sample": str, "condition": str, "condition2": str, "batch_effect": str},
+        dtype={"sample": str, "condition": str, "condition2": str, "batch": str},
         header=0,
         comment="#",
     )

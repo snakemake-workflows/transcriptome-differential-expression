@@ -41,5 +41,5 @@ properties:
 required:
   - sample
   - condition
-  - batch_effect
+  - batch
 
