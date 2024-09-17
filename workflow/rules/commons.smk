@@ -35,8 +35,11 @@ validate(samples, schema="../schemas/samples.schema.yaml")
 def get_mapped_reads_input(sample):
     path = Path(os.path.join(config["inputdir"], sample))
     for extension in exts:
-        if os.path.exists(path.with_suffix(extension)):
-            return path.with_suffix(extension)
+        # we need to append the extension with +, because
+        # path.with_suffix might consider everything after a . in
+        # the file name a suffix!
+        if os.path.exists(str(path) + ext):
+            valids.append(str(path) + ext)
 
     raise WorkflowError(
         f"No valid sample found for sample: '{sample}' with possible extension '{exts}'"
