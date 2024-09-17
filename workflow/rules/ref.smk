@@ -24,7 +24,7 @@ rule extract_genome:
     input:
         rules.get_genome.output,
     output:
-        "references/genomic.fna",
+        "references/genomic.fa",
     group:
         "reference"
     params:
