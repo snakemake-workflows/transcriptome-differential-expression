@@ -7,7 +7,7 @@ samples: samples.csv
 workflow: "workflow-transcriptome-de_phe"
 
 # this is the input directory. All samples are looked for in this directory
-inputdir: "."
+inputdir: "../.test/ngs-test-data/reads"
 # Repository URL:
 repo: "https://github.com/snakemake-workflows/transriptome-differential-expression"
 
