@@ -55,7 +55,10 @@ def aggregate_input(samples):
         inputdir = Path(config["inputdir"])
         file_list = [str(_) for _ in inputdir.glob("*")]
         pwd = os.getcwd()
-        print(f"we are in {pwd} and the input directory is '{inputdir}' - found '{file_list}’", file=sys.stderr)
+        print(
+            f"we are in {pwd} and the input directory is '{inputdir}' - found '{file_list}’",
+            file=sys.stderr,
+        )
         raise WorkflowError(f"no valid samples found, allowed extensions are: '{exts}'")
     return valids
 
