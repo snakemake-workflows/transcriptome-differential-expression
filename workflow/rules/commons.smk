@@ -54,7 +54,7 @@ def aggregate_input(samples):
     if not len(valids):
         inputdir = Path(config["inputdir"])
         file_list = [str(_) for _ in inputdir.glob("*")]
-        print("input directory is '{inputdir}' - found '{file_list}’", file=sys.stderr)
+        print(f"input directory is '{inputdir}' - found '{file_list}’", file=sys.stderr)
         raise WorkflowError(f"no valid samples found, allowed extensions are: '{exts}'")
     return valids
 
