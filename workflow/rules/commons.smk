@@ -48,21 +48,13 @@ def aggregate_input(samples):
     valids = list()
     for sample, ext in product(samples, exts):
         path = Path(os.path.join(config["inputdir"], sample))
-
-        print(path.with_suffix(ext), os.path.exists(path.with_suffix(ext)), file = sys.stderr)
-        if os.path.exists(path.with_suffix(ext)):
-            valids.append(path.with_suffix(ext))
+        # we need to append the extension with +, because
+        # path.with_suffix might consider everything after a . in
+        # the file name a suffix!
+        if os.path.exists(str(path) + ext):
+            valids.append(str(path) + ext)
 
     if not len(valids):
-        inputdir = Path(config["inputdir"])
-        print(os.path.exists(inputdir), file=sys.stderr)
-        print("files in pwd: ", [_ for _ in glob("ngs-test-data/reads")], file=sys.stderr)
-        file_list = [str(_) for _ in inputdir.glob("*")]
-        pwd = os.getcwd()
-        print(
-            f"we are in {pwd} and the input directory is '{inputdir}' - found '{file_list}’",
-            file=sys.stderr,
-        )
         raise WorkflowError(f"no valid samples found, allowed extensions are: '{exts}'")
     return valids
 
