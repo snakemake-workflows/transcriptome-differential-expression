@@ -49,7 +49,7 @@ def aggregate_input(samples):
     for sample, ext in product(samples, exts):
         path = Path(os.path.join(config["inputdir"], sample))
 
-        print(path, ext, file = sys.stderr)
+        print(path.with_suffix(ext), os.path.exists(path.with_suffix(ext)), file = sys.stderr)
         if os.path.exists(path.with_suffix(ext)):
             valids.append(path.with_suffix(ext))
 
