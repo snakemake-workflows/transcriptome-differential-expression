@@ -90,7 +90,7 @@ rule map_qc:
     log:
         "logs/qualimap/{sample}.log",
     wrapper:
-        "v3.13.4/bio/qualimap/bamqc"
+        "v4.4.0/bio/qualimap/bamqc"
 
 
 rule compress_map_qc:
