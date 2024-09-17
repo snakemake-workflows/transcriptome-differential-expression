@@ -39,7 +39,7 @@ def get_mapped_reads_input(sample):
         # path.with_suffix might consider everything after a . in
         # the file name a suffix!
         if os.path.exists(str(path) + extension):
-            valids.append(str(path) + extension)
+            return str(path) + extension
 
     raise WorkflowError(
         f"No valid sample found for sample: '{sample}' with possible extension '{exts}'"
