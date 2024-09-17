@@ -1,5 +1,5 @@
 sample  condition   condition2	batch    platform    purity
-a.chr21.1.fq  	treated        condition2  batch1          NANOPORE    1
-a.chr21.2.fq  	untreated        condition2  batch1          NANOPORE    1
-b.chr21.1.fq      treated      condition2  batch1          NANOPORE    1
-b.chr21.2.fq      untreated      condition2  batch1          NANOPORE    1
+a.chr21.1  	treated        condition2  batch1          NANOPORE    1
+a.chr21.2  	untreated        condition2  batch1          NANOPORE    1
+b.chr21.1      treated      condition2  batch1          NANOPORE    1
+b.chr21.2      untreated      condition2  batch1          NANOPORE    1
