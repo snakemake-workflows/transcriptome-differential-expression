@@ -73,19 +73,13 @@ properties:
   ref:
     type: object
     properties:
-      n_chromosomes:
-        type: integer
       species:
         type: string
-      release:
-        type: integer
-      build:
+      accession:
         type: string
     required:
       - species
-      - release
-      - build
-      - n_chromosomes
+      - accession
 
   primers:
     type: object

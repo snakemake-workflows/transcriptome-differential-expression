@@ -14,6 +14,9 @@ repo: "https://github.com/snakemake-workflows/transriptome-differential-expressi
 ## Workflow-specific Parameters:
 
 ref:
+    # species
+    species: "Homo sapiens"
+    
     # NCBI accession number of the reference data set.
     accession: "GCF_000001405.40"
 

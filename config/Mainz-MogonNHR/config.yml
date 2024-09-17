@@ -14,6 +14,7 @@ repo: "https://github.com/snakemake-workflows/transriptome-differential-expressi
 ## Workflow-specific Parameters:
 
 ref:
+    species: "Chironomus riparius"
     # NCBI accession number of the reference data set
     accession: "GCA_917627325.4"
 
@@ -22,7 +23,6 @@ min_length: 200
 
 # Maximum number of CPUs in your partition/PC/server
 max_cpus: 40
-
 
 # Minimap2 indexing options
 minimap_index_opts: ""
