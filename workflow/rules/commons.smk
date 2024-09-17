@@ -55,7 +55,7 @@ def aggregate_input(samples):
     if not len(valids):
         inputdir = Path(config["inputdir"])
         print(os.path.exists(inputdir), file=sys.stderr)
-        print("files in pwd: ", [_ for _ in glob("*")], file=sys.stderr)
+        print("files in pwd: ", [_ for _ in glob("ngs-test-data/reads")], file=sys.stderr)
         file_list = [str(_) for _ in inputdir.glob("*")]
         pwd = os.getcwd()
         print(
