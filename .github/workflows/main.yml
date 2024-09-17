@@ -44,6 +44,10 @@ jobs:
       - Linting
       - Formatting
     steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      with:
+          submodules: recursive
     - uses: actions/checkout@v3
 
     - name: Test workflow
@@ -51,7 +55,7 @@ jobs:
       with:
         directory: .test
         snakefile: workflow/Snakefile
-        args: "--configfile .test/config-simple/config.yml --workflow-profile .test/profile --use-conda --show-failed-logs --cores 2 --conda-cleanup-pkgs cache --all-temp --workflow-profile .test/profile/"
+        args: "--configfile .test/config-simple/config.yml --workflow-profile .test/profile --use-conda --show-failed-logs --cores 2 --conda-cleanup-pkgs cache --all-temp"
 
 #    - name: Test report
 #      uses: snakemake/snakemake-github-action@v1.24.0
