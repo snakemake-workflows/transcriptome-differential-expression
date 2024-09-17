@@ -6,7 +6,7 @@ properties:
   sample:
     type: string
     description: sample name/identifier (alphanumeric string, that may additionally contain '_' and '-')
-    pattern: "^[a-zA-Z_0-9-]+$"
+    pattern: "^[a-zA-Z_0-9-.]+$"
   group:
     type: string
     description: group of samples called jointly (alphanumeric string, that may additionally contain '_' and '-')
