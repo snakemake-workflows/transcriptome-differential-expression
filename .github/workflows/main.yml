@@ -23,6 +23,12 @@ jobs:
   Linting:
     runs-on: ubuntu-latest
     steps:
+    
+    - name: Checout repository
+      uses: action/checkout@v3
+      with:
+          submodules: recursive
+
     - uses: actions/checkout@v2
     - name: Lint workflow
       uses: snakemake/snakemake-github-action@v1.24.0
