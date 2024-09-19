@@ -7,9 +7,9 @@ rule count_reads:
         bam="sorted_alignments/{sample}.bam",
         trs="transcriptome/transcriptome.fa",
     output:
-        tsv="counts/{sample}_salmon/quant.sf",
+        tsv=temp("counts/{sample}_salmon/quant.sf"),
     params:
-        outdir=lambda wildcards: f"counts/{wildcards.sample}_salmon",
+        outdir=temp(lambda wildcards: f"counts/{wildcards.sample}_salmon"),
         libtype=config["salmon_libtype"],
     log:
         "logs/salmon/{sample}.log",

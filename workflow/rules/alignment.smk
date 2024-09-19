@@ -2,7 +2,7 @@ rule build_minimap_index:  ## build minimap2 index
     input:
         target="transcriptome/transcriptome.fa",
     output:
-        index="index/transcriptome_index.mmi",
+        index=temp("index/transcriptome_index.mmi"),
     params:
         extra=config["minimap_index_opts"],
     log:
@@ -17,7 +17,7 @@ rule map_reads:
         target="index/transcriptome_index.mmi",
         query="filter/{sample}_filtered.fq",
     output:
-        "alignments/{sample}.sam",
+        temp("alignments/{sample}.sam"),
     log:
         "logs/minimap2/mapping_{sample}.log",
     params:

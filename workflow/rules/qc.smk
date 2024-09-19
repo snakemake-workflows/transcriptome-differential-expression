@@ -23,7 +23,7 @@ rule plot_samples:
             caption="../report/nanoplot_sample_report.rst",
         ),
     params:
-        outdir=lambda wildcards: f"NanoPlot/{wildcards.sample}",
+        outdir=temp(lambda wildcards: f"NanoPlot/{wildcards.sample}"),
     log:
         "logs/NanoPlot/{sample}.log",
     resources:
@@ -46,7 +46,7 @@ rule plot_all_samples:
         ),
     # This parameter is in line with the Snakemake docs 8.20.3 guideline on how to avoid having parameters as output prefixes
     params:
-        outdir=lambda wildcards, output: output[0][:-21],
+        outdir=temp(lambda wildcards, output: output[0][:-21]),
     log:
         "logs/NanoPlot/all_samples.log",
     conda:
@@ -86,7 +86,7 @@ rule map_qc:
     input:
         bam="sorted_alignments/{sample}_sorted.bam",
     output:
-        directory("QC/qualimap/{sample}"),
+        temp(directory("QC/qualimap/{sample}")),
     log:
         "logs/qualimap/{sample}.log",
     wrapper:
