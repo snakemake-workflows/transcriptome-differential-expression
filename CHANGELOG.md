@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.3.0](https://github.com/snakemake-workflows/transcriptome-differential-expression/compare/v1.2.0...v1.3.0) (2024-09-19)
+
+
+### Features
+
+* made output temporary for any files not needed for the report ([#92](https://github.com/snakemake-workflows/transcriptome-differential-expression/issues/92)) ([a95222b](https://github.com/snakemake-workflows/transcriptome-differential-expression/commit/a95222b5a5554d0cb130c00faa2e08169f89d85f))
+
+
+### Bug Fixes
+
+* taking absolute l2fc values to sort ([#91](https://github.com/snakemake-workflows/transcriptome-differential-expression/issues/91)) ([9c009d0](https://github.com/snakemake-workflows/transcriptome-differential-expression/commit/9c009d00cc15e6c2bb109c3a4d3c783648f0a274))
+
 ## [1.2.0](https://github.com/snakemake-workflows/transcriptome-differential-expression/compare/v1.1.0...v1.2.0) (2024-09-17)
 
 
