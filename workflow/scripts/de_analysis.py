@@ -108,7 +108,7 @@ sf = dds.obsm["size_factors"]
 normalized = counts_df.T * sf
 
 # shorthand for log2fold and pvalue columns
-log2foldchange = stat_res.results_df["log2FoldChange"]
+log2foldchange = np.abs(stat_res.results_df["log2FoldChange"])
 # 'pvalue' is a pandas series, linear, of length(number of aligned loci)
 pvalue = stat_res.results_df["pvalue"]
 padj = stat_res.results_df["padj"]
