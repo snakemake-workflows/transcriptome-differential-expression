@@ -1,5 +1,38 @@
 # Changelog
 
+## [1.3.0](https://github.com/snakemake-workflows/transcriptome-differential-expression/compare/v1.2.0...v1.3.0) (2024-09-19)
+
+
+### Features
+
+* made output temporary for any files not needed for the report ([#92](https://github.com/snakemake-workflows/transcriptome-differential-expression/issues/92)) ([a95222b](https://github.com/snakemake-workflows/transcriptome-differential-expression/commit/a95222b5a5554d0cb130c00faa2e08169f89d85f))
+
+
+### Bug Fixes
+
+* taking absolute l2fc values to sort ([#91](https://github.com/snakemake-workflows/transcriptome-differential-expression/issues/91)) ([9c009d0](https://github.com/snakemake-workflows/transcriptome-differential-expression/commit/9c009d00cc15e6c2bb109c3a4d3c783648f0a274))
+
+## [1.2.0](https://github.com/snakemake-workflows/transcriptome-differential-expression/compare/v1.1.0...v1.2.0) (2024-09-17)
+
+
+### Features
+
+* batch correction ([#87](https://github.com/snakemake-workflows/transcriptome-differential-expression/issues/87)) ([f174574](https://github.com/snakemake-workflows/transcriptome-differential-expression/commit/f17457405b07adfe6fa48be8201c873366f82010))
+* ci pipeline correction ([#90](https://github.com/snakemake-workflows/transcriptome-differential-expression/issues/90)) ([c41657a](https://github.com/snakemake-workflows/transcriptome-differential-expression/commit/c41657a32de0772991b7aae8af5edb27f37acf78))
+* correcting p-values for multiple testing ([#66](https://github.com/snakemake-workflows/transcriptome-differential-expression/issues/66)) ([a83d514](https://github.com/snakemake-workflows/transcriptome-differential-expression/commit/a83d514367c7521721421c80d13730906b411dc6))
+* de output ([#83](https://github.com/snakemake-workflows/transcriptome-differential-expression/issues/83)) ([a2e45bd](https://github.com/snakemake-workflows/transcriptome-differential-expression/commit/a2e45bddcbabf143295bb1452299be255681882c))
+* generate snakemake report ([#80](https://github.com/snakemake-workflows/transcriptome-differential-expression/issues/80)) ([cd25504](https://github.com/snakemake-workflows/transcriptome-differential-expression/commit/cd2550422d1ef7bc86450286cf14852b8e153d8e))
+* get refs from database ([#69](https://github.com/snakemake-workflows/transcriptome-differential-expression/issues/69)) ([1b50d39](https://github.com/snakemake-workflows/transcriptome-differential-expression/commit/1b50d3961b04fbc238c37c5835c4b917fc7f22d1))
+
+
+### Bug Fixes
+
+* [#82](https://github.com/snakemake-workflows/transcriptome-differential-expression/issues/82) double p value adjustment ([#84](https://github.com/snakemake-workflows/transcriptome-differential-expression/issues/84)) ([1d6bfc7](https://github.com/snakemake-workflows/transcriptome-differential-expression/commit/1d6bfc736c9353602179bce69146eda790084205))
+* batch correction ([#89](https://github.com/snakemake-workflows/transcriptome-differential-expression/issues/89)) ([04fcfcf](https://github.com/snakemake-workflows/transcriptome-differential-expression/commit/04fcfcf7c6eb6257e618e0ef71b9b6cc19d5b5ab))
+* different names for downloads to avoid name clashes ([#71](https://github.com/snakemake-workflows/transcriptome-differential-expression/issues/71)) ([756ba5b](https://github.com/snakemake-workflows/transcriptome-differential-expression/commit/756ba5b6fc6c5f34e68fb0fc3aa833a7f093e981))
+* quantification ([#74](https://github.com/snakemake-workflows/transcriptome-differential-expression/issues/74)) ([3d9216e](https://github.com/snakemake-workflows/transcriptome-differential-expression/commit/3d9216e302652f948782b5e48229ff4a27d317d1))
+* quantification input output mismatch ([#68](https://github.com/snakemake-workflows/transcriptome-differential-expression/issues/68)) ([44e6451](https://github.com/snakemake-workflows/transcriptome-differential-expression/commit/44e6451d42219a2af4dd6657e53d94f8a3ee4236))
+
 ## [1.1.0](https://github.com/snakemake-workflows/transcriptome-differential-expression/compare/v1.0.0...v1.1.0) (2024-08-16)
 
 

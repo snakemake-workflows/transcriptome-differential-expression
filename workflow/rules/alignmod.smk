@@ -2,7 +2,7 @@ rule sam_view:
     input:
         sam="alignments/{sample}.sam",
     output:
-        "sorted_alignments/{sample}.bam",
+        temp("sorted_alignments/{sample}.bam"),
     log:
         "logs/samtools/samview_{sample}.log",
     params:
@@ -15,7 +15,7 @@ rule sam_sort:
     input:
         sam="alignments/{sample}.sam",
     output:
-        "sorted_alignments/{sample}_sorted.bam",
+        temp("sorted_alignments/{sample}_sorted.bam"),
     log:
         "logs/samtools/samsort_{sample}.log",
     params:
