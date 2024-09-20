@@ -46,6 +46,8 @@ dds = DeseqDataSet(
     refit_cooks=True,
     n_cpus=ncpus,
 )
+# compute normalization factors
+#dds.fit_size_factors()
 # fit dispersion(s) and LFCs
 #  this - fits the size factors
 #       - the genewise dispersion
@@ -55,10 +57,8 @@ dds = DeseqDataSet(
 #       - cooks distances
 dds.deseq2()
 
-# compute normalization factors
-# dds.fit_size_factors()
 # fitting genewise dispersions
-# dds.fit_genewise_dispersions()
+dds.fit_genewise_dispersions()
 
 dds.plot_dispersions(save_path=f"{snakemake.output.dispersion_graph}")
 
