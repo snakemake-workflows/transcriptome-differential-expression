@@ -7,6 +7,11 @@ set-resources:
         cpus_per_task: 1
         mem_mb_per_cpu: 1800
         runtime: "30m"
+
+    gff_to_gtf:
+        cpus_per_task: 1
+        mem_mb_per_cpu: 1800
+        runtime: "30m"
     
     filter_reads:
         cpus_per_task: 1
