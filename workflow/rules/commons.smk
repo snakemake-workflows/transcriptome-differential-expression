@@ -81,4 +81,7 @@ def rule_all_input():
     all_input.append(f"de_analysis/ma_graph.{config['deseq2']['figtype']}")
     all_input.append(f"de_analysis/heatmap.{config['deseq2']['figtype']}")
     all_input.append("de_analysis/lfc_analysis.csv")
+    if config["isoform_quantification"]=="yes":
+        all_input.append(expand("flair/{sample}/diffsplice/diffsplice.alt3.events.quant.tsv", sample=samples["sample"]))
+        all_input.append(expand("flair/{sample}/diffexp/genes_deseq2_MCF7_v_A549.tsv", sample=samples["sample"]))
     return all_input
