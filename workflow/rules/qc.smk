@@ -106,6 +106,23 @@ rule compress_map_qc:
         "../scripts/make_archive.py"
 
 
+rule qm_report:
+    input:
+        map_qc=rules.map_qc.output,
+    output:
+        qm_report=report(
+            "QC/qualimap/{sample}/qualimapReport.html",
+            category="Quality control",
+            caption="../report/qualimap.rst",
+        ),
+    log:
+        "logs/qualimap/{sample}_report.log",
+    conda:
+        "../envs/base.yml"
+    shell:
+        "ls 2> {log}"
+
+
 rule sam_stats:
     input:
         bam="sorted_alignments/{sample}.bam",
