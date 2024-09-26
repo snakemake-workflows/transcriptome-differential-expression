@@ -17,7 +17,7 @@ rule map_reads:
         target="index/transcriptome_index.mmi",
         query="filter/{sample}_filtered.fq",
     output:
-       "alignments/{sample}.sam",
+        "alignments/{sample}.sam",
     log:
         "logs/minimap2/mapping_{sample}.log",
     params:
