@@ -7,7 +7,7 @@ rule count_reads:
         bam="sorted_alignments/{sample}.bam",
         trs="transcriptome/transcriptome.fa",
     output:
-        tsv=temp("counts/{sample}_salmon/quant.sf"),
+        tsv="counts/{sample}_salmon/quant.sf",
     params:
         outdir=temp(lambda wildcards: f"counts/{wildcards.sample}_salmon"),
         libtype=config["salmon_libtype"],
@@ -26,7 +26,7 @@ rule merge_counts:
     input:
         count_tsvs=expand("counts/{sample}_salmon/quant.sf", sample=samples["sample"]),
     output:
-        temp("merged/all_counts.tsv"),
+        "merged/all_counts.tsv",
     log:
         "logs/merge_count.log",
     conda:

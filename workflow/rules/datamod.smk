@@ -7,7 +7,7 @@ rule genome_to_transcriptome:
         genome="references/genomic.fa",
         annotation="references/genomic.gff",
     output:
-        transcriptome=temp("transcriptome/transcriptome.fa"),
+        transcriptome="transcriptome/transcriptome.fa",
     log:
         "logs/gffread.log",
     conda:
@@ -24,7 +24,7 @@ rule filter_reads:
             samples["sample"][wildcards.sample]
         ),
     output:
-        temp("filter/{sample}_filtered.fq"),
+        "filter/{sample}_filtered.fq",
     message:
         f"Filtering with read length >= {config['min_length']}."
     log:
