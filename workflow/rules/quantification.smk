@@ -9,7 +9,7 @@ rule count_reads:
     output:
         tsv="counts/{sample}_salmon/quant.sf",
     params:
-        outdir=temp(lambda wildcards: f"counts/{wildcards.sample}_salmon"),
+        outdir=lambda wildcards: f"counts/{wildcards.sample}_salmon",
         libtype=config["salmon_libtype"],
     log:
         "logs/salmon/{sample}.log",
