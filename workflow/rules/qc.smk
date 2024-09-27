@@ -86,9 +86,9 @@ rule qm_report:
         "cp -a QC/qualimap/{wildcards.sample} qualimap/ 2> {log}"
 
 
-rule sam_stats:
+rule bam_stats:
     input:
-        bam="sorted_alignments/{sample}.bam",
+        bam="alignments/{sample}.bam",
     output:
         "QC/samstats/{sample}.txt",
     log:
