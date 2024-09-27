@@ -2,9 +2,6 @@ import os
 
 
 localrules:
-    compress_nplot,
-    compress_nplot_all,
-    compress_map_qc,
     qm_report,
 
 
