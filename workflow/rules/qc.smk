@@ -83,29 +83,6 @@ rule qm_report:
         qm_report=report(
             "qualimap/{sample}/qualimapReport.html",
             category="Quality control",
-            subcategory="QualiMap",
-            caption="../report/qualimap.rst",
-            labels={
-                "model": "QualiMap",
-                "figure": "{sample}",
-            },
-        ),
-    log:
-        "logs/qualimap/{sample}_report.log",
-    conda:
-        "../envs/base.yml"
-    shell:
-        "cp -a QC/qualimap/{wildcards.sample} qualimap/ 2> {log}"
-
-
-# this is a dummy rule to create input for the report because the QualiMap wrapper only accepts directories as valid output
-rule qm_report:
-    input:
-        map_qc=rules.map_qc.output,
-    output:
-        qm_report=report(
-            "qualimap/{sample}/qualimapReport.html",
-            category="Quality control",
             caption="../report/qualimap.rst",
         ),
     log:
