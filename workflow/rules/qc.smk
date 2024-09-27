@@ -5,6 +5,7 @@ localrules:
     compress_nplot,
     compress_nplot_all,
     compress_map_qc,
+    qm_report,
 
 
 configfile: "config/config.yml"
@@ -106,12 +107,13 @@ rule compress_map_qc:
         "../scripts/make_archive.py"
 
 
+# this is a dummy rule to create input for the report because the QualiMap wrapper only accepts directories as valid output
 rule qm_report:
     input:
         map_qc=rules.map_qc.output,
     output:
         qm_report=report(
-            "QC/qualimap/{sample}/qualimapReport.html",
+            "qualimap/{sample}/qualimapReport.html",
             category="Quality control",
             caption="../report/qualimap.rst",
         ),
@@ -120,7 +122,7 @@ rule qm_report:
     conda:
         "../envs/base.yml"
     shell:
-        "ls 2> {log}"
+        "cp -a QC/qualimap/{wildcards.sample} qualimap/ 2> {log}"
 
 
 rule sam_stats:
