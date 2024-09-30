@@ -83,7 +83,12 @@ rule qm_report:
         qm_report=report(
             "qualimap/{sample}/qualimapReport.html",
             category="Quality control",
+            subcategory="QualiMap",
             caption="../report/qualimap.rst",
+            labels={
+                "model": "QualiMap",
+                "figure": "{sample}",
+            },
         ),
     log:
         "logs/qualimap/{sample}_report.log",
