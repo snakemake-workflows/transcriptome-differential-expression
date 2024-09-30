@@ -19,6 +19,6 @@ rule bam_sort:
     log:
         "logs/samtools/bamsort_{sample}.log",
     params:
-        extra=f'{config["bsort_opts"]}',
+        extra=f'{config["bamsort_opts"]}',
     wrapper:
         "v3.13.4/bio/samtools/sort"

@@ -15,7 +15,7 @@ rule de_analysis:
             category="Results",
             caption="../report/ma_graph.rst",
             labels={
-                "figure": "Bland-Altman plot",
+                "figure": "MA plot",
             },
         ),
         de_heatmap=report(
@@ -23,7 +23,7 @@ rule de_analysis:
             category="Results",
             caption="../report/heatmap.rst",
             labels={
-                "figure": "Heatmap",
+                "figure": "Gene heatmap",
             },
         ),
         correlation_matrix=report(
@@ -40,7 +40,7 @@ rule de_analysis:
             category="Results",
             caption="../report/heatmap_top.rst",
             labels={
-                "figure": "Top heatmap",
+                "figure": "Top gene heatmap",
             },
         ),
         lfc_analysis="de_analysis/lfc_analysis.csv",

@@ -106,6 +106,6 @@ rule bam_stats:
     log:
         "logs/samtools/bamstats_{sample}.log",
     params:
-        extra=f'{config["bstats_opts"]}',
+        extra=f'{config["bamstats_opts"]}',
     wrapper:
         "v3.13.4/bio/samtools/stats"
