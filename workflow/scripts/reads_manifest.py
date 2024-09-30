@@ -14,7 +14,7 @@ def get_sample_path(sample_name, inputdir, exts):
     path=Path(os.path.join(inputdir,sample_name))
     for ext in exts:
         if os.path.exists(str(path)+ext):
-            return str(path)
+            return str(path)+ext
     return "File not found"
 
 samples_df["sample_path"]=samples_df["sample"].apply(lambda x: get_sample_path(x, snakemake.params.inputdir, exts))
