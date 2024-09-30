@@ -1,12 +1,12 @@
 import os
 import sys
-import pickle as pkl
 from pathlib import Path
 
 import matplotlib
 
 matplotlib.use("Agg")  # suppress creating of interactive plots
 import matplotlib.pyplot as plt
+plt.rcParams['font.family'] = 'DeJavu Serif'
 from matplotlib.colors import LogNorm
 import numpy as np
 import pandas as pd
@@ -36,13 +36,14 @@ counts_df.set_index("Reference", inplace=True)
 counts_df = counts_df.T
 
 # next we filter out counts, with counts lower than 10
-genes_to_keep = counts_df.columns[counts_df.sum(axis=0) >= snakemake.config["mincount"]]
+genes_to_keep = counts_df.columns[counts_df.sum(axis=0) >= snakemake.config["deseq2"]["mincount"]]
 counts_df = counts_df[genes_to_keep]
 
 dds = DeseqDataSet(
     counts=counts_df,
     metadata=metadata,
-    design_factors=snakemake.config["design_factors"],
+    design_factors=snakemake.config["deseq2"]["design_factors"],
+    continuous_factors=snakemake.config["deseq2"].get("continuous_factors", None),
     refit_cooks=True,
     n_cpus=ncpus,
 )
@@ -55,7 +56,7 @@ dds = DeseqDataSet(
 #       - MAP dispersion
 #       - log2fold change
 #       - cooks distances
-dds.deseq2()
+dds.deseq2()#fit_type= "parametric")
 
 # fitting genewise dispersions
 dds.fit_genewise_dispersions()
@@ -78,10 +79,10 @@ a_condition = conditions[1]  # this order ensures the the lfc shrink condition i
 b_condition = conditions[0]
 
 # run Wald test and plot, perform optional threshold tests, if wanted
-if "lfc_null" in snakemake.config or "alt_hypothesis" in snakemake.config:
+if "lfc_null" in snakemake.config["deseq2"] or "alt_hypothesis" in snakemake.config["deseq2"]:
     summary = stat_res.summary(
-        lfc_null=snakemake.config.get("lfc_null", 0),
-        alt_hypothesis=snakemake.config.get("alt_hypothesis", None),
+        lfc_null=snakemake.config["deseq2"].get("lfc_null", 0),
+        alt_hypothesis=snakemake.config["deseq2"].get("alt_hypothesis", None),
     )
 else:
     summary = stat_res.summary()
@@ -96,7 +97,7 @@ except KeyError:
 stat_res.results_df.to_csv(snakemake.output.lfc_analysis)
 
 stat_res.plot_MA(
-    s=snakemake.config["point_width"], save_path=f"{snakemake.output.ma_graph}"
+    s=snakemake.config["deseq2"]["point_width"], save_path=f"{snakemake.output.ma_graph}"
 )
 
 # create a clustermap, based on normalized counts
@@ -112,15 +113,18 @@ log2foldchange = np.abs(stat_res.results_df["log2FoldChange"])
 # 'pvalue' is a pandas series, linear, of length(number of aligned loci)
 pvalue = stat_res.results_df["pvalue"]
 padj = stat_res.results_df["padj"]
+print(pvalue)
+print(padj)
 
 normalized = normalized.join(log2foldchange)
 # normalized = normalized.join(np.array(pvalue[1]))
 normalized = normalized.join(padj)
+print(normalized)
 
 normalized.sort_values(by="log2FoldChange")
 # delete rows, which do not meet our p-value criterion
 # the comparison operator is >= because we drop all values >= our desired alpha
-normalized.drop(normalized[padj >= snakemake.config["alpha"]].index, inplace=True)
+#normalized.drop(normalized[padj >= snakemake.config["deseq2"]["alpha"]].index, inplace=True)
 normalized.to_csv(snakemake.output.normalized_counts)
 # throw away these columns
 normalized.drop("log2FoldChange", axis=1, inplace=True)
@@ -143,7 +147,7 @@ mask = np.triu(np.ones_like(correlation_matrix))
 # TODO: add condition labels (e.g. male/female to the map)
 cluster = sns.clustermap(
     correlation_matrix,
-    cmap=snakemake.config["colormap"],
+    cmap=snakemake.config["deseq2"]["colormap"],
     linewidths=0,
 )  # , xticklables = metadata.index.to_list())#, yticklabels = sta)
 values = cluster.ax_heatmap.collections[0].get_array().reshape(correlation_matrix.shape)
@@ -155,16 +159,16 @@ plt.savefig(snakemake.output.correlation_matrix)
 # TODO: add condition labels (e.g. male/female to the map)
 sns.clustermap(
     normalized.fillna(0),
-    cmap=snakemake.config["colormap"],
+    cmap=snakemake.config["deseq2"]["colormap"],
     linewidths=0,
     norm=LogNorm(),
 )
 plt.savefig(snakemake.output.de_heatmap)
 
-n = snakemake.config["threshold_plot"]
+n = snakemake.config["deseq2"]["threshold_plot"]
 sns.clustermap(
     normalized.fillna(0).iloc[:n],
-    cmap=snakemake.config["colormap"],
+    cmap=snakemake.config["deseq2"]["colormap"],
     linewidths=0,
     norm=LogNorm(),
 )
@@ -172,13 +176,13 @@ plt.savefig(snakemake.output.de_top_heatmap)
 
 # our test case has no significant values
 # in our CI test, we have no significant data, hence:
-if snakemake.config["alpha"] < 0.9:
+if snakemake.config["deseq2"]["alpha"] < 0.9:
     visuz.GeneExpression.volcano(
         df=stat_res.results_df.fillna(1),
         lfc="log2FoldChange",
         pv="padj",
-        lfc_thr=(snakemake.config["lfc_null"], snakemake.config["lfc_null"]),
-        pv_thr=(snakemake.config["alpha"], snakemake.config["alpha"]),
+        lfc_thr=(snakemake.config["deseq2"]["lfc_null"], snakemake.config["deseq2"]["lfc_null"]),
+        pv_thr=(snakemake.config["deseq2"]["alpha"], snakemake.config["deseq2"]["alpha"]),
         sign_line=True,
         gstyle=2,
         show=False,
