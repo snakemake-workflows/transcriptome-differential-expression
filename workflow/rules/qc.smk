@@ -18,7 +18,12 @@ rule plot_samples:
         scatter=report(
             "NanoPlot/{sample}/NanoPlot-report.html",
             category="Quality control",
+            subcategory="NanoPlot",
             caption="../report/nanoplot_sample_report.rst",
+            labels={
+                "model": "NanoPlot",
+                "figure": "{sample}",
+            },
         ),
     params:
         outdir=lambda wildcards: f"NanoPlot/{wildcards.sample}",
@@ -40,7 +45,12 @@ rule plot_all_samples:
         scatter=report(
             "NanoPlot/all_samples/NanoPlot-report.html",
             category="Quality control",
+            subcategory="NanoPlot",
             caption="../report/nanoplot_all_samples_report.rst",
+            labels={
+                "model": "NanoPlot",
+                "figure": "All samples",
+            },
         ),
     # This parameter is in line with the Snakemake docs 8.20.3 guideline on how to avoid having parameters as output prefixes
     params:
@@ -73,7 +83,12 @@ rule qm_report:
         qm_report=report(
             "qualimap/{sample}/qualimapReport.html",
             category="Quality control",
+            subcategory="QualiMap",
             caption="../report/qualimap.rst",
+            labels={
+                "model": "QualiMap",
+                "figure": "{sample}",
+            },
         ),
     log:
         "logs/qualimap/{sample}_report.log",
@@ -89,8 +104,8 @@ rule bam_stats:
     output:
         "QC/samstats/{sample}.txt",
     log:
-        "logs/samtools/samstats_{sample}.log",
+        "logs/samtools/bamstats_{sample}.log",
     params:
-        extra=f'{config["sstats_opts"]}',
+        extra=f'{config["bstats_opts"]}',
     wrapper:
         "v3.13.4/bio/samtools/stats"

@@ -37,10 +37,10 @@ maximum_secondary: 100
 secondary_score_ratio: 1.0
 
 # Samtools view opts, "-b" creates BAM from SAM.
-sview_opts: "-b"
+samtobam_opts: "-b"
 
 # Samtools sort opts,
-ssort_opts: ""
+bsort_opts: ""
 
 # Salmon library type
 salmon_libtype: "U"
@@ -49,7 +49,7 @@ salmon_libtype: "U"
 # QC options
 
 # Samtools stats opts
-sstats_opts: ""
+bstats_opts: ""
 
 # Count filtering options - customize these according to your experimental design:
 
