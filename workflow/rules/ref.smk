@@ -24,7 +24,7 @@ rule extract_genome:
     input:
         rules.get_genome.output,
     output:
-        temp("references/genomic.fa"),
+        "references/genomic.fa",
     group:
         "reference"
     params:
@@ -43,7 +43,7 @@ rule extract_annotation:
     input:
         rules.get_genome.output,
     output:
-        temp("references/genomic.gff"),
+        "references/genomic.gff",
     group:
         "reference"
     params:
