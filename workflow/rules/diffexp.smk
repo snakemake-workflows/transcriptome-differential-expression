@@ -6,33 +6,51 @@ rule de_analysis:
             "de_analysis/dispersion_graph.svg",
             category="Results",
             caption="../report/dispersion_graph.rst",
+            labels={
+                "figure": "Dispersion graph",
+            },
         ),
         ma_graph=report(
             "de_analysis/ma_graph.svg",
             category="Results",
             caption="../report/ma_graph.rst",
+            labels={
+                "figure": "MA plot",
+            },
         ),
         de_heatmap=report(
             "de_analysis/heatmap.svg",
             category="Results",
             caption="../report/heatmap.rst",
+            labels={
+                "figure": "Gene heatmap",
+            },
         ),
         correlation_matrix=report(
             "de_analysis/correlation_matrix.svg",
             category="Results",
             caption="../report/correlation_matrix.rst",
+            labels={
+                "figure": "Correlation matrix",
+            },
         ),
         normalized_counts="de_analysis/normalized_counts.csv",
         de_top_heatmap=report(
             "de_analysis/heatmap_top.svg",
             category="Results",
             caption="../report/heatmap_top.rst",
+            labels={
+                "figure": "Top gene heatmap",
+            },
         ),
         lfc_analysis="de_analysis/lfc_analysis.csv",
         volcano_plot=report(
             "de_analysis/volcano_plot.svg",
             category="Results",
             caption="../report/volcano_plot.rst",
+            labels={
+                "figure": "Volcano plot",
+            },
         ),
     params:
         samples=samples,

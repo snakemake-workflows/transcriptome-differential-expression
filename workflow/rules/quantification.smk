@@ -4,7 +4,7 @@ localrules:
 
 rule count_reads:
     input:
-        bam="sorted_alignments/{sample}.bam",
+        bam="alignments/{sample}.bam",
         trs="transcriptome/transcriptome.fa",
     output:
         tsv="counts/{sample}_salmon/quant.sf",
