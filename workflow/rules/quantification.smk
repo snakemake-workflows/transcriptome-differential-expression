@@ -4,12 +4,12 @@ localrules:
 
 rule count_reads:
     input:
-        bam="sorted_alignments/{sample}.bam",
+        bam="alignments/{sample}.bam",
         trs="transcriptome/transcriptome.fa",
     output:
-        tsv=temp("counts/{sample}_salmon/quant.sf"),
+        tsv="counts/{sample}_salmon/quant.sf",
     params:
-        outdir=temp(lambda wildcards: f"counts/{wildcards.sample}_salmon"),
+        outdir=lambda wildcards: f"counts/{wildcards.sample}_salmon",
         libtype=config["salmon_libtype"],
     log:
         "logs/salmon/{sample}.log",

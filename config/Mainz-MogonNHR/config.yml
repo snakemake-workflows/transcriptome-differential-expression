@@ -38,10 +38,10 @@ maximum_secondary: 100
 secondary_score_ratio: 1.0
 
 # Samtools view opts, "-b" creates BAM from SAM.
-sview_opts: "-b"
+samtobam_opts: "-b"
 
 # Samtools sort opts,
-ssort_opts: ""
+bamsort_opts: ""
 
 # Salmon library type
 salmon_libtype: "U"
@@ -50,7 +50,7 @@ salmon_libtype: "U"
 # QC options
 
 # Samtools stats opts
-sstats_opts: ""
+bamstats_opts: ""
 
 # Count filtering options - customize these according to your experimental design:
 
@@ -70,7 +70,6 @@ deseq2:
     # the "design factors" are the confounding variables to be adjusted fr
     # during normalization. They must be given in the configuration (samples.csv).
     design_factors: 
-        - "batch"
         - "condition"
     #
     # the "continous factors" are non-categorial factors to be considered

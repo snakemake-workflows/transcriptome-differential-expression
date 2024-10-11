@@ -39,22 +39,22 @@ set-resources:
         mem_mb_per_cpu: 1800
         runtime: "1h"
 
-    sam_sort:
+    bam_sort:
         cpus_per_task: 4
         mem_mb_per_cpu: 7200
         runtime: "2h"
 
-    sam_view:
+    sam_to_bam:
         cpus_per_task: 1
         mem_mb_per_cpu: 1800
         runtime: "1h"
 
-    sam_index:
+    bam_index:
         cpus_per_task: 8
         mem_mb_per_cpu: 1800
         runtime: "30m"
 
-    sam_stats:
+    bam_stats:
         cpus_per_task: 8
         mem_mb_per_cpu: 1800
         runtime: "30m"
