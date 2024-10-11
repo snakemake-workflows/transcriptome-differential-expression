@@ -218,7 +218,7 @@ if snakemake.config["deseq2"]["alpha"] < 0.9:
         figtype=snakemake.config["deseq2"]["figtype"],
     )
     os.rename(
-        "volcano." + snakemake.config["deseq2"]["figtype"],
+        f"volcano.{snakemake.config['deseq2']['figtype']}",
         snakemake.output.volcano_plot,
     )
 else:
