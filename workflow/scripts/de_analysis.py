@@ -50,7 +50,7 @@ dds = DeseqDataSet(
     continuous_factors=snakemake.config["deseq2"].get("continuous_factors", None),
     refit_cooks=True,
     n_cpus=ncpus,
-    fit_type="mean",
+    fit_type=snakemake.config["deseq2"]["fit_type"],
 )
 # compute normalization factors
 # dds.fit_size_factors()
