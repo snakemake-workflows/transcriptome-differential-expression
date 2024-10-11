@@ -98,7 +98,7 @@ deseq2:
     mincount: 10
     #
     # Type I error cutoff value:
-    alpha: 1
+    alpha: 10
     #
     # in addition to the full heatmap, plot the top number of different
     # values, ranked by the top ratio between the two traits
