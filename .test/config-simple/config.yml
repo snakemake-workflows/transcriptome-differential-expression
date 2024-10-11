@@ -72,7 +72,6 @@ deseq2:
     # the "design factors" are the confounding variables to be adjusted fr
     # during normalization. They must be given in the configuration (samples.csv).
     design_factors: 
-        - "batch"
         - "condition"
     #
     # the "continous factors" are non-categorial factors to be considered
