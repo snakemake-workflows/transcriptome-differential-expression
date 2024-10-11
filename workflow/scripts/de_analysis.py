@@ -49,7 +49,7 @@ dds = DeseqDataSet(
     design_factors=snakemake.config["deseq2"]["design_factors"],
     continuous_factors=snakemake.config["deseq2"].get("continuous_factors", None),
     refit_cooks=True,
-    n_cpus=ncpus,
+    inference=inference,
     fit_type=snakemake.config["deseq2"]["fit_type"],
 )
 # compute normalization factors
