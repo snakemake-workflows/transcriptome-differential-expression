@@ -102,10 +102,10 @@ rule bam_stats:
     input:
         bam="alignments/{sample}.bam",
     output:
-        "QC/samstats/{sample}.txt",
+        "QC/bamstats/{sample}.txt",
     log:
         "logs/samtools/bamstats_{sample}.log",
     params:
-        extra=f'{config["bamstats_opts"]}',
+        extra=config["bamstats_opts"],
     wrapper:
         "v3.13.4/bio/samtools/stats"
