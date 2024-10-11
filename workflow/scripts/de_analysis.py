@@ -6,26 +6,28 @@ import matplotlib
 
 matplotlib.use("Agg")  # suppress creating of interactive plots
 import matplotlib.pyplot as plt
-plt.rcParams['font.family'] = 'DeJavu Serif'
+
+plt.rcParams["font.family"] = "sans-serif"
 from matplotlib.colors import LogNorm
 import numpy as np
 import pandas as pd
 import seaborn as sns
 import scipy.spatial as sp, scipy.cluster.hierarchy as hc
-from bioinfokit import analys, visuz
+from bioinfokit import visuz
 
 
 from snakemake.exceptions import WorkflowError
 
 from pydeseq2.dds import DeseqDataSet
 from pydeseq2.ds import DeseqStats
-from pydeseq2.utils import load_example_data
-
+from pydeseq2.default_inference import DefaultInference
 
 sys.stderr = sys.stdout = open(snakemake.log[0], "w")
 
 ncpus = snakemake.threads
 samples = snakemake.params.samples
+
+inference = DefaultInference(n_cpus=ncpus)
 
 metadata = samples.loc[:, samples.columns != "samples"]
 
@@ -36,7 +38,9 @@ counts_df.set_index("Reference", inplace=True)
 counts_df = counts_df.T
 
 # next we filter out counts, with counts lower than 10
-genes_to_keep = counts_df.columns[counts_df.sum(axis=0) >= snakemake.config["deseq2"]["mincount"]]
+genes_to_keep = counts_df.columns[
+    counts_df.sum(axis=0) >= snakemake.config["deseq2"]["mincount"]
+]
 counts_df = counts_df[genes_to_keep]
 
 dds = DeseqDataSet(
@@ -46,9 +50,10 @@ dds = DeseqDataSet(
     continuous_factors=snakemake.config["deseq2"].get("continuous_factors", None),
     refit_cooks=True,
     n_cpus=ncpus,
+    fit_type="mean",
 )
 # compute normalization factors
-#dds.fit_size_factors()
+# dds.fit_size_factors()
 # fit dispersion(s) and LFCs
 #  this - fits the size factors
 #       - the genewise dispersion
@@ -56,7 +61,7 @@ dds = DeseqDataSet(
 #       - MAP dispersion
 #       - log2fold change
 #       - cooks distances
-dds.deseq2()#fit_type= "parametric")
+dds.deseq2(fit_type=snakemake.config["deseq2"]["fit_type"])
 
 # fitting genewise dispersions
 dds.fit_genewise_dispersions()
@@ -79,7 +84,10 @@ a_condition = conditions[1]  # this order ensures the the lfc shrink condition i
 b_condition = conditions[0]
 
 # run Wald test and plot, perform optional threshold tests, if wanted
-if "lfc_null" in snakemake.config["deseq2"] or "alt_hypothesis" in snakemake.config["deseq2"]:
+if (
+    "lfc_null" in snakemake.config["deseq2"]
+    or "alt_hypothesis" in snakemake.config["deseq2"]
+):
     summary = stat_res.summary(
         lfc_null=snakemake.config["deseq2"].get("lfc_null", 0),
         alt_hypothesis=snakemake.config["deseq2"].get("alt_hypothesis", None),
@@ -97,7 +105,8 @@ except KeyError:
 stat_res.results_df.to_csv(snakemake.output.lfc_analysis)
 
 stat_res.plot_MA(
-    s=snakemake.config["deseq2"]["point_width"], save_path=f"{snakemake.output.ma_graph}"
+    s=snakemake.config["deseq2"]["point_width"],
+    save_path=f"{snakemake.output.ma_graph}",
 )
 
 # create a clustermap, based on normalized counts
@@ -113,33 +122,46 @@ log2foldchange = np.abs(stat_res.results_df["log2FoldChange"])
 # 'pvalue' is a pandas series, linear, of length(number of aligned loci)
 pvalue = stat_res.results_df["pvalue"]
 padj = stat_res.results_df["padj"]
-print(pvalue)
-print(padj)
 
 normalized = normalized.join(log2foldchange)
 # normalized = normalized.join(np.array(pvalue[1]))
 normalized = normalized.join(padj)
-print(normalized)
 
-normalized.sort_values(by="log2FoldChange")
 # delete rows, which do not meet our p-value criterion
 # the comparison operator is >= because we drop all values >= our desired alpha
-#normalized.drop(normalized[padj >= snakemake.config["deseq2"]["alpha"]].index, inplace=True)
+# normalized.drop(normalized[padj >= snakemake.config["deseq2"]["alpha"]].index, inplace=True)
 normalized.to_csv(snakemake.output.normalized_counts)
+normalized.to_csv("normalized_my.csv")
+
+
+# warning: dropping rows before writing might remove the numerical of the selection column
+#          the reason is unclear.
+sorted = normalized.copy()
+
+sorted.sort_values(by=["log2FoldChange", "padj"], ascending=False, inplace=True)
+sorted.drop(sorted[padj >= snakemake.config["deseq2"]["alpha"]].index, inplace=True)
+# throw away these columns
+# sorted.drop("log2FoldChange", axis=1, inplace=True)
+# sorted.drop("padj", axis=1, inplace=True)
+sorted.to_csv(snakemake.output.sorted_normalized_counts)
+
 # throw away these columns
 normalized.drop("log2FoldChange", axis=1, inplace=True)
 normalized.drop("padj", axis=1, inplace=True)
+sorted.drop("log2FoldChange", axis=1, inplace=True)
+sorted.drop("padj", axis=1, inplace=True)
+
 
 normalized.dropna(inplace=True)
 
 # precompute linkages, to prevent missing values crashing the script
-row_dism = 1 - normalized.T.corr()
+row_dism = 1 - sorted.T.corr()
 row_linkage = hc.linkage(sp.distance.squareform(row_dism), method="complete")
-col_dism = 1 - normalized.corr()
+col_dism = 1 - sorted.corr()
 col_linkage = hc.linkage(sp.distance.squareform(col_dism), method="complete")
 
 # we calculate the calculation matrix once, with filling NaNs as 0
-correlation_matrix = normalized.corr().fillna(0)
+correlation_matrix = sorted.corr().fillna(0)
 # next, a triangle mask is needed, to avoid redundant plotting of the matrix
 # in a square
 mask = np.triu(np.ones_like(correlation_matrix))
@@ -167,7 +189,7 @@ plt.savefig(snakemake.output.de_heatmap)
 
 n = snakemake.config["deseq2"]["threshold_plot"]
 sns.clustermap(
-    normalized.fillna(0).iloc[:n],
+    sorted.fillna(0).iloc[:n],
     cmap=snakemake.config["deseq2"]["colormap"],
     linewidths=0,
     norm=LogNorm(),
@@ -181,17 +203,25 @@ if snakemake.config["deseq2"]["alpha"] < 0.9:
         df=stat_res.results_df.fillna(1),
         lfc="log2FoldChange",
         pv="padj",
-        lfc_thr=(snakemake.config["deseq2"]["lfc_null"], snakemake.config["deseq2"]["lfc_null"]),
-        pv_thr=(snakemake.config["deseq2"]["alpha"], snakemake.config["deseq2"]["alpha"]),
+        lfc_thr=(
+            snakemake.config["deseq2"]["lfc_null"],
+            snakemake.config["deseq2"]["lfc_null"],
+        ),
+        pv_thr=(
+            snakemake.config["deseq2"]["alpha"],
+            snakemake.config["deseq2"]["alpha"],
+        ),
         sign_line=True,
         gstyle=2,
         show=False,
         plotlegend=True,
         legendpos="upper right",
         legendanchor=(1.46, 1),
-        figtype="svg",
+        figtype=snakemake.config["deseq2"]["figtype"],
     )
-    os.rename("volcano.svg", snakemake.output.volcano_plot)
+    os.rename(
+        "volcano." + snakemake.config["deseq2"]["figtype"],
+        snakemake.output.volcano_plot,
+    )
 else:
     Path(snakemake.output.volcano_plot).touch()
-
