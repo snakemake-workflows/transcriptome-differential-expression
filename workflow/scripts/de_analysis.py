@@ -131,8 +131,6 @@ normalized = normalized.join(padj)
 # the comparison operator is >= because we drop all values >= our desired alpha
 # normalized.drop(normalized[padj >= snakemake.config["deseq2"]["alpha"]].index, inplace=True)
 normalized.to_csv(snakemake.output.normalized_counts)
-normalized.to_csv("normalized_my.csv")
-
 
 # warning: dropping rows before writing might remove the numerical of the selection column
 #          the reason is unclear.
