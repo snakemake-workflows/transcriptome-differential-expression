@@ -74,7 +74,7 @@ def rule_all_input():
     )
     all_input.append("merged/all_counts.tsv")
     all_input.append(f"de_analysis/dispersion_graph.{config['deseq2']['figtype']}")
-    all_input.append(f"de_analysis/ma_graph.{config['deseq2']['figtype']")
-    all_input.append(f"de_analysis/heatmap.{config['deseq2']['figtype']")
+    all_input.append(f"de_analysis/ma_graph.{config['deseq2']['figtype']}")
+    all_input.append(f"de_analysis/heatmap.{config['deseq2']['figtype']}")
     all_input.append("de_analysis/lfc_analysis.csv")
     return all_input
