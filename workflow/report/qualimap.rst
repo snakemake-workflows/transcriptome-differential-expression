@@ -1,0 +1,1 @@
+Full `QualiMap, <http://qualimap.conesalab.org/doc_html/analysis.html#bam-qc>`_ BAMQC alignment quality report for total samples.

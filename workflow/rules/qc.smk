@@ -2,9 +2,7 @@ import os
 
 
 localrules:
-    compress_nplot,
-    compress_nplot_all,
-    compress_map_qc,
+    qm_report,
 
 
 configfile: "config/config.yml"
@@ -20,7 +18,12 @@ rule plot_samples:
         scatter=report(
             "NanoPlot/{sample}/NanoPlot-report.html",
             category="Quality control",
+            subcategory="NanoPlot",
             caption="../report/nanoplot_sample_report.rst",
+            labels={
+                "model": "NanoPlot",
+                "figure": "{sample}",
+            },
         ),
     params:
         outdir=lambda wildcards: f"NanoPlot/{wildcards.sample}",
@@ -42,7 +45,12 @@ rule plot_all_samples:
         scatter=report(
             "NanoPlot/all_samples/NanoPlot-report.html",
             category="Quality control",
+            subcategory="NanoPlot",
             caption="../report/nanoplot_all_samples_report.rst",
+            labels={
+                "model": "NanoPlot",
+                "figure": "All samples",
+            },
         ),
     # This parameter is in line with the Snakemake docs 8.20.3 guideline on how to avoid having parameters as output prefixes
     params:
@@ -56,32 +64,6 @@ rule plot_all_samples:
         "--fastq {input} --outdir {params.outdir} 2> {log}"
 
 
-rule compress_nplot:
-    input:
-        samples=rules.plot_samples.output,
-    output:
-        "QC/NanoPlot/{sample}.tar.gz",
-    log:
-        "logs/NanoPlot/compress_{sample}.log",
-    conda:
-        "../envs/base.yml"
-    script:
-        "../scripts/make_archive.py"
-
-
-rule compress_nplot_all:
-    input:
-        all_samples=rules.plot_all_samples.output,
-    output:
-        "QC/NanoPlot/all_samples.tar.gz",
-    log:
-        "logs/NanoPlot/compress_all_samples.log",
-    conda:
-        "../envs/base.yml"
-    script:
-        "../scripts/make_archive.py"
-
-
 rule map_qc:
     input:
         bam="sorted_alignments/{sample}_sorted.bam",
@@ -93,27 +75,37 @@ rule map_qc:
         "v4.4.0/bio/qualimap/bamqc"
 
 
-rule compress_map_qc:
+# this is a dummy rule to create input for the report because the QualiMap wrapper only accepts directories as valid output
+rule qm_report:
     input:
         map_qc=rules.map_qc.output,
     output:
-        "QC/qualimap/{sample}.tar.gz",
+        qm_report=report(
+            "qualimap/{sample}/qualimapReport.html",
+            category="Quality control",
+            subcategory="QualiMap",
+            caption="../report/qualimap.rst",
+            labels={
+                "model": "QualiMap",
+                "figure": "{sample}",
+            },
+        ),
     log:
-        "logs/qualimap/compress_{sample}.log",
+        "logs/qualimap/{sample}_report.log",
     conda:
         "../envs/base.yml"
-    script:
-        "../scripts/make_archive.py"
+    shell:
+        "cp -a QC/qualimap/{wildcards.sample} qualimap/ 2> {log}"
 
 
-rule sam_stats:
+rule bam_stats:
     input:
-        bam="sorted_alignments/{sample}.bam",
+        bam="alignments/{sample}.bam",
     output:
-        "QC/samstats/{sample}.txt",
+        "QC/bamstats/{sample}.txt",
     log:
-        "logs/samtools/samstats_{sample}.log",
+        "logs/samtools/bamstats_{sample}.log",
     params:
-        extra=f'{config["sstats_opts"]}',
+        extra=config["bamstats_opts"],
     wrapper:
         "v3.13.4/bio/samtools/stats"

@@ -1,24 +1,24 @@
-rule sam_view:
+rule sam_to_bam:
     input:
         sam="alignments/{sample}.sam",
     output:
-        "sorted_alignments/{sample}.bam",
+        "alignments/{sample}.bam",
     log:
-        "logs/samtools/samview_{sample}.log",
+        "logs/samtools/samtobam_{sample}.log",
     params:
-        extra=f'{config["sview_opts"]}',
+        extra=f'{config["samtobam_opts"]}',
     wrapper:
         "v3.13.4/bio/samtools/view"
 
 
-rule sam_sort:
+rule bam_sort:
     input:
-        sam="alignments/{sample}.sam",
+        bam="alignments/{sample}.bam",
     output:
         "sorted_alignments/{sample}_sorted.bam",
     log:
-        "logs/samtools/samsort_{sample}.log",
+        "logs/samtools/bamsort_{sample}.log",
     params:
-        extra=f'{config["ssort_opts"]}',
+        extra=f'{config["bamsort_opts"]}',
     wrapper:
         "v3.13.4/bio/samtools/sort"

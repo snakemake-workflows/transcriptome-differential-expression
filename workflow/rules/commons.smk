@@ -65,10 +65,14 @@ def aggregate_input(samples):
 def rule_all_input():
     all_input = list()
     all_input.append("versions.txt")
-    all_input.extend(expand("QC/NanoPlot/{sample}.tar.gz", sample=samples["sample"]))
-    all_input.append("QC/NanoPlot/all_samples.tar.gz")
-    all_input.extend(expand("QC/samstats/{sample}.txt", sample=samples["sample"]))
-    all_input.extend(expand("QC/qualimap/{sample}.tar.gz", sample=samples["sample"]))
+    all_input.extend(
+        expand("NanoPlot/{sample}/NanoPlot-report.html", sample=samples["sample"])
+    )
+    all_input.append("NanoPlot/all_samples/NanoPlot-report.html")
+    all_input.extend(expand("QC/bamstats/{sample}.txt", sample=samples["sample"]))
+    all_input.extend(
+        expand("qualimap/{sample}/qualimapReport.html", sample=samples["sample"])
+    )
     all_input.extend(
         expand("counts/{sample}_salmon/quant.sf", sample=samples["sample"])
     )

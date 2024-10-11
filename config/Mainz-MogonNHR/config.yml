@@ -37,10 +37,10 @@ maximum_secondary: 100
 secondary_score_ratio: 1.0
 
 # Samtools view opts, "-b" creates BAM from SAM.
-sview_opts: "-b"
+samtobam_opts: "-b"
 
 # Samtools sort opts,
-ssort_opts: ""
+bamsort_opts: ""
 
 # Salmon library type
 salmon_libtype: "U"
@@ -49,7 +49,7 @@ salmon_libtype: "U"
 # QC options
 
 # Samtools stats opts
-sstats_opts: ""
+bamstats_opts: ""
 
 # Count filtering options - customize these according to your experimental design:
 
@@ -71,7 +71,7 @@ design_factors:
   - "condition"
 #
 # The (log2) log fold change under the null hypothesis. (default: 0).
-lfc_null: 0.1
+lfc_null: 1
 #
 # The alternative hypothesis for computing wald p-values. By default,
 # the normal Wald test assesses deviation of the estimated log fold
