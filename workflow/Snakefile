@@ -23,7 +23,7 @@ include: "rules/alignment.smk"
 include: "rules/alignmod.smk"
 include: "rules/quantification.smk"
 include: "rules/diffexp.smk"
-include: "rules/as_detect.smk"
+include: "rules/isoform_analysis.smk"
 
 
 inputdir = config["inputdir"]
