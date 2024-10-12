@@ -31,6 +31,20 @@ samples = (
 
 validate(samples, schema="../schemas/samples.schema.yaml")
 
+# flair uses the values of condition1 in its file naming scheme, therefore we extract them as wildcards from samples
+condition_val = samples["condition"].unique().tolist()
+if config["isoform_analysis"] == "yes":
+    if len(condition_val) != 2:
+        raise ValueError(
+            "If you want to perform differential isoform analysis, 'condition' in samples.csv must have exactly two distinct values."
+        )
+
+condition_value1, condition_value2 = condition_val[0], condition_val[1]
+condition_samples = {
+    cond: samples[samples["condition"] == cond]["sample"].tolist()
+    for cond in condition_val
+}
+
 
 def get_mapped_reads_input(sample):
     path = Path(os.path.join(config["inputdir"], sample))
@@ -81,7 +95,12 @@ def rule_all_input():
     all_input.append(f"de_analysis/ma_graph.{config['deseq2']['figtype']}")
     all_input.append(f"de_analysis/heatmap.{config['deseq2']['figtype']}")
     all_input.append("de_analysis/lfc_analysis.csv")
-    if config["isoform_quantification"]=="yes":
-        all_input.append("flair/diffsplice.alt3.events.quant.tsv")
-        all_input.append("flair/genes_deseq2_MCF7_v_A549.tsv")
+    if config["isoform_analysis"] == "yes":
+        all_input.extend(
+            expand(
+                "iso_analysis/diffexp/genes_deseq2_{condition_value1}_v_{condition_value2}.tsv",
+                condition_value1=[condition_value1],
+                condition_value2=[condition_value2],
+            )
+        )
     return all_input
