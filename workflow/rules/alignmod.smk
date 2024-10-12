@@ -27,11 +27,11 @@ rule bam_sort:
 # flair bam2bed needs index files
 rule bam_index:
     input:
-        sbam="sorted_alignments/{sample}_sorted.bam"
+        sbam="sorted_alignments/{sample}_sorted.bam",
     output:
-        bai="sorted_alignments/{sample}_sorted.bam.bai"
+        bai="sorted_alignments/{sample}_sorted.bam.bai",
     log:
-        "logs/samtools/samindex_{sample}.log"
+        "logs/samtools/samindex_{sample}.log",
     params:
         extra=f'{config["bamindex_opts"]}',
     wrapper:

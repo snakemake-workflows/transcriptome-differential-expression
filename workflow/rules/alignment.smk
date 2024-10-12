@@ -4,7 +4,7 @@ rule build_minimap_index:  ## build minimap2 index
     output:
         index="index/transcriptome_index.mmi",
     params:
-        extra=config['minimap2']["index_opts"],
+        extra=config["minimap2"]["index_opts"],
     log:
         "logs/minimap2/index.log",
     threads: 4
