@@ -41,17 +41,18 @@ min_length: 200
 # Maximum number of CPUs in your partition/PC/server
 max_cpus: 40
 
-# Minimap2 indexing options
-minimap_index_opts: ""
+minimap2:
+    # Minimap2 indexing options
+    index_opts: ""
 
-# Minimap2 mapping options
-minimap2_opts: ""
+    # Minimap2 mapping options
+    opts: ""
 
-# Maximum secondary alignments
-maximum_secondary: 100
+    # Maximum secondary alignments
+    maximum_secondary: 100
 
-# Secondary score ratio (-p for minimap2)
-secondary_score_ratio: 1.0
+    # Secondary score ratio (-p for minimap2)
+    secondary_score_ratio: 1.0
 
 # Samtools view opts, "-b" creates BAM from SAM.
 samtobam_opts: "-b"
