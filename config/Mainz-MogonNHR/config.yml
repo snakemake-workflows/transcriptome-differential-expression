@@ -59,6 +59,9 @@ samtobam_opts: "-b"
 # Samtools sort opts,
 bamsort_opts: ""
 
+# Samtools index opts,
+bamindex_opts: ""
+
 # Salmon library type
 salmon_libtype: "U"
 
