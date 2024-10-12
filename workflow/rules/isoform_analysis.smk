@@ -13,7 +13,7 @@ rule reads_manifest:
     log:
         "logs/flair/reads_manifest.log",
     conda:
-        "../envs/base.yml"
+        "../envs/pandas.yml"
     script:
         "../scripts/reads_manifest.py"
 
