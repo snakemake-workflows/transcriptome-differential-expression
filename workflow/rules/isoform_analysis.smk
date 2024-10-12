@@ -71,7 +71,7 @@ rule flair_collapse:
         isof="iso_analysis/collapse/flair.isoforms.fa",
     params:
         outdir=lambda wildcards, output: output[0][:-13],
-        qscore=config["qscore"],
+        qscore=config["FLAIR"]["qscore"],
     log:
         "logs/flair/collapse.log",
     conda:
@@ -94,7 +94,7 @@ rule flair_quantify:
     params:
         outdir=lambda wildcards, output: output[0][:-11],
         tmp_dir="iso_analysis/quantify/tmp",
-        qscore=config["qscore"],
+        qscore=config["FLAIR"]["qscore"],
     log:
         "logs/flair/quantify.log",
     conda:
@@ -120,7 +120,7 @@ rule flair_diffexp:
         isoforms_drimseq="iso_analysis/diffexp/isoforms_drimseq_{cond_val1}_v_{cond_val2}.tsv",
     params:
         outdir=lambda wildcards, output: os.path.dirname(output[0]),
-        exp_thresh=config["exp_thresh"],
+        exp_thresh=config["FLAIR"]["exp_thresh"],
     log:
         "logs/flair/diffexp_{cond_val1}_v_{cond_val2}.log",
     conda:
