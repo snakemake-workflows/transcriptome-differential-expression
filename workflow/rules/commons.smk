@@ -95,7 +95,7 @@ def rule_all_input():
     all_input.append(f"de_analysis/ma_graph.{config['deseq2']['figtype']}")
     all_input.append(f"de_analysis/heatmap.{config['deseq2']['figtype']}")
     all_input.append("de_analysis/lfc_analysis.csv")
-    if config["isoform_analysis"] == "yes":
+    if config["FLAIR"]["isoform_analysis"] == "yes":
         all_input.extend(
             expand(
                 "iso_analysis/diffexp/genes_deseq2_{condition_value1}_v_{condition_value2}.tsv",
