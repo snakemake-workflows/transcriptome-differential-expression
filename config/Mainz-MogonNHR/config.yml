@@ -19,8 +19,21 @@ ref:
     # NCBI accession number of the reference data set
     accession: "GCA_917627325.4"
 
-# perform isoform quantification?
-isoform_quantification: "yes"
+
+# Differential Isoform Analysis
+
+# The differential isoform analysis pipeline uses FLAIR and includes resource-intensive computations and only works with additional constraints.
+#     1. In 'samples.csv: The 'condition' column must contain exactly two distinct values. For example 'control' and 'treated'.
+#     2. In 'samples.csv: Refrain from using underscores when naming samples. The 'sample' column may contain underscores, but be aware that underscores will be removed from the name for isoform quantification steps.
+#     3. In this file: the variable 'isoform_analysis' below must be:'"yes"'. This is a check to determine if users are aware of the constraints and wish to proceed.
+
+# Perform Differential Isoform Analysis with FLAIR?
+isoform_analysis: "yes"
+#FLAIR quality score. Minimum MAPQ of read assignment to an isoform (default 1).
+qscore: 1
+#FLAIR read count expression threshold. Isoforms in which both conditions contain fewer than E reads are filtered out (Default E=10).
+exp_thresh: 10
+
 
 # Minimum read length, put 0 if you want to proceed with all reads.
 min_length: 200
