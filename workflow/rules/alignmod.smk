@@ -22,3 +22,17 @@ rule bam_sort:
         extra=f'{config["bamsort_opts"]}',
     wrapper:
         "v3.13.4/bio/samtools/sort"
+
+
+# flair bam2bed needs index files
+rule bam_index:
+    input:
+        sbam="sorted_alignments/{sample}_sorted.bam",
+    output:
+        bai="sorted_alignments/{sample}_sorted.bam.bai",
+    log:
+        "logs/samtools/samindex_{sample}.log",
+    params:
+        extra=f'{config["bamindex_opts"]}',
+    wrapper:
+        "v4.5.0/bio/samtools/index"
