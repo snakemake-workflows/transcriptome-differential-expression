@@ -14,8 +14,8 @@ rule standardize_gff:
         "../envs/agat.yml"
     shell:
         """
-    perl $(which agat_convert_sp_gxf2gxf.pl) --gff {input} -o {output} &> {log}
-    """
+        agat_convert_sp_gxf2gxf.pl --gff {input} -o {output} &> {log}
+        """
 
 
 rule genome_to_transcriptome:
