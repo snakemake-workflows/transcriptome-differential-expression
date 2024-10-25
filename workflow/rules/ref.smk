@@ -38,7 +38,7 @@ rule get_genome:
     shell:
         # checks if local genome is available (see commons.smk), if it is, moves it to output path. If not, extract genome from ncbi_dataset.zip
         """
-        [ -f "{input}" ] && mv "{input}" "{output}" || unzip -p {input} ncbi_dataset/data/{params.accession}/*.fna > {output} 2>> {log}
+        [ -f "{input}" ] && mv "{input}" "{output}" 2> "{log}"  || unzip -p {input} ncbi_dataset/data/{params.accession}/*.fna > {output} 2>> {log}
         """
 
 
@@ -60,5 +60,5 @@ rule get_annotation:
     shell:
         # checks if local annotation is available (see commons.smk), if it is, moves it to output path. If not, extracts annotation from ncbi_dataset.zip
         """
-        [ -f "{input}" ] && mv "{input}" "{output}" || unzip -p {input} ncbi_dataset/data/{params.accession}/*.gff > {output} 2>> {log};
+        [ -f "{input}" ] && mv "{input}" "{output}" 2> "{log}" || unzip -p {input} ncbi_dataset/data/{params.accession}/*.gff > {output} 2>> {log};
         """
