@@ -15,11 +15,11 @@ repo: "https://github.com/snakemake-workflows/transriptome-differential-expressi
 
 # The reference genome respectively transcriptome, is defined here:
 # You can provide either 'genome' or 'annotation' reference files locally.
-# If both 'genome' and 'annotation' are available no 'accession' number is needed. 
+# If both 'genome' and 'annotation' are available no 'accession' number is needed.
 # In any other case an 'accession' number is needed to download missing reference data remotely.
 ref:
     species: "Chironomus riparius"
-    
+
     # Local reference data
     # Genome file path; can be left empty if remote download is prefered.
     # allowed extensions: ".fa" or ".fna" or ".fasta"
@@ -27,11 +27,10 @@ ref:
     # Annotation file path; can be left empty if remote download is prefered.
     # allowed extensions: ".gff" or ".gtf"
     annotation: "/lustre/project/nhr-zdvhpc/transcriptome_data/GCA_917627325.4_PGI_CHIRRI_v4_genomic.gff"
-    
+
     # Remote reference data
     # NCBI accession number of the reference data set; can be left empty if both reference files are available locally"
     accession: "GCA_917627325.4"
-
 
 
 # Minimum read length, put 0 if you want to proceed with all reads.
