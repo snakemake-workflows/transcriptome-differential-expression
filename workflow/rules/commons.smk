@@ -37,8 +37,20 @@ def get_reference_files(config):
     ref = config.get("ref", {})
     accession = ref.get("accession")
     # Validate genome and annotation paths
-    genome = ref.get("genome") if ref.get("genome") and os.path.exists(ref["genome"]) and ref["genome"].endswith((".fa", ".fna", ".fasta")) else None
-    annotation = ref.get("annotation") if ref.get("annotation") and os.path.exists(ref["annotation"]) and ref["annotation"].endswith((".gtf", ".gff")) else None
+    genome = (
+        ref.get("genome")
+        if ref.get("genome")
+        and os.path.exists(ref["genome"])
+        and ref["genome"].endswith((".fa", ".fna", ".fasta"))
+        else None
+    )
+    annotation = (
+        ref.get("annotation")
+        if ref.get("annotation")
+        and os.path.exists(ref["annotation"])
+        and ref["annotation"].endswith((".gtf", ".gff"))
+        else None
+    )
 
     if genome and annotation:
         return {"genome": genome, "annotation": annotation}
@@ -52,7 +64,9 @@ def get_reference_files(config):
 
     # Throw errors if reference data is invalid
     if genome or annotation:
-        raise ValueError("Only one reference file provided, provide either both genome and annotation or an NCBI accession number.")
+        raise ValueError(
+            "Only one reference file provided, provide either both genome and annotation or an NCBI accession number."
+        )
     raise ValueError("No valid reference files or accession number provided.")
 
 
