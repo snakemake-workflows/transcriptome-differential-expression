@@ -22,7 +22,9 @@ rule get_genome:
 
 rule extract_genome:
     input:
-        lambda wildcards: get_reference_files(config).get("genome","references/ncbi_dataset.zip")
+        lambda wildcards: get_reference_files(config).get(
+            "genome", "references/ncbi_dataset.zip"
+        ),
     output:
         "references/genomic.fa",
     group:
@@ -41,7 +43,9 @@ rule extract_genome:
 
 rule extract_annotation:
     input:
-        lambda wildcards: get_reference_files(config).get("annotation","references/ncbi_dataset.zip")
+        lambda wildcards: get_reference_files(config).get(
+            "annotation", "references/ncbi_dataset.zip"
+        ),
     output:
         "references/genomic.gff",
     group:
