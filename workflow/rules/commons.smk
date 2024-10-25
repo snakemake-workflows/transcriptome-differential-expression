@@ -38,7 +38,7 @@ def get_reference_files(config):
     annotation = config["ref"].get("annotation")
 
     genome_exts = (".fa", ".fna", ".fasta")
-    annotation_exts=(".gtf", ".gff")
+    annotation_exts = (".gtf", ".gff")
 
     if (
         os.path.exists(genome)
