@@ -32,6 +32,7 @@ samples = (
 validate(samples, schema="../schemas/samples.schema.yaml")
 
 
+# Verifiy user provided reference files and set input paths
 def get_reference_files(config):
     genome = config["ref"].get("genome")
     annotation = config["ref"].get("annotation")
@@ -50,9 +51,10 @@ def get_reference_files(config):
     return {}
 
 
+# Throw error if no valid reference data is provided
 if not config["ref"].get("accession") and not get_reference_files(config):
     raise ValueError(
-        "Error: No accession number or local reference files provided in config YML."
+        "Error: No accession number or valid local reference files provided in config YML."
     )
 
 
