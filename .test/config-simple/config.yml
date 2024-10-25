@@ -16,7 +16,10 @@ repo: "https://github.com/snakemake-workflows/transriptome-differential-expressi
 ref:
     # species
     species: "Homo sapiens"
-    
+    # Genome FA or FASTA or FNA
+    genome: "./ngs-test-data/ref/genome.chr21.fa"
+    # Annotation GFF or GTF
+    annotation: "./ngs-test-data/ref/annotation.chr21.gtf"    
     # NCBI accession number of the reference data set.
     accession: "GCF_000001405.40"
 
