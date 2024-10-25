@@ -39,15 +39,13 @@ def get_reference_files(config):
     # Validate genome and annotation paths
     genome = (
         ref.get("genome")
-        if ref.get("genome")
-        and os.path.exists(ref["genome"])
+        if os.path.exists(ref["genome"])
         and ref["genome"].endswith((".fa", ".fna", ".fasta"))
         else None
     )
     annotation = (
         ref.get("annotation")
-        if ref.get("annotation")
-        and os.path.exists(ref["annotation"])
+        if os.path.exists(ref["annotation"])
         and ref["annotation"].endswith((".gtf", ".gff"))
         else None
     )
