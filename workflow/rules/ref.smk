@@ -7,7 +7,7 @@ localrules:
 rule get_genome:
     output:
         # generic name:
-        temp("ncbi_dataset.zip"),
+        temp("references/ncbi_dataset.zip"),
     params:
         accession=config["ref"]["accession"],
     log:
@@ -22,7 +22,7 @@ rule get_genome:
 
 rule extract_genome:
     input:
-        rules.get_genome.output,
+        lambda wildcards: get_reference_files(config).get("genome","references/ncbi_dataset.zip")
     output:
         "references/genomic.fa",
     group:
@@ -35,13 +35,13 @@ rule extract_genome:
         "../envs/reference.yml"
     shell:
         """
-        unzip -p {input} ncbi_dataset/data/{params.accession}/*.fna > {output} 2> {log}
+        [ -f "{input}" ] && mv {input} {output} || unzip -p {input} ncbi_dataset/data/{params.accession}/*.fna > {output} 2>> {log}
         """
 
 
 rule extract_annotation:
     input:
-        rules.get_genome.output,
+        lambda wildcards: get_reference_files(config).get("annotation","references/ncbi_dataset.zip")
     output:
         "references/genomic.gff",
     group:
@@ -54,5 +54,5 @@ rule extract_annotation:
         "../envs/reference.yml"
     shell:
         """
-        unzip -p {input} ncbi_dataset/data/{params.accession}/*.gff > references/genomic.gff 2> {log};
+        [ -f "{input}" ] && mv {input} {output} || unzip -p {input} ncbi_dataset/data/{params.accession}/*.gff > references/genomic.gff 2>> {log};
         """

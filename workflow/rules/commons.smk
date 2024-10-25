@@ -32,6 +32,30 @@ samples = (
 validate(samples, schema="../schemas/samples.schema.yaml")
 
 
+def get_reference_files(config):
+    genome = config["ref"].get("genome")
+    annotation = config["ref"].get("annotation")
+
+    genome_exts = (".fa", ".fna", ".fasta")
+    annotation_exts=(".gtf", ".gff")
+
+    if (
+        os.path.exists(genome)
+        and genome.endswith(genome_exts)
+        and os.path.exists(annotation)
+        and annotation.endswith(annotation_exts)
+    ):
+        return {"genome": genome, "annotation": annotation}
+
+    return {}
+
+
+if not config["ref"].get("accession") and not get_reference_files(config):
+    raise ValueError(
+        "Error: No accession number or local reference files provided in config YML."
+    )
+
+
 def get_mapped_reads_input(sample):
     path = Path(os.path.join(config["inputdir"], sample))
     for extension in exts:
