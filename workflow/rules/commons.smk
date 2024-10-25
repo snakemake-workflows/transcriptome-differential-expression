@@ -34,28 +34,26 @@ validate(samples, schema="../schemas/samples.schema.yaml")
 
 # Verifiy user provided reference files and set input paths
 def get_reference_files(config):
-    genome = config["ref"].get("genome")
-    annotation = config["ref"].get("annotation")
+    ref = config.get("ref", {})
+    accession = ref.get("accession")
+    # Validate genome and annotation paths
+    genome = ref.get("genome") if ref.get("genome") and os.path.exists(ref["genome"]) and ref["genome"].endswith((".fa", ".fna", ".fasta")) else None
+    annotation = ref.get("annotation") if ref.get("annotation") and os.path.exists(ref["annotation"]) and ref["annotation"].endswith((".gtf", ".gff")) else None
 
-    genome_exts = (".fa", ".fna", ".fasta")
-    annotation_exts = (".gtf", ".gff")
-
-    if (
-        os.path.exists(genome)
-        and genome.endswith(genome_exts)
-        and os.path.exists(annotation)
-        and annotation.endswith(annotation_exts)
-    ):
+    if genome and annotation:
         return {"genome": genome, "annotation": annotation}
 
-    return {}
+    if accession:
+        if genome:
+            return {"genome": genome}
+        if annotation:
+            return {"annotation": annotation}
+        return {}
 
-
-# Throw error if no valid reference data is provided
-if not config["ref"].get("accession") and not get_reference_files(config):
-    raise ValueError(
-        "Error: No accession number or valid local reference files provided in config YML."
-    )
+    # Throw errors if reference data is invalid
+    if genome or annotation:
+        raise ValueError("Only one reference file provided, provide either both genome and annotation or an NCBI accession number.")
+    raise ValueError("No valid reference files or accession number provided.")
 
 
 def get_mapped_reads_input(sample):
