@@ -32,27 +32,31 @@ samples = (
 validate(samples, schema="../schemas/samples.schema.yaml")
 
 
-# Verifiy user provided reference files and set input paths
 def get_reference_files(config):
+    """
+    Get reference files from config file and validate them.
+    """
     ref = config.get("ref", {})
-    accession = ref.get("accession")
-    # Validate genome and annotation paths
+    genome_exts = (".fa", ".fna", ".fasta")
+    annotation_exts = (".gtf", ".gff")
+    # Validate genome and annotation files
     genome = (
         ref.get("genome")
-        if os.path.exists(ref["genome"])
-        and ref["genome"].endswith((".fa", ".fna", ".fasta"))
+        if Path(ref["genome"]).exists()
+        and Path(ref["genome"]).suffix.lower() in genome_exts in genome_exts
         else None
     )
     annotation = (
         ref.get("annotation")
-        if os.path.exists(ref["annotation"])
-        and ref["annotation"].endswith((".gtf", ".gff"))
+        if Path(ref["annotation"]).exists()
+        and Path(ref["annotation"]).suffix.lower() in annotation_exts
         else None
     )
 
     if genome and annotation:
         return {"genome": genome, "annotation": annotation}
 
+    accession = ref.get("accession")
     if accession:
         if genome:
             return {"genome": genome}
@@ -60,11 +64,12 @@ def get_reference_files(config):
             return {"annotation": annotation}
         return {}
 
-    # Throw errors if reference data is invalid
+    # Throw errors if reference data are invalid: only one file is given
     if genome or annotation:
         raise ValueError(
             "Only one reference file provided, provide either both genome and annotation or an NCBI accession number."
         )
+
     raise ValueError("No valid reference files or accession number provided.")
 
 
