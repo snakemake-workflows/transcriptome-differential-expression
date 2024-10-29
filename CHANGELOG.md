@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/snakemake-workflows/transcriptome-differential-expression/compare/v1.4.1...v1.5.0) (2024-10-29)
+
+
+### Features
+
+* local refs ([#100](https://github.com/snakemake-workflows/transcriptome-differential-expression/issues/100)) ([5fed515](https://github.com/snakemake-workflows/transcriptome-differential-expression/commit/5fed515c81e754ca6138a69eda83dd84a5383a2d))
+
 ## [1.4.1](https://github.com/snakemake-workflows/transcriptome-differential-expression/compare/v1.4.0...v1.4.1) (2024-10-12)
 
 
