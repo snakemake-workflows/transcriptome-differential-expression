@@ -46,6 +46,8 @@ FLAIR:
     qscore: 1
     #FLAIR read count expression threshold. Isoforms in which both conditions contain fewer than E reads are filtered out (Default E=10).
     exp_thresh: 10
+    # flair_collapse options. '--stringent' for full-length supporting reads (>=80% coverage)
+    col_opts: "--stringent"
 
 # Minimum read length, put 0 if you want to proceed with all reads.
 min_length: 200

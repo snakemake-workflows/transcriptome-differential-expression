@@ -72,6 +72,7 @@ rule flair_collapse:
     params:
         outdir=lambda wildcards, output: output[0][:-13],
         qscore=config["FLAIR"]["qscore"],
+        opts=config["FLAIR"]["col_opts"],
     log:
         "logs/flair/collapse.log",
     conda:
@@ -80,7 +81,7 @@ rule flair_collapse:
         """
         flair collapse --genome {input.transcriptome} --gtf {input.annotation} --query {input.beds} \
         --reads {input.sample} --output {params.outdir} --quality {params.qscore} --no_gtf_end_adjustment \
-        --stringent --threads {resources.cpus_per_task} &> {log}
+        {params.col_opts} --threads {resources.cpus_per_task} &> {log}
         """
 
 
