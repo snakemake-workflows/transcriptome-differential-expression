@@ -24,8 +24,8 @@ ref:
     # Genome file path; can be left empty if remote download is prefered.
     # allowed extensions: ".fa" or ".fna" or ".fasta"
     genome: "/lustre/project/nhr-zdvhpc/transcriptome_data/GCA_917627325.4_PGI_CHIRRI_v4_genomic.fa"
-    # Annotation file path; can be left empty if remote download is prefered.
-    # allowed extensions: ".gff" or ".gtf"
+    # Annotation file (supported extensions: .gff, .gtf, case-insensitive)
+    #                 may be a path or left empty, if download using an accession number is preferred
     annotation: "/lustre/project/nhr-zdvhpc/transcriptome_data/GCA_917627325.4_PGI_CHIRRI_v4_genomic.gff"
 
     # Remote reference data
