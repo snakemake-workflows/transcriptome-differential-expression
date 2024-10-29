@@ -81,7 +81,7 @@ rule flair_collapse:
         """
         flair collapse --genome {input.transcriptome} --gtf {input.annotation} --query {input.beds} \
         --reads {input.sample} --output {params.outdir} --quality {params.qscore} --no_gtf_end_adjustment \
-        {params.col_opts} --threads {resources.cpus_per_task} &> {log}
+        {params.opts} --threads {resources.cpus_per_task} &> {log}
         """
 
 
