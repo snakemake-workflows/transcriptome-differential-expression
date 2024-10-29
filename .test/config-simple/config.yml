@@ -22,7 +22,7 @@ ref:
     annotation: "./ngs-test-data/ref/annotation.chr21.gtf"    
     # NCBI accession number of the reference data set.
     # empty, because every real reference is too big.
-    accession: ""
+    accession: None
 
 # Minimum read length, put 0 if you want to proceed with all reads.
 min_length: 10
