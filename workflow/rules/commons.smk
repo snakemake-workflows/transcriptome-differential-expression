@@ -53,6 +53,15 @@ def get_reference_files(config):
         else None
     )
 
+    # Throw errors if reference data are provided, but for only one file
+    if (genome and not annotation) or (annotation and not genome):
+        raise ValueError(
+            """Only one reference file provided 
+               (found '{genome}' for genome and '{annotation}' as annotation),
+               provide either both genome and annotation or an NCBI accession
+               number."""
+        )
+
     if genome and annotation:
         return {"genome": genome, "annotation": annotation}
 
@@ -63,15 +72,6 @@ def get_reference_files(config):
         if annotation:
             return {"annotation": annotation}
         return {}
-
-    # Throw errors if reference data are invalid: only one file is given
-    if genome or annotation:
-        raise ValueError(
-            """Only one reference file provided 
-               (found '{genome}' for genome and '{annotation}' as annotation),
-               provide either both genome and annotation or an NCBI accession
-               number."""
-        )
 
     raise ValueError("No valid reference files or accession number provided.")
 
