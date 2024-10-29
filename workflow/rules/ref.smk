@@ -1,7 +1,7 @@
 localrules:
+    get_references,
+    get_annotation,
     get_genome,
-    extract_annotation,
-    extract_genome,
 
 
 rule get_references:
