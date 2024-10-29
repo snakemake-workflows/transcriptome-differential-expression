@@ -46,6 +46,50 @@ condition_samples = {
 }
 
 
+def get_reference_files(config):
+    """
+    Get reference files from config file and validate them.
+    """
+    ref = config.get("ref", {})
+    genome_exts = (".fa", ".fna", ".fasta")
+    annotation_exts = (".gtf", ".gff")
+    # Validate genome and annotation files
+    genome = (
+        ref.get("genome")
+        if Path(ref["genome"]).exists()
+        and Path(ref["genome"]).suffix.lower() in genome_exts
+        else None
+    )
+    annotation = (
+        ref.get("annotation")
+        if Path(ref["annotation"]).exists()
+        and Path(ref["annotation"]).suffix.lower() in annotation_exts
+        else None
+    )
+
+    # Throw errors if reference data are provided, but for only one file
+    if (genome and not annotation) or (annotation and not genome):
+        raise ValueError(
+            f"""Only one reference file provided 
+               (found '{genome}' for genome and '{annotation}' as annotation),
+               provide either both genome and annotation or an NCBI accession
+               number."""
+        )
+
+    if genome and annotation:
+        return {"genome": genome, "annotation": annotation}
+
+    accession = ref.get("accession")
+    if accession:
+        if genome:
+            return {"genome": genome}
+        if annotation:
+            return {"annotation": annotation}
+        return {}
+
+    raise ValueError("No valid reference files or accession number provided.")
+
+
 def get_mapped_reads_input(sample):
     path = Path(os.path.join(config["inputdir"], sample))
     for extension in exts:

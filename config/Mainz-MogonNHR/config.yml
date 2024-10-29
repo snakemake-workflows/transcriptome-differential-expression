@@ -13,10 +13,23 @@ repo: "https://github.com/snakemake-workflows/transriptome-differential-expressi
 
 ## Workflow-specific Parameters:
 
-# the reference genome respectively transcriptome, is defined here:
+# The reference genome respectively transcriptome, is defined here:
+# You can provide either 'genome' or 'annotation' reference files locally.
+# If both 'genome' and 'annotation' are available no 'accession' number is needed.
+# In any other case an 'accession' number is needed to download missing reference data remotely.
 ref:
     species: "Chironomus riparius"
-    # NCBI accession number of the reference data set
+
+    # Local reference data
+    # Genome file path; can be left empty if remote download is prefered.
+    # allowed extensions: ".fa" or ".fna" or ".fasta"
+    genome: "/lustre/project/nhr-zdvhpc/transcriptome_data/GCA_917627325.4_PGI_CHIRRI_v4_genomic.fa"
+    # Annotation file (supported extensions: .gff, .gtf, case-insensitive)
+    #                 may be a path or left empty, if download using an accession number is preferred
+    annotation: "/lustre/project/nhr-zdvhpc/transcriptome_data/GCA_917627325.4_PGI_CHIRRI_v4_genomic.gff"
+
+    # Remote reference data
+    # NCBI accession number of the reference data set; can be left empty if both reference files are available locally"
     accession: "GCA_917627325.4"
 
 
@@ -33,7 +46,6 @@ FLAIR:
     qscore: 1
     #FLAIR read count expression threshold. Isoforms in which both conditions contain fewer than E reads are filtered out (Default E=10).
     exp_thresh: 10
-
 
 # Minimum read length, put 0 if you want to proceed with all reads.
 min_length: 200
