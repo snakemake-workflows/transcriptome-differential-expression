@@ -77,7 +77,7 @@ set-resources:
     bam_to_bed:
         cpus_per_task: 1
         mem_mb_per_cpu: 1800
-        runtime: "1h" 
+        runtime: "1h"
 
     flair_collapse:
         cpus_per_task: 32
@@ -85,10 +85,10 @@ set-resources:
         runtime: "2h"
 
     flair_quantify:
-        cpus_per_task: 32 
+        cpus_per_task: 32
         mem_mb_per_cpu: 1800
         runtime: "3h"
-    
+
     flair_diffexp:
         cpus_per_task: 4
         mem_mb_per_cpu: 3600
