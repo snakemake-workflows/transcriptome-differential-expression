@@ -1,6 +1,7 @@
 localrules:
     reads_manifest,
     concatenate_beds,
+    plot_isoforms,
 
 
 # Construct a flair readable TSV file for samples
@@ -57,7 +58,7 @@ rule concatenate_beds:
     conda:
         "../envs/base.yml"
     shell:
-        "cat {input} >> {output}"
+        "rm -f {output}; cat {input} >> {output}"
 
 
 rule flair_collapse:
@@ -114,16 +115,16 @@ rule flair_diffexp:
     input:
         counts_matrix="iso_analysis/quantify/flair.counts.tsv",
     output:
-        genes_deseq2="iso_analysis/diffexp/genes_deseq2_{cond_val1}_v_{cond_val2}.tsv",
-        genes_deseq2_QCplots="iso_analysis/diffexp/genes_deseq2_QCplots_{cond_val1}_v_{cond_val2}.pdf",
-        isoforms_deseq2="iso_analysis/diffexp/isoforms_deseq2_{cond_val1}_v_{cond_val2}.tsv",
-        isoforms_deseq2_QCplots="iso_analysis/diffexp/isoforms_deseq2_QCplots_{cond_val1}_v_{cond_val2}.pdf",
-        isoforms_drimseq="iso_analysis/diffexp/isoforms_drimseq_{cond_val1}_v_{cond_val2}.tsv",
+        genes_deseq2="iso_analysis/diffexp/genes_deseq2_{condition_value1}_v_{condition_value2}.tsv",
+        genes_deseq2_QCplots="iso_analysis/diffexp/genes_deseq2_QCplots_{condition_value1}_v_{condition_value2}.pdf",
+        isoforms_deseq2="iso_analysis/diffexp/isoforms_deseq2_{condition_value1}_v_{condition_value2}.tsv",
+        isoforms_deseq2_QCplots="iso_analysis/diffexp/isoforms_deseq2_QCplots_{condition_value1}_v_{condition_value2}.pdf",
+        isoforms_drimseq="iso_analysis/diffexp/isoforms_drimseq_{condition_value1}_v_{condition_value2}.tsv",
     params:
         outdir=lambda wildcards, output: os.path.dirname(output[0]),
         exp_thresh=config["FLAIR"]["exp_thresh"],
     log:
-        "logs/flair/diffexp_{cond_val1}_v_{cond_val2}.log",
+        "logs/flair/diffexp_{condition_value1}_v_{condition_value2}.log",
     conda:
         "../envs/flair.yml"
     shell:
@@ -134,22 +135,26 @@ rule flair_diffexp:
         """
 
 
-# rule plot_isoforms:
-#    input:
-#        isob="flair/collapse/flair.isoforms.bed",
-#        counts_matrix="flair/flair.counts.tsv",
-#        genes_deseq2="iso_analysis/diffexp/genes_deseq2_{wildcards.cond_val1}_v_{wildcards.cond_val2}.tsv",
-#        gene_name="",
-#    output:
-#        "",
-#    params:
-#        outdir=lambda wildcards, output: os.path.dirname(output[0]),
-#    log:
-#        "logs/flair/plot_isoforms.log"
-#    conda:
-#        "../envs/flair.yml"
-#    shell:
-#        """
-#        plot_isoform_usage {input.isob} {input.counts_matrix} {gene_name}
-#         --out_dir {params.outdir} --threads {resources.cpus_per_task}
-#        """
+rule plot_isoforms:
+    input:
+        isob="iso_analysis/collapse/flair.isoforms.bed",
+        counts_matrix="iso_analysis/quantify/flair.counts.tsv",
+        genes_deseq2=expand(
+            "iso_analysis/diffexp/genes_deseq2_{condition_value1}_v_{condition_value2}.tsv",
+            condition_value1=condition_value1,
+            condition_value2=condition_value2,
+        ),
+    output:
+        isoforms="iso_analysis/plots/{gene_name}_isoforms.png",
+        usage="iso_analysis/plots/{gene_name}_usage.png",
+    params:
+        outprefix=lambda wildcards, output: f"{os.path.dirname(output[0])}/{wildcards.gene_name}",
+    log:
+        "logs/flair/plot_isoform_{gene_name}.log",
+    conda:
+        "../envs/flair.yml"
+    shell:
+        """
+        plot_isoform_usage {input.isob} {input.counts_matrix} {wildcards.gene_name} \
+        -o {params.outprefix} &> {log}
+        """

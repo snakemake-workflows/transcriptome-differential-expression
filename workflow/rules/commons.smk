@@ -39,11 +39,20 @@ if config["FLAIR"]["isoform_analysis"] == "yes":
             "If you want to perform differential isoform analysis, 'condition' in samples.csv must have exactly two distinct values."
         )
 
-condition_value1, condition_value2 = condition_val[0], condition_val[1]
-condition_samples = {
-    cond: samples[samples["condition"] == cond]["sample"].tolist()
-    for cond in condition_val
-}
+    condition_value1, condition_value2 = condition_val[0], condition_val[1]
+    condition_samples = {
+        cond: samples[samples["condition"] == cond]["sample"].tolist()
+        for cond in condition_val
+    }
+
+    def get_gene_name_from_diffexp(diffexp):
+        with open(diffexp, "r") as tsv:
+            next(tsv)
+            return [line.split("\t")[0].strip() for line in tsv if line.strip()]
+
+    gene_list = get_gene_name_from_diffexp(
+        f"iso_analysis/diffexp/genes_deseq2_{condition_value1}_v_{condition_value2}.tsv"
+    )
 
 
 def get_reference_files(config):
@@ -144,6 +153,12 @@ def rule_all_input():
                 "iso_analysis/diffexp/genes_deseq2_{condition_value1}_v_{condition_value2}.tsv",
                 condition_value1=[condition_value1],
                 condition_value2=[condition_value2],
+            )
+        )
+        all_input.extend(
+            expand(
+                "iso_analysis/plots/{gene_name}_isoforms.png",
+                gene_name=gene_list,
             )
         )
     return all_input
