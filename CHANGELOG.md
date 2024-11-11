@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.5.0](https://github.com/snakemake-workflows/transcriptome-differential-expression/compare/v1.4.1...v1.5.0) (2024-11-11)
+
+
+### Features
+
+* local refs ([#100](https://github.com/snakemake-workflows/transcriptome-differential-expression/issues/100)) ([5fed515](https://github.com/snakemake-workflows/transcriptome-differential-expression/commit/5fed515c81e754ca6138a69eda83dd84a5383a2d))
+
+
+### Bug Fixes
+
+* license from MPL to MIT ([#102](https://github.com/snakemake-workflows/transcriptome-differential-expression/issues/102)) ([9e987a4](https://github.com/snakemake-workflows/transcriptome-differential-expression/commit/9e987a4021e27ebb98b4f448afef9fb7353355c9))
+
 ## [1.4.1](https://github.com/snakemake-workflows/transcriptome-differential-expression/compare/v1.4.0...v1.4.1) (2024-10-12)
 
 
