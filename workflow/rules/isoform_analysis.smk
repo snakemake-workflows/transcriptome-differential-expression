@@ -191,15 +191,32 @@ rule flair_diffexp:
         """
 
 
-rule plot_isoforms:
+checkpoint get_gene_names:
     input:
-        isob="iso_analysis/collapse/flair.isoforms.bed",
-        counts_matrix="iso_analysis/quantify/flair.counts.tsv",
-        genes_deseq2=expand(
+        genes=expand(
             "iso_analysis/diffexp/genes_deseq2_{condition_value1}_v_{condition_value2}.tsv",
             condition_value1=condition_value1,
             condition_value2=condition_value2,
         ),
+    output:
+        directory("iso_analysis/genes"),
+    run:
+        shell("rm -f {output.dir} &&  mkdir -p {output.dir} ")
+        gene_names = []
+        with open(input.genes[0]) as file:
+            next(file)
+            for line in file:
+                gene_name = line.split("\t")[0].strip()
+                gene_file = f"{output.dir}/{gene_name}.txt"
+                with open(gene_file, "w") as gene_out:
+                    gene_out.write(gene_name + "\n")
+
+
+rule plot_isoforms:
+    input:
+        get_gene_name,
+        isob="iso_analysis/collapse/flair.isoforms.bed",
+        counts_matrix="iso_analysis/quantify/flair.counts.tsv",
     output:
         isoforms="iso_analysis/plots/{gene_name}_isoforms.png",
         usage="iso_analysis/plots/{gene_name}_usage.png",

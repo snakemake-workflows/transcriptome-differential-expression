@@ -45,14 +45,14 @@ if config["FLAIR"]["isoform_analysis"] == "yes":
         for cond in condition_val
     }
 
-    def get_gene_name_from_diffexp(diffexp):
-        with open(diffexp, "r") as tsv:
-            next(tsv)
-            return [line.split("\t")[0].strip() for line in tsv if line.strip()]
-
-    gene_list = get_gene_name_from_diffexp(
-        f"iso_analysis/diffexp/genes_deseq2_{condition_value1}_v_{condition_value2}.tsv"
-    )
+    def get_gene_name(wildcards):
+        checkpoint_out = checkpoints.get_gene_names.get(**wildcards).output[0]
+        return expand(
+            "iso_analysis/genes/{gene_name}.txt",
+            i=glob_wildcards(
+                os.path.join(checkpoint_output, "{gene_name}.txt")
+            ).gene_name,
+        )
 
 
 def get_reference_files(config):
@@ -158,7 +158,9 @@ def rule_all_input():
         all_input.extend(
             expand(
                 "iso_analysis/plots/{gene_name}_isoforms.png",
-                gene_name=gene_list,
+                gene_name=glob_wildcards(
+                    "iso_analysis/plots/{gene_name}.txt"
+                ).gene_name,
             )
         )
     return all_input
