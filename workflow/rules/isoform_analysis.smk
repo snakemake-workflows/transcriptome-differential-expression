@@ -61,10 +61,66 @@ rule concatenate_beds:
         "rm -f {output}; cat {input} >> {output}"
 
 
+rule build_flair_genome_index:
+    input:
+        target="references/genomic.fa",
+    output:
+        index="index/flair_genome_index.mmi",
+    params:
+        extra=config["minimap2"]["index_opts"],
+    log:
+        "logs/flair/index.log",
+    threads: 4
+    wrapper:
+        "v3.13.4/bio/minimap2/index"
+
+
+rule flair_align:
+    input:
+        genome="references/genomic.fa",
+        sample=expand("filter/{sample}_filtered.fq", sample=samples["sample"]),
+        index="index/flair_genome_index.mmi",
+    output:
+        flair_beds="iso_analysis/align/flair.bed",
+    params:
+        outdir=lambda wildcards, output: output[0][:-4],
+    log:
+        "logs/flair/align.log",
+    conda:
+        "../envs/flair.yml"
+    shell:
+        """
+        flair align --reads {input.sample} --genome {input.genome}  \
+        --mm_index {input.index} --output {params.outdir} \
+        --threads {resources.cpus_per_task} &> {log}
+        """
+
+
+rule flair_correct:
+    input:
+        genome="references/genomic.fa",
+        flair_beds="iso_analysis/align/flair.bed",
+        annotation="references/standardized_genomic.gtf",
+    output:
+        beds_cor="iso_analysis/align/flair_all_corrected.bed",
+    params:
+        outdir=lambda wildcards, output: output[0][:-18],
+    log:
+        "logs/flair/correct.log",
+    conda:
+        "../envs/flair.yml"
+    shell:
+        """
+        flair correct --query {input.flair_beds} --genome {input.genome}  \
+        --gtf {input.annotation} --output {params.outdir} \
+        --threads {resources.cpus_per_task} &> {log}
+        """
+
+
 rule flair_collapse:
     input:
-        beds="iso_analysis/beds/all_samples.bed",
-        transcriptome="transcriptome/transcriptome.fa",
+        beds="iso_analysis/align/flair_all_corrected.bed",
+        genome="references/genomic.fa",
         annotation="references/standardized_genomic.gtf",
         sample=expand("filter/{sample}_filtered.fq", sample=samples["sample"]),
     output:
@@ -80,7 +136,7 @@ rule flair_collapse:
         "../envs/flair.yml"
     shell:
         """
-        flair collapse --genome {input.transcriptome} --gtf {input.annotation} --query {input.beds} \
+        flair collapse --genome {input.genome} --gtf {input.annotation} --query {input.beds} \
         --reads {input.sample} --output {params.outdir} --quality {params.qscore} --no_gtf_end_adjustment \
         {params.opts} --threads {resources.cpus_per_task} &> {log}
         """
@@ -135,15 +191,32 @@ rule flair_diffexp:
         """
 
 
-rule plot_isoforms:
+checkpoint get_gene_names:
     input:
-        isob="iso_analysis/collapse/flair.isoforms.bed",
-        counts_matrix="iso_analysis/quantify/flair.counts.tsv",
-        genes_deseq2=expand(
+        genes=expand(
             "iso_analysis/diffexp/genes_deseq2_{condition_value1}_v_{condition_value2}.tsv",
             condition_value1=condition_value1,
             condition_value2=condition_value2,
         ),
+    output:
+        directory("iso_analysis/genes"),
+    run:
+        shell("rm -f {output.dir} &&  mkdir -p {output.dir} ")
+        gene_names = []
+        with open(input.genes[0]) as file:
+            next(file)
+            for line in file:
+                gene_name = line.split("\t")[0].strip()
+                gene_file = f"{output.dir}/{gene_name}.txt"
+                with open(gene_file, "w") as gene_out:
+                    gene_out.write(gene_name + "\n")
+
+
+rule plot_isoforms:
+    input:
+        get_gene_name,
+        isob="iso_analysis/collapse/flair.isoforms.bed",
+        counts_matrix="iso_analysis/quantify/flair.counts.tsv",
     output:
         isoforms="iso_analysis/plots/{gene_name}_isoforms.png",
         usage="iso_analysis/plots/{gene_name}_usage.png",
