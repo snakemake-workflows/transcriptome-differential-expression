@@ -16,7 +16,7 @@ rule get_references:
         "../envs/reference.yml"
     shell:
         """
-        datasets download genome accession {params.accession} --include gff3,genome &> {log}
+        datasets download genome accession {params.accession} --include gff3,genome &> {log} && mv ncbi_dataset.zip {output}
         """
 
 
@@ -27,8 +27,6 @@ rule get_genome:
         ),
     output:
         "references/genomic.fa",
-    group:
-        "reference"
     params:
         accession=config["ref"]["accession"],
     log:
@@ -49,8 +47,6 @@ rule get_annotation:
         ),
     output:
         "references/genomic.gff",
-    group:
-        "reference"
     params:
         accession=config["ref"]["accession"],
     log:
