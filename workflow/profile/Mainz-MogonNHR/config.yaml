@@ -79,6 +79,15 @@ set-resources:
         mem_mb_per_cpu: 1800
         runtime: "1h"
 
+    flair_align:
+        cpus_per_task: 32
+        mem_mb_per_cpu: 2500
+        runtime: 300
+
+    flair_correct:
+        cpus_per_task: 8
+        runtime: 180
+
     flair_collapse:
         cpus_per_task: 32
         mem_mb_per_cpu: 1800
