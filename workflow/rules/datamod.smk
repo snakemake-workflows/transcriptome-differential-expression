@@ -13,7 +13,7 @@ rule standardize_gff:
     conda:
         "../envs/agat.yml"
     message:
-        "Standardizing GFF format for isoform analysis compatibility""
+        "Standardizing GFF format for isoform analysis compatibility"
     shell:
         """
         agat_convert_sp_gxf2gxf.pl --gff {input} -o {output} &> {log}
