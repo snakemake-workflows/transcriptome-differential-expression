@@ -2,9 +2,11 @@ default-resources:
     slurm_account: "nhr-zdvhpc"
     slurm_partition: "smallcpu"
 
+set-threads:
+    genome_to_transcriptome: 1
+
 set-resources:
     genome_to_transcriptome:
-        cpus_per_task: 1
         mem_mb_per_cpu: 1800
         runtime: "30m"
 
@@ -52,7 +54,7 @@ set-resources:
     sam_to_bam:
         cpus_per_task: 1
         mem_mb_per_cpu: 1800
-        runtime: "1h"
+        runtime: "90m"
 
     bam_index:
         cpus_per_task: 8
@@ -102,3 +104,4 @@ set-resources:
         cpus_per_task: 4
         mem_mb_per_cpu: 3600
         runtime: "1h"
+

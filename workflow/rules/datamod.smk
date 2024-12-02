@@ -28,9 +28,10 @@ rule genome_to_transcriptome:
         "logs/gffread/genome_to_transcriptome.log",
     conda:
         "../envs/gffread.yml"
+    threads: 1
     shell:
         """
-        gffread -t {resources.cpus_per_task} -w {output} -g {input.genome} {input.annotation} &> {log}    
+        gffread -t {threads} -w {output} -g {input.genome} {input.annotation} &> {log}    
         """
 
 
