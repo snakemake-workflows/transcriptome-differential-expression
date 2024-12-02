@@ -3,7 +3,9 @@ import os
 from pathlib import Path
 import pandas as pd
 
-sys.stderr = sys.stdout = open(snakemake.log[0], "w")
+log_file = open(snakemake.log[0], "w")
+
+sys.stderr = sys.stdout = log_file
 
 samples_df = snakemake.params.samples[["sample", "condition", "batch"]]
 inputdir = snakemake.params.inputdir
@@ -38,3 +40,5 @@ samples_df["sample_path"] = samples_df["sample"].apply(
 samples_df[["sample_clean", "condition", "batch", "sample_path"]].to_csv(
     snakemake.output[0], sep="\t", index=False, header=False
 )
+
+log_file.close()
