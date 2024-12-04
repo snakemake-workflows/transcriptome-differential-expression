@@ -31,6 +31,29 @@ samples = (
 
 validate(samples, schema="../schemas/samples.schema.yaml")
 
+# flair uses the values of condition1 in its file naming scheme, therefore we extract them as wildcards from samples
+condition_val = samples["condition"].unique().tolist()
+if config["FLAIR"]["isoform_analysis"] == "yes":
+    if len(condition_val) != 2:
+        raise ValueError(
+            "If you want to perform differential isoform analysis, 'condition' in samples.csv must have exactly two distinct values."
+        )
+
+    condition_value1, condition_value2 = condition_val[0], condition_val[1]
+    condition_samples = {
+        cond: samples[samples["condition"] == cond]["sample"].tolist()
+        for cond in condition_val
+    }
+
+    def get_gene_name(wildcards):
+        checkpoint_out = checkpoints.get_gene_names.get(**wildcards).output[0]
+        return expand(
+            "iso_analysis/genes/{gene_name}.txt",
+            i=glob_wildcards(
+                os.path.join(checkpoint_output, "{gene_name}.txt")
+            ).gene_name,
+        )
+
 
 def get_reference_files(config):
     """
@@ -52,16 +75,6 @@ def get_reference_files(config):
         and Path(ref["annotation"]).suffix.lower() in annotation_exts
         else None
     )
-
-    # Throw errors if reference data are provided, but for only one file
-    if (genome and not annotation) or (annotation and not genome):
-        raise ValueError(
-            f"""Only one reference file provided 
-               (found '{genome}' for genome and '{annotation}' as annotation),
-               provide either both genome and annotation or an NCBI accession
-               number."""
-        )
-
     if genome and annotation:
         return {"genome": genome, "annotation": annotation}
 
@@ -73,6 +86,15 @@ def get_reference_files(config):
             return {"annotation": annotation}
         return {}
 
+    # ValueError: If reference configuration is invalid or missing
+    if genome:
+        raise ValueError(
+            f"""Only genome file '{genome}' available, provide either a valid annotation file or an NCBI accession number."""
+        )
+    if annotation:
+        raise ValueError(
+            f"""Only annotation file '{annotation}' available, provide either a valid genome file or an NCBI accession number."""
+        )
     raise ValueError("No valid reference files or accession number provided.")
 
 
@@ -125,4 +147,20 @@ def rule_all_input():
     all_input.append(f"de_analysis/ma_graph.{config['deseq2']['figtype']}")
     all_input.append(f"de_analysis/heatmap.{config['deseq2']['figtype']}")
     all_input.append("de_analysis/lfc_analysis.csv")
+    if config["FLAIR"]["isoform_analysis"] == "yes":
+        all_input.extend(
+            expand(
+                "iso_analysis/diffexp/genes_deseq2_{condition_value1}_v_{condition_value2}.tsv",
+                condition_value1=[condition_value1],
+                condition_value2=[condition_value2],
+            )
+        )
+        all_input.extend(
+            expand(
+                "iso_analysis/plots/{gene_name}_isoforms.png",
+                gene_name=glob_wildcards(
+                    "iso_analysis/plots/{gene_name}.txt"
+                ).gene_name,
+            )
+        )
     return all_input
