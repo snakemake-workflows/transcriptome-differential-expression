@@ -199,15 +199,15 @@ checkpoint get_gene_names:
             condition_value2=condition_value2,
         ),
     output:
-        directory("iso_analysis/genes"),
+        expand("iso_analysis/genes/{gene_name}.txt"),
     run:
-        shell("rm -f {output.dir} &&  mkdir -p {output.dir} ")
+        shell("rm -rf {output} &&  mkdir -p {output} ")
         gene_names = []
-        with open(input.genes[0]) as file:
-            next(file)
+        with open(input.genes[0], "r") as file:
+            next(file) # skip header line
             for line in file:
                 gene_name = line.split("\t")[0].strip()
-                gene_file = f"{output.dir}/{gene_name}.txt"
+                gene_file = f"{output}/{gene_name}.txt"
                 with open(gene_file, "w") as gene_out:
                     gene_out.write(gene_name + "\n")
 

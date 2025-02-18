@@ -50,7 +50,7 @@ if config["FLAIR"]["isoform_analysis"] == "yes":
         return expand(
             "iso_analysis/genes/{gene_name}.txt",
             i=glob_wildcards(
-                os.path.join(checkpoint_output, "{gene_name}.txt")
+                os.path.join(checkpoint_out, "{gene_name}.txt")
             ).gene_name,
         )
 
