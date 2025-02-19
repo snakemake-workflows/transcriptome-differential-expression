@@ -45,15 +45,6 @@ if config["FLAIR"]["isoform_analysis"] == "yes":
         for cond in condition_val
     }
 
-    def get_gene_name(wildcards):
-        checkpoint_out = checkpoints.get_gene_names.get(**wildcards).output[0]
-        return expand(
-            "iso_analysis/genes/{gene_name}.txt",
-            i=glob_wildcards(
-                os.path.join(checkpoint_out, "{gene_name}.txt")
-            ).gene_name,
-        )
-
 
 def get_reference_files(config):
     """
