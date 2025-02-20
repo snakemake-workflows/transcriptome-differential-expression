@@ -146,12 +146,5 @@ def rule_all_input():
                 condition_value2=[condition_value2],
             )
         )
-        all_input.extend(
-            expand(
-                "iso_analysis/plots/{gene_name}_isoforms.png",
-                gene_name=glob_wildcards(
-                    "iso_analysis/plots/{gene_name}.txt"
-                ).gene_name,
-            )
-        )
+        all_input.append("iso_analysis/plots/")
     return all_input
