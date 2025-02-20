@@ -2,7 +2,8 @@ import sys
 import os
 import pandas as pd
 
-sys.stderr = sys.stdout = open(snakemake.log[0], "w")
+with open(snakemake.log[0], "w") as log_file:
+    sys.stderr = sys.stdout = log_file
 
 de_gene_list=snakemake.input.genes[0]
 isoforms_bed = snakemake.input.isob
@@ -12,12 +13,31 @@ out_dir=snakemake.output[0]
 os.makedirs(out_dir, exist_ok=True)
 
 def get_gene_names (de_gene_list):
-    df = pd.read_csv(de_gene_list, sep="\t")
-    return list(df.iloc[:,0])
+    try:
+        df = pd.read_csv(de_gene_list, sep="\t")
+        if df.empty:
+            raise ValueError("Empty gene list file")
+        return list(df.iloc[:,0])
+    except (pd.errors.EmptyDataError, pd.errors.ParserError) as e:
+        raise ValueError(f"Failed to parse gene list file: {e}")
+    except FileNotFoundError:
+        raise FileNotFoundError(f"Gene list file not found: {de_gene_list}")
+
+import subprocess
+import sys  # Add this if not already imported
 
 def run_plot_script (isoforms_bed, counts_matrix, gene_name, out_dir):
-    cmd = f"plot_isoform_usage {isoforms_bed} {counts_matrix} {gene_name} -o {out_dir}/{gene_name}"
-    os.system(cmd)  
+    try:
+        result = subprocess.run(
+            ["plot_isoform_usage", isoforms_bed, counts_matrix, gene_name, "-o", f"{out_dir}/{gene_name}"],
+            check=True,
+            text=True,
+            capture_output=True
+        )
+        if result.stderr:
+            print(result.stderr, file=sys.stderr)
+    except subprocess.CalledProcessError as e:
+        raise RuntimeError(f"Failed to run plot_isoform_usage for gene {gene_name}: {e}")
 
 for gene in get_gene_names(de_gene_list):
     run_plot_script(isoforms_bed, counts_matrix, gene, out_dir)
