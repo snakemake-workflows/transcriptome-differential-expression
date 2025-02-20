@@ -3,8 +3,8 @@ import os
 import pandas as pd
 import subprocess
 
-with open(snakemake.log[0], "w") as log_file:
-    sys.stderr = sys.stdout = log_file
+log_file = open(snakemake.log[0], "w")
+sys.stderr = sys.stdout = log_file
 
 de_gene_list = snakemake.input.genes[0]
 isoforms_bed = snakemake.input.isob
