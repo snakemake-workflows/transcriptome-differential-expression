@@ -8,8 +8,8 @@ rule get_references:
     output:
         # we need two different output, to ensure simultaneous access
         # by the two downstream rules:
-        temp("references/ncbi_dataset_a.zip"),
-        temp("references/ncbi_dataset_b.zip"),
+        a=temp("references/ncbi_dataset_a.zip"),
+        b=temp("references/ncbi_dataset_b.zip"),
     params:
         accession=config["ref"]["accession"],
     log:
@@ -18,8 +18,8 @@ rule get_references:
         "../envs/reference.yml"
     shell:
         """
-        datasets download genome accession {params.accession} --include gff3,genome &> {log} && mv ncbi_dataset.zip {output[0]};
-        cp {output[0]} {output[1]}
+        datasets download genome accession {params.accession} --include gff3,genome &> {log} && mv ncbi_dataset.zip {output.a};
+        cp {output.a} {output.b}
         """
 
 
