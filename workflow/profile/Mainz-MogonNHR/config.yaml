@@ -105,3 +105,7 @@ set-resources:
         mem_mb_per_cpu: 3600
         runtime: "1h"
 
+    plot_isoforms:
+        cpus_per_task: 1
+        mem_mb_per_cpu: 1800
+        runtime: "30m"
