@@ -35,24 +35,10 @@ rule get_genome:
         accession=config["ref"]["accession"],
     log:
         "logs/refs/get_genome.log",
-    # conda:
-    #    "../envs/reference.yml"
-    run:
-        import glob, shutil, zipfile
-
-        # we are dealing with a download based on an accession number
-        if input[0] == "references/ncbi_dataset_a.zip":
-            with zipfile.ZipFile(input[0]) as zf:
-                zf.extractall("ncbi_dataset_a")
-            for fname in glob.glob(
-                f"ncbi_dataset_a/ncbi_dataset/data/{params.accession}/*"
-            ):
-                if fname.endswith("fna"):
-                    shutil.copyfile(fname, f"{output[0]}")
-                    shutil.rmtree("ncbi_dataset_a")
-                    break
-        else:  # a file has been indicated
-            shutil.copyfile(input[0], output)
+    conda:
+        "../envs/reference.yml"
+    script:
+        "../scripts/extract_refs.py"
 
 
 rule get_annotation:
@@ -66,21 +52,7 @@ rule get_annotation:
         accession=config["ref"]["accession"],
     log:
         "logs/refs/get_annotation.log",
-    # conda:
-    #    "../envs/reference.yml"
-    run:
-        import glob, shutil, zipfile
-
-        # we are dealing with a download based on an accession number
-        if input[0] == "references/ncbi_dataset_b.zip":
-            with zipfile.ZipFile(input[0]) as zf:
-                zf.extractall("ncbi_dataset_b")
-            for fname in glob.glob(
-                f"ncbi_dataset_b/ncbi_dataset/data/{params.accession}/*"
-            ):
-                if fname.endswith("gff"):
-                    shutil.copyfile(fname, f"{output[0]}")
-                    shutil.rmtree("ncbi_dataset_b")
-                    break
-        else:  # a file has been indicated
-            shutil.copyfile(input[0], output[0])
+    conda:
+        "../envs/reference.yml"
+    script:
+        "../scripts/extract_refs.py"
