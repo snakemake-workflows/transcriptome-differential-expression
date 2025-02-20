@@ -13,7 +13,7 @@ os.makedirs(out_dir, exist_ok=True)
 
 def get_gene_names (de_gene_list):
     df = pd.read_csv(de_gene_list, sep="\t")
-    return list(df.iloc[1:,0])
+    return list(df.iloc[:,0])
 
 def run_plot_script (isoforms_bed, counts_matrix, gene_name, out_dir):
     cmd = f"plot_isoform_usage {isoforms_bed} {counts_matrix} {gene_name} -o {out_dir}/{gene_name}"
