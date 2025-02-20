@@ -1,6 +1,7 @@
 import sys
 import os
 import pandas as pd
+import subprocess
 
 with open(snakemake.log[0], "w") as log_file:
     sys.stderr = sys.stdout = log_file
@@ -23,10 +24,6 @@ def get_gene_names(de_gene_list):
         raise ValueError(f"Failed to parse gene list file: {e}")
     except FileNotFoundError:
         raise FileNotFoundError(f"Gene list file not found: {de_gene_list}")
-
-
-import subprocess
-import sys  # Add this if not already imported
 
 
 def run_plot_script(isoforms_bed, counts_matrix, gene_name, out_dir):
