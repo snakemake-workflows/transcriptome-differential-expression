@@ -25,9 +25,7 @@ rule get_references:
 
 rule get_genome:
     input:
-        lambda wildcards: get_reference_files(config).get(
-            "genome", "references/ncbi_dataset_a.zip"
-        ),
+        lambda wildcards: get_reference_files(config).get("genome"),
     output:
         temp("references/genomic.fa"),
     priority: 10
@@ -43,9 +41,7 @@ rule get_genome:
 
 rule get_annotation:
     input:
-        lambda wildcards: get_reference_files(config).get(
-            "annotation", "references/ncbi_dataset_b.zip"
-        ),
+        lambda wildcards: get_reference_files(config).get("annotation"),
     output:
         temp("references/genomic.gff"),
     params:

@@ -11,21 +11,34 @@ ref = snakemake.input[0]
 output = snakemake.output[0]
 accession = snakemake.params.accession
 
-temp_dir = f"temp_{accession}_{'genome' if output.endswith('.fa') else 'annotation'}"
+genome_exts = {".fa", ".fna", ".fasta"}
+annotation_exts = {".gff", ".gtf"}
 
-with zipfile.ZipFile(ref, "r") as zf:
-    zf.extractall(temp_dir)
+is_genome = output.endswith(".fa")
+is_annotation = output.endswith(".gff")
 
-ext = "fna" if output.endswith(".fa") else "gff"
 
-for fname in glob.glob(f"{temp_dir}/ncbi_dataset/data/{accession}/*"):
-    if fname.endswith(ext):
-        shutil.copyfile(fname, output)
-        break
-else:
+def extract_ref(ref_path, out_path, ext, temp_suffix):
+    temp_dir = f"temp_{accession}_{temp_suffix}"
+    with zipfile.ZipFile(ref_path, "r") as zf:
+        zf.extractall(temp_dir)
+
+    for fname in glob.glob(f"{temp_dir}/ncbi_dataset/data/{accession}/*{ext}"):
+        shutil.copyfile(fname, out_path)
+        shutil.rmtree(temp_dir)
+        return
     shutil.rmtree(temp_dir)
     raise FileNotFoundError(
-        f"No {ext} file found in {ref} for accession no {accession}"
+        f"No file with {ext} in {ref_path} for accession number: {accession}"
     )
 
-shutil.rmtree(temp_dir)
+
+if is_genome and any(ref.endswith(ext) for ext in genome_exts):
+    shutil.copyfile(ref, output)
+elif is_genome:
+    extract_ref(ref, output, ".fna", "genome")
+
+if is_annotation and any(ref.endswith(ext) for ext in annotation_exts):
+    shutil.copyfile(ref, output)
+elif is_annotation:
+    extract_ref(ref, output, ".gff", "annotation")

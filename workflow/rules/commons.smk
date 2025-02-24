@@ -69,23 +69,23 @@ def get_reference_files(config):
         return {"genome": genome, "annotation": annotation}
 
     accession = ref.get("accession")
-    if accession:
-        if genome:
-            return {"genome": genome}
-        if annotation:
-            return {"annotation": annotation}
-        return {}
+    files = {}
+    if genome:
+        files["genome"] = genome
+    else:
+        if accession:
+            files["genome"] = "references/ncbi_dataset_a.zip"
+
+    if annotation:
+        files["annotation"] = annotation
+    else:
+        if accession:
+            files["annotation"] = "references/ncbi_dataset_b.zip"
 
     # ValueError: If reference configuration is invalid or missing
-    if genome:
-        raise ValueError(
-            f"""Only genome file '{genome}' available, provide either a valid annotation file or an NCBI accession number."""
-        )
-    if annotation:
-        raise ValueError(
-            f"""Only annotation file '{annotation}' available, provide either a valid genome file or an NCBI accession number."""
-        )
-    raise ValueError("No valid reference files or accession number provided.")
+    if not files:
+        raise ValueError("No valid reference files or accession number provided.")
+    return files
 
 
 def get_mapped_reads_input(sample):
