@@ -19,7 +19,7 @@ def get_gene_names(de_gene_list):
         df = pd.read_csv(de_gene_list, sep="\t")
         if df.empty:
             raise ValueError("Empty gene list file")
-        return list(df.iloc[:, 0])
+        return (gene for gene in df.iloc[:,0])
     except (pd.errors.EmptyDataError, pd.errors.ParserError) as e:
         raise ValueError(f"Failed to parse gene list file: {e}")
     except FileNotFoundError:
