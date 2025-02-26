@@ -1,6 +1,7 @@
 localrules:
     reads_manifest,
     concatenate_beds,
+    plot_isoforms,
 
 
 # Construct a flair readable TSV file for samples
@@ -149,7 +150,8 @@ rule flair_quantify:
     output:
         counts_matrix="iso_analysis/quantify/flair.counts.tsv",
     params:
-        outdir=lambda wildcards, output: os.path.dirname(output[0]),
+        # FLAIR adds ".counts.tsv" to its --output flag.
+        outdir=lambda wildcards, output: output[0][:-11],
         tmp_dir="iso_analysis/quantify/tmp",
         qscore=config["FLAIR"]["qscore"],
     log:
