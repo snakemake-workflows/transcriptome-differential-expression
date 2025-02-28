@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://github.com/snakemake-workflows/transcriptome-differential-expression/compare/v1.5.0...v2.0.0) (2025-02-28)
+
+
+### ⚠ BREAKING CHANGES
+
+* isoform analysis ([#99](https://github.com/snakemake-workflows/transcriptome-differential-expression/issues/99))
+
+### Features
+
+* isoform analysis ([#99](https://github.com/snakemake-workflows/transcriptome-differential-expression/issues/99)) ([7509cc6](https://github.com/snakemake-workflows/transcriptome-differential-expression/commit/7509cc6249d61279cdbaa7a1d64cae538108944e))
+
 ## [1.5.0](https://github.com/snakemake-workflows/transcriptome-differential-expression/compare/v1.4.1...v1.5.0) (2024-11-11)
 
 
