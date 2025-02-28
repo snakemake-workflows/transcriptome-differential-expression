@@ -23,15 +23,33 @@ ref:
     # Local reference data
     # Genome file path; can be left empty if remote download is prefered.
     # allowed extensions: ".fa" or ".fna" or ".fasta"
-    genome: "/lustre/project/nhr-zdvhpc/transcriptome_data/GCA_917627325.4_PGI_CHIRRI_v4_genomic.fa"
+    genome: ""
+    #genome: "/lustre/project/nhr-zdvhpc/transcriptome_data/GCA_917627325.4_PGI_CHIRRI_v4_genomic.fa"
     # Annotation file (supported extensions: .gff, .gtf, case-insensitive)
     #                 may be a path or left empty, if download using an accession number is preferred
-    annotation: "/lustre/project/nhr-zdvhpc/transcriptome_data/GCA_917627325.4_PGI_CHIRRI_v4_genomic.gff"
+    annotation: ""
+    #annotation: "/lustre/project/nhr-zdvhpc/transcriptome_data/GCA_917627325.4_PGI_CHIRRI_v4_genomic.gff"
 
     # Remote reference data
     # NCBI accession number of the reference data set; can be left empty if both reference files are available locally"
     accession: "GCA_917627325.4"
 
+
+# Differential Isoform Analysis
+
+# The differential isoform analysis pipeline uses FLAIR and includes resource-intensive computations and only works with additional constraints.
+#     1. In 'samples.csv: The 'condition' column must contain exactly two distinct values. For example 'control' and 'treated'.
+#     2. In 'samples.csv: Refrain from using underscores when naming samples. The 'sample' column may contain underscores, but be aware that underscores will be removed from the name for isoform quantification steps.
+#     3. In this file: the variable 'isoform_analysis' below must be:'"yes"'. This is a check to determine if users are aware of the constraints and wish to proceed.
+FLAIR:
+    # Perform Differential Isoform Analysis with FLAIR?
+    isoform_analysis: "yes"
+    #FLAIR quality score. Minimum MAPQ of read assignment to an isoform (default 1).
+    qscore: 1
+    #FLAIR read count expression threshold. Isoforms in which both conditions contain fewer than E reads are filtered out (Default E=10).
+    exp_thresh: 10
+    # flair_collapse options. '--stringent' for full-length supporting reads (>=80% coverage)
+    col_opts: "--stringent"
 
 # Minimum read length, put 0 if you want to proceed with all reads.
 min_length: 200
@@ -39,23 +57,27 @@ min_length: 200
 # Maximum number of CPUs in your partition/PC/server
 max_cpus: 40
 
-# Minimap2 indexing options
-minimap_index_opts: ""
+minimap2:
+    # Minimap2 indexing options
+    index_opts: ""
 
-# Minimap2 mapping options
-minimap2_opts: ""
+    # Minimap2 mapping options
+    opts: ""
 
-# Maximum secondary alignments
-maximum_secondary: 100
+    # Maximum secondary alignments
+    maximum_secondary: 100
 
-# Secondary score ratio (-p for minimap2)
-secondary_score_ratio: 1.0
+    # Secondary score ratio (-p for minimap2)
+    secondary_score_ratio: 1.0
 
 # Samtools view opts, "-b" creates BAM from SAM.
 samtobam_opts: "-b"
 
 # Samtools sort opts,
 bamsort_opts: ""
+
+# Samtools index opts,
+bamindex_opts: ""
 
 # Salmon library type
 salmon_libtype: "U"

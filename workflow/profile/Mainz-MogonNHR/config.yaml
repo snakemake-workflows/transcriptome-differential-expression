@@ -2,8 +2,15 @@ default-resources:
     slurm_account: "nhr-zdvhpc"
     slurm_partition: "smallcpu"
 
+set-threads:
+    genome_to_transcriptome: 1
+
 set-resources:
     genome_to_transcriptome:
+        mem_mb_per_cpu: 1800
+        runtime: "30m"
+
+    gff_to_gtf:
         cpus_per_task: 1
         mem_mb_per_cpu: 1800
         runtime: "30m"
@@ -47,7 +54,7 @@ set-resources:
     sam_to_bam:
         cpus_per_task: 1
         mem_mb_per_cpu: 1800
-        runtime: "1h"
+        runtime: "90m"
 
     bam_index:
         cpus_per_task: 8
@@ -68,3 +75,42 @@ set-resources:
         cpus_per_task: 8
         mem_mb_per_cpu: 5000
         runtime: "1h"
+
+    bam_to_bed:
+        cpus_per_task: 1
+        mem_mb_per_cpu: 1800
+        runtime: "1h"
+
+    build_flair_genome_index:
+        cpus_per_task: 4
+        mem_mb_per_cpu: 3600
+        runtime: "30m"
+
+    flair_align:
+        cpus_per_task: 32
+        mem_mb_per_cpu: 2500
+        runtime: 300
+
+    flair_correct:
+        cpus_per_task: 8
+        runtime: 180
+
+    flair_collapse:
+        cpus_per_task: 32
+        mem_mb_per_cpu: 3600
+        runtime: "2h"
+
+    flair_quantify:
+        cpus_per_task: 32
+        mem_mb_per_cpu: 1800
+        runtime: "2h"
+
+    flair_diffexp:
+        cpus_per_task: 8
+        mem_mb_per_cpu: 5000
+        runtime: "2h"
+
+    plot_isoforms:
+        cpus_per_task: 1
+        mem_mb_per_cpu: 1800
+        runtime: "30m"

@@ -1,21 +1,40 @@
 localrules:
     genome_to_transcriptome,
+    standardize_gff,
+
+
+rule standardize_gff:
+    input:
+        "references/genomic.gff",
+    output:
+        "references/standardized_genomic.gff",
+    log:
+        "logs/agat.log",
+    conda:
+        "../envs/agat.yml"
+    message:
+        "Standardizing GFF format for isoform analysis compatibility"
+    shell:
+        """
+        agat_convert_sp_gxf2gxf.pl --gff {input} -o {output} &> {log}
+        """
 
 
 rule genome_to_transcriptome:
     input:
         genome="references/genomic.fa",
-        annotation="references/genomic.gff",
+        annotation="references/standardized_genomic.gff",
     output:
         transcriptome="transcriptome/transcriptome.fa",
     log:
-        "logs/gffread.log",
+        "logs/gffread/genome_to_transcriptome.log",
     conda:
         "../envs/gffread.yml"
+    threads: 1
     shell:
         """
-    gffread -t {resources.cpus_per_task} -w {output} -g {input.genome} {input.annotation} &> {log}    
-    """
+        gffread -t {threads} -w {output} -g {input.genome} {input.annotation} &> {log}    
+        """
 
 
 rule filter_reads:

@@ -4,7 +4,7 @@ rule build_minimap_index:  ## build minimap2 index
     output:
         index="index/transcriptome_index.mmi",
     params:
-        extra=config["minimap_index_opts"],
+        extra=config["minimap2"]["index_opts"],
     log:
         "logs/minimap2/index.log",
     threads: 4
@@ -22,7 +22,7 @@ rule map_reads:
     log:
         "logs/minimap2/mapping_{sample}.log",
     params:
-        extra=f"-p {config['secondary_score_ratio']} -N {config['maximum_secondary']} {config['minimap2_opts']}",
+        extra=f"-p {config['minimap2']['secondary_score_ratio']} -N {config['minimap2']['maximum_secondary']} {config['minimap2']['opts']}",
     threads: 32
     wrapper:
         "v3.13.4/bio/minimap2/aligner"
