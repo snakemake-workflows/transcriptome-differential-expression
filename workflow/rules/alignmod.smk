@@ -6,7 +6,7 @@ rule sam_to_bam:
     log:
         "logs/samtools/samtobam_{sample}.log",
     params:
-        extra=f'{config["samtobam_opts"]}',
+        extra=f'{config["samtools"]["samtobam_opts"]}',
     wrapper:
         "v3.13.4/bio/samtools/view"
 
@@ -19,7 +19,7 @@ rule bam_sort:
     log:
         "logs/samtools/bamsort_{sample}.log",
     params:
-        extra=f'{config["bamsort_opts"]}',
+        extra=f'{config["samtools"]["bamsort_opts"]}',
     wrapper:
         "v3.13.4/bio/samtools/sort"
 
@@ -33,6 +33,6 @@ rule bam_index:
     log:
         "logs/samtools/samindex_{sample}.log",
     params:
-        extra=f'{config["bamindex_opts"]}',
+        extra=f'{config["samtools"]["bamindex_opts"]}',
     wrapper:
         "v4.5.0/bio/samtools/index"

@@ -128,8 +128,8 @@ rule flair_collapse:
         isof="iso_analysis/collapse/flair.isoforms.fa",
     params:
         outdir=lambda wildcards, output: output[0][:-13],
-        qscore=config["FLAIR"]["qscore"],
-        opts=config["FLAIR"]["col_opts"],
+        qscore=config["isoform_analysis"]["qscore"],
+        opts=config["isoform_analysis"]["col_opts"],
     log:
         "logs/flair/collapse.log",
     conda:
@@ -153,7 +153,7 @@ rule flair_quantify:
         # FLAIR adds ".counts.tsv" to its --output flag.
         outdir=lambda wildcards, output: output[0][:-11],
         tmp_dir="iso_analysis/quantify/tmp",
-        qscore=config["FLAIR"]["qscore"],
+        qscore=config["isoform_analysis"]["qscore"],
     log:
         "logs/flair/quantify.log",
     conda:
@@ -179,7 +179,7 @@ rule flair_diffexp:
         isoforms_drimseq="iso_analysis/diffexp/isoforms_drimseq_{condition_value1}_v_{condition_value2}.tsv",
     params:
         outdir=lambda wildcards, output: os.path.dirname(output[0]),
-        exp_thresh=config["FLAIR"]["exp_thresh"],
+        exp_thresh=config["isoform_analysis"]["exp_thresh"],
     log:
         "logs/flair/diffexp_{condition_value1}_v_{condition_value2}.log",
     conda:

@@ -38,7 +38,7 @@ condition_samples = {
     cond: samples[samples["condition"] == cond]["sample"].tolist()
     for cond in condition_val
 }
-if config["FLAIR"]["isoform_analysis"] == "yes":
+if config["isoform_analysis"]["FLAIR"]:
     if len(condition_val) != 2:
         raise ValueError(
             "If you want to perform differential isoform analysis, 'condition' in samples.csv must have exactly two distinct values."
@@ -137,7 +137,7 @@ def rule_all_input():
     all_input.append(f"de_analysis/ma_graph.{config['deseq2']['figtype']}")
     all_input.append(f"de_analysis/heatmap.{config['deseq2']['figtype']}")
     all_input.append("de_analysis/lfc_analysis.csv")
-    if config["FLAIR"]["isoform_analysis"] == "yes":
+    if config["isoform_analysis"]["FLAIR"] == True:
         all_input.extend(
             expand(
                 "iso_analysis/diffexp/genes_deseq2_{condition_value1}_v_{condition_value2}.tsv",

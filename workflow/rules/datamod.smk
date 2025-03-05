@@ -45,7 +45,7 @@ rule filter_reads:
     output:
         "filter/{sample}_filtered.fq",
     message:
-        f"Filtering with read length >= {config['min_length']}."
+        f"Filtering with read length >= {config['read_filter']['min_length']}."
     log:
         "logs/filter_reads/{sample}.log",
     conda:
