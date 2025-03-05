@@ -2,6 +2,7 @@ localrules:
     reads_manifest,
     concatenate_beds,
     plot_isoforms,
+    iso_analysis_report,
 
 
 # Construct a flair readable TSV file for samples
@@ -209,3 +210,38 @@ rule plot_isoforms:
         "../envs/flair.yml"
     script:
         "../scripts/plot_isoforms.py"
+
+
+# dummy rule for output generation
+rule iso_analysis_report:
+    input:
+        in_dir=rules.plot_isoforms.output,
+    output:
+        isoforms=report(
+            directory("iso_analysis/report/isoforms"),
+            category="Splice-Isoform Analysis Results",
+            subcategory="Isoform Variants",
+            patterns=["{name}_isoforms.png"],
+            caption="../report/isoform_analysis.rst",
+            labels={
+                "gene names": "{name}",
+            },
+        ),
+        usage=report(
+            directory("iso_analysis/report/usage"),
+            category="Splice-Isoform Analysis Results",
+            subcategory="DTUs",
+            patterns=["{name}_usage.png"],
+            caption="../report/isoform_analysis.rst",
+            labels={
+                "gene names": "{name}",
+            },
+        ),
+    log:
+        "logs/flair/vis_report.log",
+    conda:
+        "../envs/base.yml"
+    shell:
+        "mkdir -p iso_analysis/report/isoforms iso_analysis/report/usage && "
+        "cp {input.in_dir}/*_isoforms.png {output.isoforms} && "
+        "cp {input.in_dir}/*_usage.png {output.usage}"
