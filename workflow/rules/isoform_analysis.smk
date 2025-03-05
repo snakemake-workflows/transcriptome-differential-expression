@@ -172,9 +172,13 @@ rule flair_diffexp:
     input:
         counts_matrix="iso_analysis/quantify/flair.counts.tsv",
     output:
-        genes_deseq2=report("iso_analysis/diffexp/genes_deseq2_{condition_value1}_v_{condition_value2}.tsv"),
+        genes_deseq2=report(
+            "iso_analysis/diffexp/genes_deseq2_{condition_value1}_v_{condition_value2}.tsv"
+        ),
         genes_deseq2_QCplots="iso_analysis/diffexp/genes_deseq2_QCplots_{condition_value1}_v_{condition_value2}.pdf",
-        isoforms_deseq2=report("iso_analysis/diffexp/isoforms_deseq2_{condition_value1}_v_{condition_value2}.tsv"),
+        isoforms_deseq2=report(
+            "iso_analysis/diffexp/isoforms_deseq2_{condition_value1}_v_{condition_value2}.tsv"
+        ),
         isoforms_deseq2_QCplots="iso_analysis/diffexp/isoforms_deseq2_QCplots_{condition_value1}_v_{condition_value2}.pdf",
         isoforms_drimseq="iso_analysis/diffexp/isoforms_drimseq_{condition_value1}_v_{condition_value2}.tsv",
     params:

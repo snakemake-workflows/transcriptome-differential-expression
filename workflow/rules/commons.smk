@@ -146,5 +146,5 @@ def rule_all_input():
             )
         )
         all_input.append("iso_analysis/report/isoforms")
-        all_input.append("iso_analysis/report/usage")        
+        all_input.append("iso_analysis/report/usage")
     return all_input
