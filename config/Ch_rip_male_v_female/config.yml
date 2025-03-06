@@ -9,11 +9,13 @@ workflow: "workflow-transcriptome-de_phe"
 # this is the input directory. All samples are looked for in this directory
 inputdir: "/lustre/project/nhr-zdvhpc/transcriptome_data"
 # Repository URL:
-repo: "https://github.com/snakemake-workflows/transriptome-differential-expression"
+repo: "https://github.com/snakemake-workflows/transcriptome-differential-expression"
+# Maximum number of CPUs in your partition/PC/server
+max_cpus: 40
 
 ## Workflow-specific Parameters:
 
-# The reference genome respectively transcriptome, is defined here:
+# Define reference genome/transcriptome
 ref:
     species: "Chironomus riparius"
     # Local reference data
@@ -29,13 +31,11 @@ ref:
 
 
 read_filter:
-    # Minimum read length; put 0 if you want to proceed with all reads.
+    # Minimum read length; set 0 to keep all reads.
     min_length: 200
 
-# Maximum number of CPUs in your partition/PC/server
-max_cpus: 40
 
-# alignment parameters
+# minimap2 alignment parameters
 minimap2:
     # Minimap2 indexing options
     index_opts: ""
@@ -57,7 +57,7 @@ samtools:
     # Samtools stats opts
     bamstats_opts: ""
 
-#quantification parameters
+# salmon quantification parameters
 quant:
     # Salmon library type
     salmon_libtype: "U"
@@ -116,11 +116,11 @@ deseq2:
 #     2. In 'samples.csv: Refrain from using underscores when naming samples. The 'sample' column may contain underscores, but be aware that underscores will be removed from the name for isoform quantification steps.
 #     3. In this file: the variable 'FLAIR' below must be:'true'. This is a check to determine if users are aware of the constraints and wish to proceed.
 isoform_analysis:
-    # Run FLAIR Differential Isoform Analysis if 'true'
+    # Enables FLAIR Isoform Analysis if 'true'
     FLAIR: true
-    # FLAIR quality score. Minimum MAPQ of read assignment to an isoform (default 1).
+    # Minimum MAPQ of read assignment to an isoform (default 1).
     qscore: 1
-    # FLAIR read count expression threshold. Isoforms which contain fewer than 'exp_thresh' (Default=10) reads in both conditions are filtered out.
+    # min read count expression threshold. Isoforms which contain fewer than 'exp_thresh' (Default=10) reads in both conditions are filtered out.
     exp_thresh: 10
     # 'flair_collapse' options. '--stringent' for full-length supporting reads (>=80% coverage)
     col_opts: "--annotation_reliant --generate_map --stringent"
