@@ -17,7 +17,7 @@ rule count_reads:
         "../envs/salmon.yml"
     shell:
         """
-        salmon --no-version-check quant --ont -p {resources.cpus_per_task} \
+        salmon --no-version-check quant --ont -p {threads} \
         -t {input.trs} -l {params.libtype} -a {input.bam} -o {params.outdir} 2> {log}
         """
 
