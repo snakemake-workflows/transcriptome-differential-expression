@@ -30,7 +30,7 @@ rule gff_to_gtf:
         "../envs/gffread.yml"
     shell:
         """
-        gffread -t {resources.cpus_per_task} -E {input} -T -o {output} &> {log}    
+        gffread -t {threads} -E {input} -T -o {output} &> {log}    
         """
 
 
@@ -92,7 +92,7 @@ rule flair_align:
         """
         flair align --reads {input.sample} --genome {input.genome}  \
         --mm_index {input.index} --output {params.outdir} \
-        --threads {resources.cpus_per_task} &> {log}
+        --threads {threads} &> {log}
         """
 
 
@@ -113,7 +113,7 @@ rule flair_correct:
         """
         flair correct --query {input.flair_beds} --genome {input.genome}  \
         --gtf {input.annotation} --output {params.outdir} \
-        --threads {resources.cpus_per_task} &> {log}
+        --threads {threads} &> {log}
         """
 
 
@@ -138,7 +138,7 @@ rule flair_collapse:
         """
         flair collapse --genome {input.genome} --gtf {input.annotation} --query {input.beds} \
         --reads {input.sample} --output {params.outdir} --quality {params.qscore} --no_gtf_end_adjustment \
-        {params.opts} --threads {resources.cpus_per_task} &> {log}
+        {params.opts} --threads {threads} &> {log}
         """
 
 
@@ -162,7 +162,7 @@ rule flair_quantify:
         """
         flair quantify --reads_manifest {input.reads_manifest} --isoforms {input.isof} \
         --isoform_bed {input.isob} --output {params.outdir} --quality {params.qscore} \
-        --temp_dir {params.tmp_dir} --stringent --threads {resources.cpus_per_task} \
+        --temp_dir {params.tmp_dir} --stringent --threads {threads} \
         &> {log}
         """
 
@@ -187,7 +187,7 @@ rule flair_diffexp:
     shell:
         """
         flair diffexp --counts_matrix {input.counts_matrix}  --out_dir {params.outdir} \
-        --out_dir_force --exp_thresh {params.exp_thresh} --threads {resources.cpus_per_task} \
+        --out_dir_force --exp_thresh {params.exp_thresh} --threads {threads} \
         &> {log}
         """
 

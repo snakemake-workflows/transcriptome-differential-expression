@@ -26,7 +26,7 @@ rule plot_samples:
     conda:
         "../envs/nanoplot.yml"
     shell:
-        "NanoPlot --threads {resources.cpus_per_task} --tsv_stats --format svg "
+        "NanoPlot --threads {threads} --tsv_stats --format svg "
         "--fastq {input.fastq} --outdir {params.outdir} 2> {log}"
 
 
@@ -52,7 +52,7 @@ rule plot_all_samples:
     conda:
         "../envs/nanoplot.yml"
     shell:
-        "NanoPlot --threads {resources.cpus_per_task} --tsv_stats --format svg "
+        "NanoPlot --threads {threads} --tsv_stats --format svg "
         "--fastq {input} --outdir {params.outdir} 2> {log}"
 
 
