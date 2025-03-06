@@ -1,11 +1,5 @@
-import os
-
-
 localrules:
     qm_report,
-
-
-configfile: "config/config.yml"
 
 
 # QC and metadata with NanoPlot
@@ -29,8 +23,6 @@ rule plot_samples:
         outdir=lambda wildcards: f"NanoPlot/{wildcards.sample}",
     log:
         "logs/NanoPlot/{sample}.log",
-    resources:
-        cpus_per_task=min(len({input}), config["max_cpus"]),  #problem with max(len(input.fastq),39)
     conda:
         "../envs/nanoplot.yml"
     shell:
