@@ -1,116 +1,74 @@
 default-resources:
     slurm_account: "nhr-zdvhpc"
     slurm_partition: "smallcpu"
+    mem_mb_per_cpu: 1800
+    runtime: "30m"
 
 set-threads:
-    genome_to_transcriptome: 1
+    gff_to_gtf: 1
+    filter_reads: 1
+    build_minimap_index: 4
+    map_reads: 32
+    plot_samples: 4
+    plot_all_samples: 8
+    map_qc: 8
+    bam_sort: 4
+    sam_to_bam: 1
+    bam_index: 8
+    bam_stats: 8
+    count_reads: 8
+    de_analysis: 8
+    bam_to_bed: 1
+    build_flair_genome_index: 4
+    flair_align: 32
+    flair_correct: 8
+    flair_collapse: 32
+    flair_quantify: 32
+    flair_diffexp: 8
 
 set-resources:
-    genome_to_transcriptome:
-        mem_mb_per_cpu: 1800
-        runtime: "30m"
-
-    gff_to_gtf:
-        cpus_per_task: 1
-        mem_mb_per_cpu: 1800
-        runtime: "30m"
-    
     filter_reads:
-        cpus_per_task: 1
-        mem_mb_per_cpu: 1800
         runtime: "2h"
-
     build_minimap_index:
-        cpus_per_task: 4
         mem_mb_per_cpu: 3600
-        runtime: "30m"
-
     map_reads:
-        threads: 32
-        mem_mb_per_cpu: 1800
         runtime: "3h"
         slurm_partition: "smallcpu" # needs benchmarking
-
     plot_samples:
-        cpus_per_task: 4
-        mem_mb_per_cpu: 1800
         runtime: "3h"
-    
     plot_all_samples:
-        cpus_per_task: 8
-        mem_mb_per_cpu: 1800
         runtime: "2h"
-
     map_qc:
-        cpus_per_task: 8
-        mem_mb_per_cpu: 1800
         runtime: "1h"
-
     bam_sort:
-        cpus_per_task: 4
         mem_mb_per_cpu: 7200
         runtime: "2h"
-
     sam_to_bam:
-        cpus_per_task: 1
-        mem_mb_per_cpu: 1800
         runtime: "90m"
-
-    bam_index:
-        cpus_per_task: 8
-        mem_mb_per_cpu: 1800
-        runtime: "30m"
-
-    bam_stats:
-        cpus_per_task: 8
-        mem_mb_per_cpu: 1800
-        runtime: "30m"
-
     count_reads:
-        cpus_per_task: 8
-        mem_mb_per_cpu: 1800
         runtime: "1h"
-
     de_analysis:
         cpus_per_task: 8
         mem_mb_per_cpu: 5000
         runtime: "1h"
-
-    bam_to_bed:
-        cpus_per_task: 1
-        mem_mb_per_cpu: 1800
-        runtime: "1h"
-
     build_flair_genome_index:
         cpus_per_task: 4
         mem_mb_per_cpu: 3600
-        runtime: "30m"
-
     flair_align:
         cpus_per_task: 32
         mem_mb_per_cpu: 2500
         runtime: 300
-
     flair_correct:
         cpus_per_task: 8
         runtime: 180
-
     flair_collapse:
         cpus_per_task: 32
         mem_mb_per_cpu: 3600
         runtime: "2h"
-
     flair_quantify:
         cpus_per_task: 32
-        mem_mb_per_cpu: 1800
         runtime: "2h"
-
     flair_diffexp:
         cpus_per_task: 8
         mem_mb_per_cpu: 5000
         runtime: "2h"
-
-    plot_isoforms:
-        cpus_per_task: 1
-        mem_mb_per_cpu: 1800
-        runtime: "30m"
