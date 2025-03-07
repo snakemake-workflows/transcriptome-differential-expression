@@ -28,8 +28,9 @@ samples = (
     .set_index("sample", drop=False)
     .sort_index()
 )
-
+# validation of config files
 validate(samples, schema="../schemas/samples.schema.yaml")
+validate(config, schema="../schemas/config.schema.yaml")
 
 # flair uses the values of condition1 in its file naming scheme, therefore we extract them as wildcards from samples
 condition_val = samples["condition"].unique().tolist()
