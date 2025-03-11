@@ -145,5 +145,6 @@ def rule_all_input():
                 condition_value2=[condition_value2],
             )
         )
-        all_input.append("iso_analysis/plots/")
+        all_input.append("iso_analysis/report/isoforms")
+        all_input.append("iso_analysis/report/usage")
     return all_input

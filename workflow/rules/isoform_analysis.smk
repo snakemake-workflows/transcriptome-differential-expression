@@ -2,6 +2,7 @@ localrules:
     reads_manifest,
     concatenate_beds,
     plot_isoforms,
+    iso_analysis_report,
 
 
 # Construct a flair readable TSV file for samples
@@ -167,14 +168,17 @@ rule flair_quantify:
         """
 
 
-## output is not "MCF7" and "A549" but reads_manifest condition "A" vs "B"
 rule flair_diffexp:
     input:
         counts_matrix="iso_analysis/quantify/flair.counts.tsv",
     output:
-        genes_deseq2="iso_analysis/diffexp/genes_deseq2_{condition_value1}_v_{condition_value2}.tsv",
+        genes_deseq2=report(
+            "iso_analysis/diffexp/genes_deseq2_{condition_value1}_v_{condition_value2}.tsv"
+        ),
         genes_deseq2_QCplots="iso_analysis/diffexp/genes_deseq2_QCplots_{condition_value1}_v_{condition_value2}.pdf",
-        isoforms_deseq2="iso_analysis/diffexp/isoforms_deseq2_{condition_value1}_v_{condition_value2}.tsv",
+        isoforms_deseq2=report(
+            "iso_analysis/diffexp/isoforms_deseq2_{condition_value1}_v_{condition_value2}.tsv"
+        ),
         isoforms_deseq2_QCplots="iso_analysis/diffexp/isoforms_deseq2_QCplots_{condition_value1}_v_{condition_value2}.pdf",
         isoforms_drimseq="iso_analysis/diffexp/isoforms_drimseq_{condition_value1}_v_{condition_value2}.tsv",
     params:
@@ -209,3 +213,38 @@ rule plot_isoforms:
         "../envs/flair.yml"
     script:
         "../scripts/plot_isoforms.py"
+
+
+# dummy rule for output generation
+rule iso_analysis_report:
+    input:
+        in_dir=rules.plot_isoforms.output,
+    output:
+        isoforms=report(
+            directory("iso_analysis/report/isoforms"),
+            category="Splice-Isoform Analysis Results",
+            subcategory="Isoform Variants",
+            patterns=["{name}_isoforms.png"],
+            caption="../report/isoform_analysis.rst",
+            labels={
+                "gene names": "{name}",
+            },
+        ),
+        usage=report(
+            directory("iso_analysis/report/usage"),
+            category="Splice-Isoform Analysis Results",
+            subcategory="DTUs",
+            patterns=["{name}_usage.png"],
+            caption="../report/isoform_analysis.rst",
+            labels={
+                "gene names": "{name}",
+            },
+        ),
+    log:
+        "logs/flair/vis_report.log",
+    conda:
+        "../envs/base.yml"
+    shell:
+        "mkdir -p iso_analysis/report/isoforms iso_analysis/report/usage && "
+        "cp {input.in_dir}/*_isoforms.png {output.isoforms} && "
+        "cp {input.in_dir}/*_usage.png {output.usage} 2> {log}"
