@@ -42,7 +42,7 @@ Since Salmon requires transcriptomic alignments for quantification, a transcript
 
 ### Read Filtering
 
-As this workflow is designed for long-read sequencing, a custom Python script is used to filter out short reads that may represent contamination or sequencing artifacts, ensuring that only reads meeting the specified length threshold are used for analysis. 
+As this workflow is designed for long-read sequencing, a custom Python script is used to filter out short reads that may represent contamination or sequencing artifacts, ensuring that only reads meeting the specified length threshold are used for analysis.
 
 - **read_filter**:
   - `min_length`: Minimum read length to retain. Can be left at 0 to consider all reads.
@@ -76,7 +76,7 @@ Transcripts are quantified using Salmon in alignment-based mode. TO ensure accur
 
 ### Differential Expression Analysis (DESeq2)
 
-Differential expression analysis is performed using PyDESeq2 to model raw read counts wtih a negative binomial distribution, estimating dispersion parameters and perfrom statistical tests to identify differentially expressed genes. 
+Differential expression analysis is performed using PyDESeq2 to model raw read counts wtih a negative binomial distribution, estimating dispersion parameters and perfrom statistical tests to identify differentially expressed genes.
 
 - **deseq2**:
   - `fit_type`: Normalization [fit type](https://pydeseq2.readthedocs.io/en/stable/api/index.html) (`parametric` or `mean`).
