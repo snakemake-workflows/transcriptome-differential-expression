@@ -1,0 +1,101 @@
+# Transcriptome Differential Expression Workflow
+
+This workflow facilitates the analysis of transcriptomic data, including alignment, quantification, and differential expression analysis, alternative splicing analysis and quality control.
+
+## Configuration Files
+
+To set up the workflow, modify the following files to reflect your dataset and analysis parameters:
+
+- `config/samples.csv`: Contains sample information and experimental design.
+- `config/config.yaml`: General workflow configuration and parameter settings.
+
+## samples.csv
+
+Each line in `samples.csv` represents a biological sample with associated metadata. The required columns are:
+- `sample`: Unique identifies that matches the sample file in the input directory
+- `condition`: Experimental condition or treatment group
+- `batch`: Batch of samples
+and the following columns forward optional metadata:
+- `platform`: Sequencing platform
+- `purity`: Purity value
+
+## config.yml
+
+The `config.yml` file contains the main configuration parameters for the workflow.
+
+### General Workflow Parameters
+
+- `workflow`: Name of the workflow.
+- `inputdir`: Directory containing input samples.
+- `repo`: URL of the workflow repository.
+- `max_cpus`: Maximum number of CPUs to utilize.
+
+### Reference Genome Parameters
+
+Since Salmon requires transcriptomic alignments for quantification, a transcriptome is constructed using genomic and annotation reference data, these reference files can be provided locally or automatically retrieved from NCBI using an accession number.
+
+- **ref**:
+  - `species`: Name of the species.
+  - `genome`: Path to the genome file (FASTA format).
+  - `annotation`: Path to the annotation file (GFF or GTF format).
+  - `accession`: NCBI accession number (used if local files are not provided).
+
+### Read Filtering
+
+As this workflow is designed for long-read sequencing, a custom Python script is used to filter out short reads that may represent contamination or sequencing artifacts, ensuring that only reads meeting the specified length threshold are used for analysis. 
+
+- **read_filter**:
+  - `min_length`: Minimum read length to retain. Can be left at 0 to consider all reads.
+
+### Alignment (minimap2)
+
+Alignment performed using Minimap2. A comprehensive explanation of its parameters can be found in the [official documentation](https://lh3.github.io/minimap2/minimap2.html#10).
+
+- **minimap2**:
+  - `index_opts`: Used to define additional options for indexing.
+  - `opts`: Used to define additional mapping options.
+  - `maximum_secondary`: Maximum number of secondary alignments, `-N` within the minimap2 documentation.
+  - `secondary_score_ratio`: Score ratio for secondary alignments, `-p` within the minimap2 documentation.
+
+### Alignment Processing (Samtools)
+
+Since multiple downstream analysis tools require different Alignment formats, Samtools is used to convert SAM files into BAM format for Salmon quantification or sorted SAM files used for FLAIR splice-isoform analysis. Additionally, Samtools generates alignment statistics that serve as quality control metrics. More details can be found in the [Samtools documentation](http://www.htslib.org/doc/samtools.html).
+
+- **samtools**:
+  - `samtobam_opts`: Additional options for SAM to BAM conversion.
+  - `bamsort_opts`: Additional options for sorting BAM files.
+  - `bamindex_opts`: Additional options for indexing sorted BAM files.
+  - `bamstats_opts`: Additional options for generating Alignment statistics.
+
+### Quantification (Salmon)
+
+Transcripts are quantified using Salmon in alignment-based mode. TO ensure accurate quantification, Salmon requires information about the strandedness if the sequencing reads. More details can be found in the [Salmon documentation](https://salmon.readthedocs.io/en/latest/salmon.html#what-s-this-libtype).
+
+- **quant**:
+  - `salmon_libtype`: Library type for Salmon quantification.
+
+### Differential Expression Analysis (DESeq2)
+
+Differential expression analysis is performed using PyDESeq2 to model raw read counts wtih a negative binomial distribution, estimating dispersion parameters and perfrom statistical tests to identify differentially expressed genes. 
+
+- **deseq2**:
+  - `fit_type`: Normalization [fit type](https://pydeseq2.readthedocs.io/en/stable/api/index.html) (`parametric` or `mean`).
+  - `design_factors`: List of design factors for the analysis.
+  - `lfc_null`: Log2 fold change under the null hypothesis for [Wald test](https://pydeseq2.readthedocs.io/en/stable/api/docstrings/pydeseq2.ds.DeseqStats.html#pydeseq2.ds.DeseqStats.summary).
+  - `alt_hypothesis`: Alternative hypothesis for [Wald test](https://pydeseq2.readthedocs.io/en/stable/api/docstrings/pydeseq2.ds.DeseqStats.html#pydeseq2.ds.DeseqStats.summary).
+  - `point_width`: Marker size for [MA-plot](https://pydeseq2.readthedocs.io/en/stable/api/docstrings/pydeseq2.ds.DeseqStats.html#pydeseq2.ds.DeseqStats.plot_MA).
+  - `mincount`: [Minimum count threshold](https://pydeseq2.readthedocs.io/en/stable/auto_examples/plot_minimal_pydeseq2_pipeline.html#data-filtering), genes below the threshold will be removed from analysis.
+  - `alpha`: [Type I error cutoff value](https://pydeseq2.readthedocs.io/en/stable/auto_examples/plot_minimal_pydeseq2_pipeline.html#statistical-analysis-with-the-deseqstats-class).
+  - `threshold_plot`: Number of top differentially expressed genes to plot in additional heatmap.
+  - `colormap`: Colormap for heatmaps.
+  - `figtype`: Figure output format (e.g., `png`).
+
+### Isoform Analysis (FLAIR)
+
+FLAIR is used to identify alternative splice isoforms in full-length transcripts obtained from long-read sequencing. It then quantifies these transcripts and performs differential expression analysis on the corresponding genes with splice-isoforms.
+
+- **isoform_analysis**:
+  - `FLAIR`: Enable FLAIR alternative isoform analysis (`true` or `false`).
+  - `qscore`: Minimum MAPQ for read alignment. `--quality` for [flair collapse](https://flair.readthedocs.io/en/latest/modules.html#flair-collapse) and [flair quantify](https://flair.readthedocs.io/en/latest/modules.html#flair-quantify) modules.
+  - `exp_thresh`: Minimum read count expression threshold for [flair differential expression analysis](https://flair.readthedocs.io/en/latest/modules.html#flair-diffexp).
+  - `col_opts`: Additional options for flair collapse module.

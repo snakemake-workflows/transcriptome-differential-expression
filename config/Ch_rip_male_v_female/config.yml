@@ -59,7 +59,7 @@ samtools:
 
 # salmon quantification parameters
 quant:
-    # Salmon library type
+    # Salmon library type (Default: U)
     salmon_libtype: "U"
 
 
