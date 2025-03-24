@@ -7,7 +7,7 @@ samples: samples.csv
 workflow: "workflow-transcriptome-de_phe"
 
 # this is the input directory. All samples are looked for in this directory
-inputdir: "/lustre/project/nhr-zdvhpc/transcriptome_data"
+inputdir: "./ngs-test-data/reads"
 # Repository URL:
 repo: "https://github.com/snakemake-workflows/transcriptome-differential-expression"
 # Maximum number of CPUs in your partition/PC/server
