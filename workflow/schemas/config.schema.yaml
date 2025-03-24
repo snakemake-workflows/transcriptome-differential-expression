@@ -41,12 +41,9 @@ properties:
   read_filter:
     type: object
     properties:
-      trimming:
-        type: object
-        properties:
-          min_length: 
-            type: integer
-            minimum: 0
+      min_length: 
+        type: integer
+        minimum: 0
 
   minimap2:
     type: object

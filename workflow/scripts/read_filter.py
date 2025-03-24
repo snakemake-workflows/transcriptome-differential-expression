@@ -19,7 +19,7 @@ if not isinstance(snakemake.config['read_filter']["min_length"], int):
         "Your configuration has no valid minimum read length, allowed are: ('int'), check the 'min_length' parameter, please."
     )
 
-if snakemake.config["min_length"] <= 0:
+if snakemake.config['read_filter']["min_length"] <= 0:
     if is_zipped(snakemake.input[0]):
         with gzip.open(snakemake.input[0], "rt") as f_in, open(
             snakemake.output[0], "wt"
