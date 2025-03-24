@@ -7,12 +7,15 @@ samples: samples.csv
 workflow: "workflow-transcriptome-de_phe"
 
 # this is the input directory. All samples are looked for in this directory
-inputdir: "./ngs-test-data/reads"
+inputdir: "/lustre/project/nhr-zdvhpc/transcriptome_data"
 # Repository URL:
-repo: "https://github.com/snakemake-workflows/transriptome-differential-expression"
+repo: "https://github.com/snakemake-workflows/transcriptome-differential-expression"
+# Maximum number of CPUs in your partition/PC/server
+max_cpus: 40
 
 ## Workflow-specific Parameters:
 
+# Define reference genome/transcriptome
 ref:
     # species
     species: "Homo sapiens"
@@ -24,27 +27,10 @@ ref:
     # empty, because every real reference is too big.
     accession: None
 
-# Differential Isoform Analysis
 
-# The differential isoform analysis pipeline uses FLAIR and includes resource-intensive computations and only works with additional constraints.
-#     1. In 'samples.csv: The 'condition' column must contain exactly two distinct values. For example 'control' and 'treated'.
-#     2. In 'samples.csv: Refrain from using underscores when naming samples. The 'sample' column may contain underscores, but be aware that underscores will be removed from the name for isoform quantification steps.
-#     3. In this file: the variable 'isoform_analysis' below must be:'"yes"'. This is a check to determine if users are aware of the constraints and wish to proceed.
-FLAIR:
-    # Perform Differential Isoform Analysis with FLAIR?
-    isoform_analysis: ""
-    #FLAIR quality score. Minimum MAPQ of read assignment to an isoform (default 1).
-    qscore: 1
-    #FLAIR read count expression threshold. Isoforms in which both conditions contain fewer than E reads are filtered out (Default E=10).
-    exp_thresh: 10
-    # flair_collapse options. '--stringent' for full-length supporting reads (>=80% coverage)
-    col_opts: "--stringent --support 1"
-
-# Minimum read length, put 0 if you want to proceed with all reads.
-min_length: 10
-
-# Maximum number of CPUs in your partition/PC/server
-max_cpus: 40
+read_filter:
+    # Minimum read length; set 0 to keep all reads.
+    min_length: 10
 
 minimap2:
     # Minimap2 indexing options
@@ -59,34 +45,21 @@ minimap2:
     # Secondary score ratio (-p for minimap2)
     secondary_score_ratio: 1.0
 
-# Samtools view opts, "-b" creates BAM from SAM.
-samtobam_opts: "-b"
+# samtools processing parameters
+samtools:
+    # Samtools view opts, "-b" creates BAM from SAM.
+    samtobam_opts: "-b"
+    # Samtools sort opts,
+    bamsort_opts: ""
+    # Samtools index opts,
+    bamindex_opts: ""
+    # Samtools stats opts
+    bamstats_opts: ""
 
-# Samtools sort opts,
-bamsort_opts: ""
-
-# Samtools index opts,
-bamindex_opts: ""
-
-# Salmon library type
-salmon_libtype: "U"
-
-
-# QC options
-
-# Samtools stats opts
-bamstats_opts: ""
-
-# Count filtering options - customize these according to your experimental design:
-
-# Genes expressed in minimum this many samples
-min_samps_gene_expr: 3
-# Transcripts expressed in minimum this many samples
-min_samps_feature_expr: 1
-# Minimum gene counts
-min_gene_expr: 10
-# Minimum transcript counts
-min_feature_expr: 3
+# salmon quantification parameters
+quant:
+    # Salmon library type (Default: U)
+    salmon_libtype: "U"
 
 
 # This section defines the pyDESeq2 plot and data handling parameters
@@ -134,3 +107,18 @@ deseq2:
     #plot figure type
     figtype: "png"
 
+## Differential Isoform Analysis
+
+# The FLAIR splice-isoform analysis pipeline includes resource-intensive computations and only works with additional constraints.
+#     1. In 'samples.csv: The 'condition' column must contain exactly two distinct values. For example 'control' and 'treated'.
+#     2. In 'samples.csv: Refrain from using underscores when naming samples. The 'sample' column may contain underscores, but be aware that underscores will be removed from the name for isoform quantification steps.
+#     3. In this file: the variable 'FLAIR' below must be:'true'. This is a check to determine if users are aware of the constraints and wish to proceed.
+isoform_analysis:
+    # Enables FLAIR Isoform Analysis if 'true'
+    FLAIR: false
+    # Minimum MAPQ of read assignment to an isoform (default 1).
+    qscore: 1
+    # min read count expression threshold. Isoforms which contain fewer than 'exp_thresh' (Default=10) reads in both conditions are filtered out.
+    exp_thresh: 10
+    # 'flair_collapse' options. '--stringent' for full-length supporting reads (>=80% coverage)
+    col_opts: "--annotation_reliant --generate_map --stringent"
