@@ -14,7 +14,7 @@ def is_zipped(fname):
     return fname.endswith(".gz")
 
 
-if not isinstance(snakemake.config["min_length"], int):
+if not isinstance(snakemake.config['read_filter']["min_length"], int):
     raise TypeError(
         "Your configuration has no valid minimum read length, allowed are: ('int'), check the 'min_length' parameter, please."
     )
@@ -35,7 +35,7 @@ else:
         filter_iterator = (
             read
             for read in input_iterator
-            if len(read.seq) >= snakemake.config["min_length"]
+            if len(read.seq) >= snakemake.config['read_filter']["min_length"]
         )
 
         SeqIO.write(filter_iterator, snakemake.output[0], "fastq")
