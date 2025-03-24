@@ -49,7 +49,7 @@ As this workflow is designed for long-read sequencing, a custom Python script is
 
 ### Alignment (minimap2)
 
-Alignment performed using Minimap2. A comprehensive explanation of its parameters can be found in the [official documentation](https://lh3.github.io/minimap2/minimap2.html#10).
+Alignment performed using Minimap2. A comprehensive explanation of its parameters can be found in the [Minimap2 documentation](https://lh3.github.io/minimap2/minimap2.html#10).
 
 - **minimap2**:
   - `index_opts`: Used to define additional options for indexing.
@@ -76,26 +76,26 @@ Transcripts are quantified using Salmon in alignment-based mode. TO ensure accur
 
 ### Differential Expression Analysis (DESeq2)
 
-Differential expression analysis is performed using PyDESeq2 to model raw read counts wtih a negative binomial distribution, estimating dispersion parameters and perfrom statistical tests to identify differentially expressed genes.
-
+Differential expression analysis is performed using PyDESeq2 to model raw read counts wtih a negative binomial distribution, estimating dispersion parameters to identify differentially expressed genes. See the [PyDESeq2 documentation](https://pydeseq2.readthedocs.io/en/stable/index.html) for more details.
 - **deseq2**:
-  - `fit_type`: Normalization [fit type](https://pydeseq2.readthedocs.io/en/stable/api/index.html) (`parametric` or `mean`).
+  - `fit_type`: Type of fitting of dispersions to the mean intensity. `parametric`: fit a dispersion-mean relation via a robust gamma-family GLM. `mean`: use the mean of gene-wise dispersion estimates. Will set the fit type for the DEA and the vst transformation. If needed, it can be set separately for each method.
   - `design_factors`: List of design factors for the analysis.
-  - `lfc_null`: Log2 fold change under the null hypothesis for [Wald test](https://pydeseq2.readthedocs.io/en/stable/api/docstrings/pydeseq2.ds.DeseqStats.html#pydeseq2.ds.DeseqStats.summary).
-  - `alt_hypothesis`: Alternative hypothesis for [Wald test](https://pydeseq2.readthedocs.io/en/stable/api/docstrings/pydeseq2.ds.DeseqStats.html#pydeseq2.ds.DeseqStats.summary).
-  - `point_width`: Marker size for [MA-plot](https://pydeseq2.readthedocs.io/en/stable/api/docstrings/pydeseq2.ds.DeseqStats.html#pydeseq2.ds.DeseqStats.plot_MA).
-  - `mincount`: [Minimum count threshold](https://pydeseq2.readthedocs.io/en/stable/auto_examples/plot_minimal_pydeseq2_pipeline.html#data-filtering), genes below the threshold will be removed from analysis.
-  - `alpha`: [Type I error cutoff value](https://pydeseq2.readthedocs.io/en/stable/auto_examples/plot_minimal_pydeseq2_pipeline.html#statistical-analysis-with-the-deseqstats-class).
+  - `lfc_null`: The (log2) log fold change under the null hypothesis for Wald test.
+  - `alt_hypothesis`: The alternative hypothesis for computing wald p-values. By default, the normal Wald test assesses deviation of the estimated log fold change from the null hypothesis, as given by `lfc_null`. The alternative hypothesis corresponds to what the user wants to find rather than the null hypothesis.
+  - `point_width`: Marker size for MA-plot
+  - `mincount`: Minimum count threshold, genes below the threshold will be removed from analysis.
+  - `alpha`: Type I error cutoff value.
   - `threshold_plot`: Number of top differentially expressed genes to plot in additional heatmap.
   - `colormap`: Colormap for heatmaps.
   - `figtype`: Figure output format (e.g., `png`).
 
 ### Isoform Analysis (FLAIR)
 
-FLAIR is used to identify alternative splice isoforms in full-length transcripts obtained from long-read sequencing. It then quantifies these transcripts and performs differential expression analysis on the corresponding genes with splice-isoforms.
+FLAIR is used to identify alternative splice isoforms in full-length transcripts obtained from long-read sequencing. It then quantifies these transcripts and performs differential expression analysis on the corresponding genes with splice-isoforms. More details can be found in the [FLAIR documentation](https://flair.readthedocs.io/en/latest/index.html).
 
 - **isoform_analysis**:
   - `FLAIR`: Enable FLAIR alternative isoform analysis (`true` or `false`).
-  - `qscore`: Minimum MAPQ for read alignment. `--quality` for [flair collapse](https://flair.readthedocs.io/en/latest/modules.html#flair-collapse) and [flair quantify](https://flair.readthedocs.io/en/latest/modules.html#flair-quantify) modules.
-  - `exp_thresh`: Minimum read count expression threshold for [flair differential expression analysis](https://flair.readthedocs.io/en/latest/modules.html#flair-diffexp).
+  - `qscore`: Minimum MAPQ for read alignment. `--quality` for FLAIR modules.
+  - `exp_thresh`: Minimum read count expression threshold for differential expression analysis. Genes with less counts will be removed form analysis.
   - `col_opts`: Additional options for flair collapse module.
+
