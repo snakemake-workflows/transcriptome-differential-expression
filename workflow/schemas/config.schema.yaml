@@ -9,28 +9,13 @@ properties:
     type: string
     description: "Path of sample '.csv' file"
 
-  workflow:
-    type: string
-    description: "Name of the workflow"
-
   inputdir:
     type: string
     description: "Path of sample fasta file directory"
 
-  repo:
-    type: string
-    
-  max_cpus:
-    type: integer
-    minimum: 1
-    description: "Maximum number of cpus"
-
   ref:
     type: object
     properties:
-      #why do we need species?
-      species:
-        type: string
       genome:
         type: string
       annotation:
@@ -122,10 +107,7 @@ isoform_analysis:
 
 required:
   - samples
-  - workflow
   - inputdir
-  - repo
-  - max_cpus
   - ref
   - read_filter
   - minimap2

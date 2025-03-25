@@ -1,6 +1,6 @@
 # Transcriptome Differential Expression Workflow
 
-This workflow facilitates the analysis of transcriptomic data, including alignment, quantification, and differential expression analysis, alternative splicing analysis and quality control.
+This workflow facilitates the analysis of transcriptomic data obtained from Oxford Nanopore long-read sequencing, including alignment, quantification, differential expression analysis, alternative splicing analysis and quality control. Users should be aware that alignment parameters may need to be adjusted accordingly for optimal performance with alternative sequencing techniques.
 
 ## Configuration Files
 
@@ -25,10 +25,7 @@ The `config.yml` file contains the main configuration parameters for the workflo
 
 ### General Workflow Parameters
 
-- `workflow`: Name of the workflow.
 - `inputdir`: Directory containing input samples.
-- `repo`: URL of the workflow repository.
-- `max_cpus`: Maximum number of CPUs to utilize.
 
 ### Reference Genome Parameters
 
@@ -36,8 +33,8 @@ Since Salmon requires transcriptomic alignments for quantification, a transcript
 
 - **ref**:
   - `species`: Name of the species.
-  - `genome`: Path to the genome file (FASTA format).
-  - `annotation`: Path to the annotation file (GFF or GTF format).
+  - `genome`: Path to the genome file (FASTA format, can be omitted if remote retrieval through accession number is prefered).
+  - `annotation`: Path to the annotation file (GFF or GTF format, can be omitted if remote retrieval through accession number is prefered).
   - `accession`: NCBI accession number (used if local files are not provided).
 
 ### Read Filtering

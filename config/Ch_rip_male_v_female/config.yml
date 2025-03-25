@@ -3,15 +3,8 @@ samples: samples.csv
 
 ## General Workflow Parameters:
 
-# Name of the Workflow:
-workflow: "workflow-transcriptome-de_phe"
-
 # this is the input directory. All samples are looked for in this directory
 inputdir: "/lustre/project/nhr-zdvhpc/transcriptome_data"
-# Repository URL:
-repo: "https://github.com/snakemake-workflows/transcriptome-differential-expression"
-# Maximum number of CPUs in your partition/PC/server
-max_cpus: 40
 
 ## Workflow-specific Parameters:
 
@@ -29,11 +22,9 @@ ref:
     # NCBI accession number of the reference data set; can be left empty if both reference files are available locally"
     accession: "GCA_917627325.4"
 
-
 read_filter:
     # Minimum read length; set 0 to keep all reads.
     min_length: 200
-
 
 # minimap2 alignment parameters
 minimap2:
@@ -61,7 +52,6 @@ samtools:
 quant:
     # Salmon library type (Default: U)
     salmon_libtype: "U"
-
 
 # This section defines the pyDESeq2 plot and data handling parameters
 deseq2:
@@ -107,7 +97,6 @@ deseq2:
     colormap: "flare"
     #plot figure type
     figtype: "png"
-
 
 ## Differential Isoform Analysis
 
