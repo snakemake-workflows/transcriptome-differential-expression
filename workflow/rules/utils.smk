@@ -4,7 +4,6 @@ import re
 
 localrules:
     dump_versions,
-    info,
 
 
 rule dump_versions:
@@ -20,16 +19,3 @@ rule dump_versions:
         """
     eval $(ensureconda) list > {output.ver} 2> {log}
     """
-
-
-rule info:  ## print pipeline information
-    params:
-        name=config["workflow"],
-        wdir=os.getcwd(),
-        repo=config["repo"],
-    log:
-        "logs/utils/info.log",
-    run:
-
-
-        "scripts/info.py"
