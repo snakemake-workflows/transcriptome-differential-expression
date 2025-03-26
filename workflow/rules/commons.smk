@@ -124,7 +124,7 @@ def rule_all_input():
     all_input.extend(
         expand("NanoPlot/{sample}/NanoPlot-report.html", sample=samples["sample"])
     )
-    all_input.append("NanoPlot/all_samples/NanoPlot-report.html")
+    all_input.append("NanoPlot/NanoPlot-report.html")
     all_input.extend(expand("QC/bamstats/{sample}.txt", sample=samples["sample"]))
     all_input.extend(
         expand("qualimap/{sample}/qualimapReport.html", sample=samples["sample"])
