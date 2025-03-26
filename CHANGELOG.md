@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.1](https://github.com/snakemake-workflows/transcriptome-differential-expression/compare/v2.0.0...v2.0.1) (2025-03-26)
+
+
+### Bug Fixes
+
+* removed subdir from rule to prohibit incorrect wildcard resolution ([#108](https://github.com/snakemake-workflows/transcriptome-differential-expression/issues/108)) ([e79bebf](https://github.com/snakemake-workflows/transcriptome-differential-expression/commit/e79bebf5dca2887f3c9fe99d5bc86add18e378fc))
+
 ## [2.0.0](https://github.com/snakemake-workflows/transcriptome-differential-expression/compare/v1.5.0...v2.0.0) (2025-02-28)
 
 
