@@ -43,7 +43,7 @@ rule plot_all_samples:
         aggregate_input(samples["sample"]),
     output:
         scatter=report(
-            "NanoPlot/all_samples/NanoPlot-report.html",
+            "NanoPlot/NanoPlot-report.html",
             category="Quality control",
             subcategory="NanoPlot",
             caption="../report/nanoplot_all_samples_report.rst",
