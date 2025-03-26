@@ -10,14 +10,14 @@ rule count_reads:
         tsv="counts/{sample}_salmon/quant.sf",
     params:
         outdir=lambda wildcards: f"counts/{wildcards.sample}_salmon",
-        libtype=config["salmon_libtype"],
+        libtype=config["quant"]["salmon_libtype"],
     log:
         "logs/salmon/{sample}.log",
     conda:
         "../envs/salmon.yml"
     shell:
         """
-        salmon --no-version-check quant --ont -p {resources.cpus_per_task} \
+        salmon --no-version-check quant --ont -p {threads} \
         -t {input.trs} -l {params.libtype} -a {input.bam} -o {params.outdir} 2> {log}
         """
 

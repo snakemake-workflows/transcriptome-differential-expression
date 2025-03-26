@@ -1,11 +1,5 @@
-import os
-
-
 localrules:
     qm_report,
-
-
-configfile: "config/config.yml"
 
 
 # QC and metadata with NanoPlot
@@ -29,12 +23,10 @@ rule plot_samples:
         outdir=lambda wildcards: f"NanoPlot/{wildcards.sample}",
     log:
         "logs/NanoPlot/{sample}.log",
-    resources:
-        cpus_per_task=min(len({input}), config["max_cpus"]),  #problem with max(len(input.fastq),39)
     conda:
         "../envs/nanoplot.yml"
     shell:
-        "NanoPlot --threads {resources.cpus_per_task} --tsv_stats --format svg "
+        "NanoPlot --threads {threads} --tsv_stats --format svg "
         "--fastq {input.fastq} --outdir {params.outdir} 2> {log}"
 
 
@@ -60,7 +52,7 @@ rule plot_all_samples:
     conda:
         "../envs/nanoplot.yml"
     shell:
-        "NanoPlot --threads {resources.cpus_per_task} --tsv_stats --format svg "
+        "NanoPlot --threads {threads} --tsv_stats --format svg "
         "--fastq {input} --outdir {params.outdir} 2> {log}"
 
 
@@ -106,6 +98,6 @@ rule bam_stats:
     log:
         "logs/samtools/bamstats_{sample}.log",
     params:
-        extra=config["bamstats_opts"],
+        extra=config["samtools"]["bamstats_opts"],
     wrapper:
         "v3.13.4/bio/samtools/stats"

@@ -1,6 +1,6 @@
 rule de_analysis:
     input:
-        all_counts=rules.merge_counts.output,
+        all_counts="merged/all_counts.tsv",
     output:
         dispersion_graph=report(
             f"de_analysis/dispersion_graph.{config['deseq2']['figtype']}",

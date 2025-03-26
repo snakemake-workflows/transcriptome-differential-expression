@@ -1,336 +1,117 @@
 $schema: "http://json-schema.org/draft-07/schema#"
 
 description: snakemake configuration file
-
 type: object
 
-definitions:
-  aux-file:
-    type: object
-    additionalProperties:
-      anyOf:
-        - type: string
-  filterentry:
-    type: object
-    additionalProperties:
-      anyOf:
-        - type: string
-        - type: "null"
-        - type: object
-          properties:
-            aux-files:
-              $ref: "#/definitions/aux-file"
-              description: "a map of <name: string> pairs"
-            expression:
-              type: string
-          required:
-            - aux-files
-            - expression
-  evententry:
-    type: object
-    properties:
-      varlociraptor:
-        type: array
-        items: 
-          type: string
-      filter:
-        anyOf:
-          - type: string
-          - type: array
-            items:
-              type: string
-      desc:
-        type: string
-      labels:
-        type: object
-      subcategory:
-        type: string
-      sort:
-        type: array
-        items:
-          type: string
-      local:
-        type: boolean
-      threshold:
-        type: number
-        minimum: 0.0
-        maximum: 1.0
 
 properties:
   samples:
     type: string
-  #units:
-  #  type: string
-  groups:
-    type: string
+    description: "Path of sample '.csv' file"
 
-  target_regions:
-    anyOf:
-      - type: string
-      - type: "null"
-      - type: array
+  inputdir:
+    type: string
+    description: "Path of sample fasta file directory"
 
   ref:
     type: object
     properties:
-      species:
+      genome:
+        type: string
+      annotation:
         type: string
       accession:
         type: string
-    required:
-      - species
-      - accession
 
-  primers:
+  read_filter:
     type: object
     properties:
-      trimming:
-        type: object
-        properties:
-          activate: 
-            type: boolean
-          primers_fq1:
-            type: string
-          primers_fq2:
-            type: string
-          tsv:
-            type: string
-          library_error:
-            type: integer
-          library_length:
-            type: integer
-
-  gene_coverage:
-    type: object
-    properties:
-      min_avg_coverage:
+      min_length: 
         type: integer
+        minimum: 0
 
-  report:
+  minimap2:
     type: object
     properties:
-      activate:
-        type: boolean
-      stratify:
-        type: object
-        properties:
-          activate:
-            type: boolean
-          by-column:
-            type: string
-        required:
-          - activate
-          - by-column
-      max_read_depth:
+      index_opts:
+        type: string
+      opts:
+        type: string
+      maximum_secondary:
         type: integer
-    required:
-      - activate
-      - max_read_depth
+        minimum: 0
+      secondary_score_ratio:
+        type: number
+        minimum: 0.0
 
-  population:
-    type: object
-    properties:
-      db:
-        type: object
-        properties:
-          activate:
-            type: boolean
-          path:
-            type: string
-          events:
-            type: array
-            items: 
-              type: string
-        required:
-          - activate
+samtools:
+  type: object
+  properties:
+    samtobam_opts:
+      type: string
+    bamsort_opts:
+      type: string
+    bamindex_opts:
+      type: string
+    bamstats_opts:
+      type: string
 
-  tables:
-    type: object
-    activate:
-      type: boolean
-    properties:
-      output:
-        type: object
-        properties:
-          event_prob:
-            type: boolean
-          observations:
-            type: boolean
-          annotation_fields:
-            type: array
-            items: 
-               anyOf:
-                - type: string
-                - type: object
-                  properties:
-                    name:
-                      type: string
-                    expr:
-                      type: string
-    generate_excel:
-      type: boolean
-    required:
-      - activate
+quant:
+  type: object
+  properties:
+    salmon_libtype:
+      type: string
 
-  mutational_burden:
-    type: object
-    properties:
-      activate:
-        type: boolean
-    required:
-      - activate
-
-
-  calling:
-    type: object
-    properties:
-      delly:
-        type: object
-        properties:
-          activate:
-            type: boolean
-      freebayes:
-        type: object
-        properties:
-          activate:
-            type: boolean
-      scenario:
+deseq2:
+  type: object
+  properties:
+    fit_type:
+      type: string
+      enum: ["parametric","mean"]
+    design_factors:
+      type: array
+      items:
         type: string
-      filter:
-        $ref: "#/definitions/filterentry"
-        description: "a map of <filtername: string> pairs"
-      fdr-control:
-        type: object
-        properties:
-          threshold:
-            type: number
-            minimum: 0.0
-            maximum: 1.0
-          local:
-            type: boolean
-          events:
-            $ref: "#/definitions/evententry"
-            description: "a map of <eventname: event> pairs"
-        required:
-          - events
-    required:
-      - delly
-      - freebayes
-      - scenario
-      - filter
-      - fdr-control
-  
-  remove_duplicates:
-    type: object
-    properties:
-      activate:
-        type: boolean
+    lfc_null:
+      type: number
+    alt_hypothesis:
+      type: string
+      enum: ["greaterAbs", "lessAbs", "greater", "less"]
+    point_width:
+      type: integer
+      minimum: 1
+    alpha:
+      type: number
+      minimum: 0.0
+      maximum: 1.0
+    threshold_plot:
+      type: integer
+    colormap:
+      type: string
+    figtype:
+      type: string
 
-  calc_consensus_reads:
-    type: object
-    properties:
-      activate:
-        type: boolean
-
-  annotations:
-    type: object
-    properties:
-      vcfs:
-        properties:
-          activate:
-            type: boolean
-      dgidb:
-        properties:
-          activate:
-            type: boolean
-          datasources:
-            type: array
-            items: 
-              type: string
-      vep:
-        properties:
-          candidate_calls:
-            properties:
-              params:
-                type: string
-              plugins:
-                type: array
-                items:
-                  type: string
-            required:
-              - params
-              - plugins
-          final_calls:
-            properties:
-              params:
-                type: string
-              plugins:
-                type: array
-                items:
-                  type: string
-            required:
-              - params
-              - plugins
-        required:
-          - candidate_calls
-          - final_calls
-    required:
-      - vep
-      - vcfs
-      - dgidb
-
-
-
-
-  params:
-    type: object
-    properties:
-      cutadapt:
-        type: string
-      gatk:
-        type: object
-        properties:
-          BaseRecalibrator:
-            type: string
-          applyBQSR:
-            type: string
-        required:
-          - BaseRecalibrator
-          - applyBQSR
-      varlociraptor:
-        type: object
-        properties:
-          preprocess:
-            type: string
-          call:
-            type: string
-        required:
-          - preprocess
-          - call
-      picard:
-        type: object
-        properties:
-          MarkDuplicates:
-            type: string
-        required:
-          - MarkDuplicates
-      freebayes:
-        type: object
-        properties:
-          min_allele_frequency:
-            type: number
-    required:
-      - gatk
-      - picard
-      - cutadapt
-      - freebayes
-      - varlociraptor
+isoform_analysis:
+  type: object
+  properties:
+    FLAIR:
+      type: boolean
+    qscore:
+      type: integer
+      minimum: 1
+    exp_thresh:
+      type: integer
+      minimum: 0
+    col_opts:
+      type: string
 
 required:
   - samples
-    #- units
-    #- ref
-    #mutational_burden
-    #- calling
-    #- params
-    #- annotations
+  - inputdir
+  - ref
+  - read_filter
+  - minimap2
+  - samtools
+  - quant 
+  - deseq2
+  - isoform_analysis

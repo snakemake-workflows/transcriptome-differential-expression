@@ -16,7 +16,8 @@ rule standardize_gff:
         "Standardizing GFF format for isoform analysis compatibility"
     shell:
         """
-        agat_convert_sp_gxf2gxf.pl --gff {input} -o {output} &> {log}
+        agat_convert_sp_gxf2gxf.pl --gff {input} -o {output} &> {log} &&
+        cat genomic.agat.log >> {log} && rm genomic.agat.log
         """
 
 
@@ -26,6 +27,7 @@ rule genome_to_transcriptome:
         annotation="references/standardized_genomic.gff",
     output:
         transcriptome="transcriptome/transcriptome.fa",
+        index=temp("references/genomic.fa.fai"),
     log:
         "logs/gffread/genome_to_transcriptome.log",
     conda:
@@ -33,7 +35,7 @@ rule genome_to_transcriptome:
     threads: 1
     shell:
         """
-        gffread -t {threads} -w {output} -g {input.genome} {input.annotation} &> {log}    
+        gffread -t {threads} -w {output} -g {input.genome} {input.annotation} &> {log}
         """
 
 
@@ -45,7 +47,7 @@ rule filter_reads:
     output:
         "filter/{sample}_filtered.fq",
     message:
-        f"Filtering with read length >= {config['min_length']}."
+        f"Filtering with read length >= {config['read_filter']['min_length']}."
     log:
         "logs/filter_reads/{sample}.log",
     conda:
