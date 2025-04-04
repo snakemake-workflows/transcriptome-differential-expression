@@ -38,7 +38,6 @@ rule gff_to_gtf:
 rule bam_to_bed:
     input:
         sbam="sorted_alignments/{sample}_sorted.bam",
-        sbami="sorted_alignments/{sample}_sorted.bam.bai",
     output:
         "iso_analysis/beds/{sample}.bed",
     log:
@@ -73,28 +72,85 @@ rule build_flair_genome_index:
         "logs/flair/index.log",
     threads: 4
     wrapper:
-        "v3.13.4/bio/minimap2/index"
+        "v5.10.0/bio/minimap2/index"
 
 
-rule flair_align:
+rule splice_align:
     input:
-        genome="references/genomic.fa",
-        sample=expand("filter/{sample}_filtered.fq", sample=samples["sample"]),
-        index="index/flair_genome_index.mmi",
+        query="filter/{sample}_filtered.fq",
+        target="index/flair_genome_index.mmi",
     output:
-        flair_beds="iso_analysis/align/flair.bed",
+        sam="iso_analysis/align/unfiltered/{sample}.sam",
     params:
-        outdir=lambda wildcards, output: output[0][:-4],
+        extra=f"-ax splice -s {config['isoform_analysis']['minfragsize']} -G {config['isoform_analysis']['maxintronlen']}",
     log:
-        "logs/flair/align.log",
-    conda:
-        "../envs/flair.yml"
-    shell:
-        """
-        flair align --reads {input.sample} --genome {input.genome}  \
-        --mm_index {input.index} --output {params.outdir} \
-        --threads {threads} &> {log}
-        """
+        "logs/flair/align_{sample}.log",
+    threads: 32
+    wrapper:
+        "v5.10.0/bio/minimap2/aligner"
+
+
+rule splice_sam_to_bam:
+    input:
+        sam="iso_analysis/align/unfiltered/{sample}.sam",
+    output:
+        "iso_analysis/align/bam/{sample}.bam",
+    log:
+        "logs/samtools/splicesamtobam_{sample}.log",
+    params:
+        extra="",
+    wrapper:
+        "v5.10.0/bio/samtools/view"
+
+
+rule splice_bam_sort:
+    input:
+        bam="iso_analysis/align/bam/{sample}.bam",
+    output:
+        "iso_analysis/align/sorted/{sample}.bam",
+    log:
+        "logs/samtools/splicebamsort_{sample}.log",
+    params:
+        extra="",
+    wrapper:
+        "v5.10.0/bio/samtools/sort"
+
+
+rule create_splice_bed:
+    input:
+        bam="iso_analysis/align/sorted/{sample}.bam",
+    output:
+        flair_bed="iso_analysis/align/{sample}/flair.bed",
+        flair_bam="iso_analysis/align/{sample}/flair.bam",
+        flair_sup="iso_analysis/align/{sample}/flair_sup.bam",
+        flair_trash="iso_analysis/align/{sample}/flair_trash.bam",
+    params:
+        "",
+    log:
+        "logs/flair/create_splice_bed_{sample}.log",
+    script:
+        "../scripts/create_splice_bed.py"
+
+
+# rule flair_align:
+#     input:
+#         genome="references/genomic.fa",
+#         sample=expand("filter/{sample}_filtered.fq", sample=samples["sample"]),
+#         index="index/flair_genome_index.mmi",
+#     output:
+#         flair_bed="iso_analysis/align/flair.bed",
+#     params:
+#         outdir=lambda wildcards, output: output[0][:-4],
+#     log:
+#         "logs/flair/align.log",
+#     conda:
+#         "../envs/flair.yml"
+#     shell:
+#         """
+#         flair align --reads {input.sample} --genome {input.genome}  \
+#         --mm_index {input.index} --output {params.outdir} \
+#         --threads {threads} &> {log}
+#         """
 
 
 rule flair_correct:
