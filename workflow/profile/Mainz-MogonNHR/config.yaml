@@ -13,6 +13,8 @@ set-resources:
     map_reads:
         runtime: "3h"
         slurm_partition: "smallcpu" # needs benchmarking
+    splice_align:
+        runtime: "3h"
     plot_samples:
         runtime: "3h"
     plot_all_samples:
@@ -22,7 +24,12 @@ set-resources:
     bam_sort:
         mem_mb_per_cpu: 7200
         runtime: "2h"
+    splice_bam_sort:
+        mem_mb_per_cpu: 7200
+        runtime: "2h"
     sam_to_bam:
+        runtime: "90m"
+    splice_sam_to_bam:
         runtime: "90m"
     count_reads:
         runtime: "1h"
@@ -33,6 +40,8 @@ set-resources:
     build_flair_genome_index:
         cpus_per_task: 4
         mem_mb_per_cpu: 3600
+    create_splice_beds:
+        runtime: "2h"
     flair_align:
         cpus_per_task: 32
         mem_mb_per_cpu: 2500
@@ -56,11 +65,14 @@ set-resources:
 set-threads:
     build_minimap_index: 4
     map_reads: 32
+    splice_align: 32
     plot_samples: 4
     plot_all_samples: 8
     map_qc: 8
     bam_sort: 4
+    splice_bam_sort: 4
     bam_index: 8
+    splice_bam_index: 8
     bam_stats: 8
     count_reads: 8
     de_analysis: 8
