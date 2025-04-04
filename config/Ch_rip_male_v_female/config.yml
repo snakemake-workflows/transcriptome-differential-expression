@@ -107,6 +107,10 @@ deseq2:
 isoform_analysis:
     # Enables FLAIR Isoform Analysis if 'true'
     FLAIR: true
+    #
+    minfragsize: 80
+    #
+    maxintronlen: "200k"
     # Minimum MAPQ of read assignment to an isoform (default 1).
     qscore: 1
     # min read count expression threshold. Isoforms which contain fewer than 'exp_thresh' (Default=10) reads in both conditions are filtered out.
