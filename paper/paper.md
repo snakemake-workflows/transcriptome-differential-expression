@@ -12,7 +12,7 @@ authors:
     affiliation: "1, 2"
   - name: Sören Lukas Hellmann
     orcid: 000-003-4958-1419
-    affiliation 2
+    affiliation: 2
   - name: Christiane Krämer
     orcid: XXX ?
     affiliation: 2
