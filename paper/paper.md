@@ -1,5 +1,3 @@
-# long read transcriptome workflow
-
 ---
 title: 'A Snakemake workflow for differential expression analyis with alternative splicing detection using long read data'
 tags:
@@ -11,7 +9,7 @@ tags:
 authors:
   - name: Yannic Eising
     orcid: 0009-0003-9103-5689
-    affiliation: "1, 2" # (Multiple affiliations must be quoted)
+    affiliation: "1, 2"
   - name: Sören Lukas Hellmann
     orcid: 000-003-4958-1419
     affiliation 2
@@ -31,18 +29,17 @@ affiliations:
 date: 04 April 2025 <- update
 bibliography: paper.bib
 
+---
+
 # Summary
 
-Long-read RNA sequencing technologies, such as those from Oxford Nanopore Technologies, enable the characterization of full-length transcripts and complex splicing patterns. While offering new opportunities for transcriptomic analysis, these data come with substantial computational demands, especially when scaling to multiple samples, replicates, and experimental conditions.
+Long-read RNA sequencing technologies enable the characterization of full-length transcripts and complex splicing patterns. While offering new opportunities for transcriptomic analysis, these data come with substantial computational demands, especially when scaling to multiple samples, replicates, and experimental conditions.
 
 We present a modular, reproducible workflow tailored for differential expression and alternative splicing analysis from long-read RNA sequencing data.
 The workflow is designed for use on high-performance computing (HPC) or cloud systems, enabling efficient parallel execution of computationally intensive steps such as read alignment, quantification, and isoform detection.
 
 It supports quality filtering, statistical analysis of gene expression across conditions, and isoform-level splicing analysis. For under-annotated or novel genomes, it includes an optional annotation step based on local similarity searches to assign putative gene functions.
-
 Reference data can be supplied via local files or retrieved automatically using accession numbers.
-
-By integrating robust provenance tracking, configurable parameters, and support for distributed execution, the workflow provides a scalable solution for long-read transcriptomic studies.
 
 It is well-suited for researchers working with large datasets and complex experimental designs who require transparent, reproducible, and HPC-compatible analysis pipelines.
 
@@ -75,7 +72,7 @@ This allows users to flexibly apply the workflow to well-characterized model org
 
 ## Quality Filtering and Assessment
 
-Prioar downstream analysis, reads undergo a configurable quality control step. Users can specify minimum average read quality and read length thresholds. For this we make use of the BioPython library [@Cock2009] Quality statistics and read length distributions are assessed using NanoPlot [@DeCoster2018], which generates interactive and publication-ready QC plots. Those are included in the workflow report and ensures high-confidence input for downstream expression and splicing analysis.
+Prioar downstream analysis, reads undergo a configurable quality control step. Users can specify minimum average read quality and read length thresholds. For this we make use of the BioPython library [@cock_biopython_2009] Quality statistics and read length distributions are assessed using NanoPlot [@DeCoster2018], which generates interactive and publication-ready QC plots. Those are included in the workflow report and ensures high-confidence input for downstream expression and splicing analysis.
 
 ## Transcriptome Alignment and Differential Expression Analysis
 
