@@ -48,8 +48,8 @@ It is well-suited for researchers working with large datasets and complex experi
 
 # Statement of Need
 
-Long-read sequencing technologies, such as Oxford Nanopore Technologies (ONT), have revolutionized transcriptomic studies by enabling direct detection of full-length RNA molecules.
-This advancement facilitates more accurate analyses of differential gene expression and alternative splicing events, both of which are essential for understanding transcriptomic complexity and functional genomics [@Wang2008; @Amarasinghe2020].
+Long-read sequencing technologies, such as Oxford Nanopore Technologies (ONT), have revolutionized transcriptomic studies by enabling direct detection of full-length RNA molecules [@Delahaye2021].
+This advancement facilitates more accurate analyses of differential gene expression [@Dong2021] and alternative splicing events, both of which are essential for understanding transcriptomic complexity and functional genomics.
 However, analyzing long-read transcriptomic data remains technically challenging due to the intricacies of read preprocessing, isoform-level quantification, and the need for reproducible and scalable computational workflows.
 
 Several existing tools—such as FLAIR [@Tang2020] and TALON [@Nicolai2020]—provide frameworks for analyzing long-read transcriptomic data.
@@ -60,7 +60,7 @@ To address these gaps, we present a Snakemake-based workflow that automates the 
 While other workflows exist that support either differential expression analysis or isoform-level analysis, our workflow integrates both in a modular and reproducible pipeline designed for scalability across local machines, HPC clusters, and cloud environments.
 
 A distinctive feature of our workflow is its capability to operate on ill-annotated or completely unannotated genomes.
-To support these cases, the workflow includes optional local alignments using tools such as BLAST [XXX] or lambda [XXX], enabling the functional annotation of transcripts by identifying putative gene functions.
+To support these cases, the workflow includes optional local alignments using tools such as BLAST [@Altschul1990;@Camacho2009] or lambda [@Hausdewell2014], enabling the functional annotation of transcripts by identifying putative gene functions.
 This enhances interpretability in non-model organisms and supports exploratory analyses in less-characterized transcriptomes.
 
 By leveraging Snakemake’s robust workflow management capabilities [@Köster2012], our pipeline offers transparent provenance tracking, efficient resource handling, and reproducible execution.
@@ -70,27 +70,29 @@ It provides a flexible foundation for advanced long-read transcriptomic analyses
 
 ## Input Data and Reference Handling
 
-The workflow accepts raw ONT reads in FASTQ format, along with either user-specified or automatically downloaded reference data. Reference transcriptomes and genome assemblies can be provided as file paths, or alternatively, specified using NCBI accession numbers, in which case the required data are retrieved using `ncbi-datasets` [XXX].
+The workflow accepts raw ONT reads in FASTQ format, along with either user-specified or automatically downloaded reference data. Reference transcriptomes and genome assemblies can be provided as file paths, or alternatively, specified using NCBI accession numbers, in which case the required data are retrieved using `ncbi-datasets` [@OLeary2024].
 This allows users to flexibly apply the workflow to well-characterized model organisms or newly sequenced, poorly annotated species.
 
 ## Quality Filtering and Assessment
 
-Prioar downstream analysis, reads undergo a configurable quality control step. Users can specify minimum average read quality and read length thresholds. Quality statistics and read length distributions are assessed using NanoPlot [@DeCoster2018; DOI:10.1093/bioinformatics/bty149], which generates interactive and publication-ready QC plots. Those are included in the workflow report and ensures high-confidence input for downstream expression and splicing analysis.
+Prioar downstream analysis, reads undergo a configurable quality control step. Users can specify minimum average read quality and read length thresholds. For this we make use of the BioPython library [@Cock2009] Quality statistics and read length distributions are assessed using NanoPlot [@DeCoster2018], which generates interactive and publication-ready QC plots. Those are included in the workflow report and ensures high-confidence input for downstream expression and splicing analysis.
 
 ## Transcriptome Alignment and Differential Expression Analysis
 
-Reads passing quality filters are aligned to the reference transcriptome minimap2 [XXX]. Following alignment, read counts per transcript are computed and used for differential expression analysis using pyDESeq2 [@Zhu2023; DOI:10.1093/bioinformatics/btad400], a Python-native implementation of the DESeq2 method.
+Reads passing quality filters are aligned to the reference transcriptome minimap2 [@Li2018]. Following alignment, read counts per transcript are computed and used for differential expression analysis using pyDESeq2 [@Zhu2019;@Love2014], a Python-native implementation of the DESeq2 method.
 
 This enables statistical analysis of gene expression changes across experimental conditions while staying within a Python-based workflow ecosystem.
 
 ## Alternative Splicing Analysis
 
-For isoform-level analysis, the pipeline integrates a modified version of the FLAIR toolkit [@Tang2020; DOI:10.1186/s13059-020-02129-2]. We adapted key alignment and postprocessing steps to improve compatibility with Snakemake and enhance robustness for HPC use. Isoforms are collapsed, quantified, and categorized to identify splicing patterns and events across conditions.
+For isoform-level analysis, the pipeline integrates a modified version of the FLAIR toolkit [@Tang2020]. We adapted key alignment and postprocessing steps to improve compatibility with Snakemake and enhance robustness for HPC use. Isoforms are collapsed, quantified, and categorized to identify splicing patterns and events across conditions.
 Optional Functional Annotation via Local Alignment
 
 When reference data are incomplete, unannotated, or of uncertain quality, the workflow offers optional functional annotation. Transcripts or isoforms can be locally aligned against curated protein or nucleotide databases using BLAST or lambda. This provides putative gene product functions that support biological interpretation in non-model organisms or exploratory studies.
 
 ADD rulegraph and caption, here.
+
+# Usage
 
 
 # Acknowledgements
