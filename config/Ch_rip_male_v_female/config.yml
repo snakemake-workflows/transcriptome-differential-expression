@@ -113,3 +113,10 @@ isoform_analysis:
     exp_thresh: 10
     # 'flair_collapse' options. '--stringent' for full-length supporting reads (>=80% coverage)
     col_opts: "--annotation_reliant --generate_map --stringent"
+    #splice isoform quantification options
+    quantify:
+        # Confirms alignment quality by checking a small window around splice junctions for matches. 
+        # If the number of matches is less than 'num_match_in_ss_window' then the alignemnt is rejected (Default: 4)
+        num_match_in_ss_window: 4
+        # Filters out alignments with with deletions, insertions or skipped regions greater than 'large_indel_tolerane' (Default: 25)
+        large_indel_tolerance: 25

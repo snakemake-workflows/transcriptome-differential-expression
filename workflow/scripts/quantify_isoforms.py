@@ -14,10 +14,12 @@ sorted_sam = snakemake.input.ssam
 output_file = snakemake.output.sample_counts
 quality_threshold = snakemake.params.qscore
 
-MIN_INSERTION_LEN = 3
-NUM_MATCH_IN_SS_WINDOW = 4
-TRUST_ENDS_WINDOW = 50
-LARGE_INDEL_TOLERANCE = 25
+num_match_in_ss_window = snakemake.config["isoform_analysis"]["quantify"][
+    "num_match_in_ss_window"
+]
+large_indel_tolerance = snakemake.config["isoform_analysis"]["quantify"][
+    "large_indel_tolerane"
+]
 
 print(f"{isoforms_bed}, {sorted_sam}, {output_file}, {quality_threshold}", flush=True)
 
@@ -81,7 +83,7 @@ def check_splicesites(coveredpos, exonpos, tstart, tend):
             ssvals = coveredpos[currpos - 3 : currpos + 3]
             totinsert = sum([x for x in ssvals if x > 1])
             totmatch = sum([x for x in ssvals if x == 1])
-            if totmatch - totinsert <= NUM_MATCH_IN_SS_WINDOW:
+            if totmatch - totinsert <= num_match_in_ss_window:
                 return False
     return True
 
@@ -116,11 +118,11 @@ def process_cigar(matchvals, cigarblocks, startpos):
         elif btype in {2, 3}:
             coveredpos.extend([0] * blen)
             tendpos += blen
-            if blen > LARGE_INDEL_TOLERANCE:
+            if blen > large_indel_tolerance:
                 return True, None, None, None, None, None
         elif btype == 1:
             coveredpos[-1] += blen
-            if blen > LARGE_INDEL_TOLERANCE:
+            if blen > large_indel_tolerance:
                 return True, None, None, None, None, None
     return False, coveredpos, queryclipping, blockstarts, blocksizes, tendpos
 
