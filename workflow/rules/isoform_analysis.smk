@@ -3,6 +3,7 @@ localrules:
     concatenate_beds,
     plot_isoforms,
     iso_analysis_report,
+    merge_splice_counts,
 
 
 # Construct a flair readable TSV file for samples
@@ -143,29 +144,88 @@ rule flair_collapse:
         """
 
 
-rule flair_quantify:
+rule splice_quant_map_reads:
     input:
-        reads_manifest="iso_analysis/reads_manifest.tsv",
-        isof="iso_analysis/collapse/flair.isoforms.fa",
+        query="filter/{sample}_filtered.fq",
+        target="iso_analysis/collapse/flair.isoforms.fa",
+    output:
+        sam="iso_analysis/quantify/{sample}.sam",
+    params:
+        extra=f"--MD -N 4",
+    log:
+        "logs/flair/quantify/align_{sample}.log",
+    threads: 32
+    wrapper:
+        "v5.10.0/bio/minimap2/aligner"
+
+
+rule splice_quant_sam_sort:
+    input:
+        sam="iso_analysis/quantify/{sample}.sam",
+    output:
+        "iso_analysis/quantify/{sample}_sorted.sam",
+    log:
+        "logs/flair/quantify/samsort_{sample}.log",
+    params:
+        extra='',
+    wrapper:
+        "v5.10.0/bio/samtools/sort"
+
+
+rule splice_quantify:
+    input:
         isob="iso_analysis/collapse/flair.isoforms.bed",
+        ssam="iso_analysis/quantify/{sample}_sorted.sam",
+    output:
+        sample_counts="iso_analysis/quantify/{sample}_counts.tsv",
+    params:
+        qscore=config["isoform_analysis"]["qscore"],
+    log:
+        "logs/flair/quantify_{sample}.log",
+    conda:
+        "../envs/pysam.yml"
+    script:
+        "../scripts/quantify_isoforms.py"
+
+
+rule merge_splice_counts:
+    input:
+        samples_counts=expand("iso_analysis/quantify/{sample}_counts.tsv", sample=samples["sample"]),
     output:
         counts_matrix="iso_analysis/quantify/flair.counts.tsv",
     params:
-        # FLAIR adds ".counts.tsv" to its --output flag.
-        outdir=lambda wildcards, output: output[0][:-11],
-        tmp_dir="iso_analysis/quantify/tmp",
-        qscore=config["isoform_analysis"]["qscore"],
+        "",
     log:
-        "logs/flair/quantify.log",
+        "logs/flair/merge_splice_counts.log",
     conda:
-        "../envs/flair.yml"
-    shell:
-        """
-        flair quantify --reads_manifest {input.reads_manifest} --isoforms {input.isof} \
-        --isoform_bed {input.isob} --output {params.outdir} --quality {params.qscore} \
-        --temp_dir {params.tmp_dir} --stringent --threads {threads} \
-        &> {log}
-        """
+        "../envs/base.yml"
+    script:
+        "../scripts/quantify_isoforms.py"
+
+
+# rule flair_quantify:
+#     input:
+#         reads_manifest="iso_analysis/reads_manifest.tsv",
+#         isof="iso_analysis/collapse/flair.isoforms.fa",
+#         isob="iso_analysis/collapse/flair.isoforms.bed",
+#     output:
+#         counts_matrix="iso_analysis/quantify/flair.counts.tsv",
+#     params:
+#         # FLAIR adds ".counts.tsv" to its --output flag.
+#         outdir=lambda wildcards, output: output[0][:-11],
+#         tmp_dir="iso_analysis/quantify/tmp",
+#         qscore=config["isoform_analysis"]["qscore"],
+#     log:
+#         "logs/flair/quantify.log",
+#     conda:
+#         "../envs/flair.yml"
+#     shell:
+#         """
+#         flair quantify --reads_manifest {input.reads_manifest} --isoforms {input.isof} \
+#         --isoform_bed {input.isob} --output {params.outdir} --quality {params.qscore} \
+#         --temp_dir {params.tmp_dir} --stringent --threads {threads} \
+#         &> {log}
+#         """
 
 
 rule flair_diffexp:
