@@ -18,7 +18,7 @@ num_match_in_ss_window = snakemake.config["isoform_analysis"]["quantify"][
     "num_match_in_ss_window"
 ]
 large_indel_tolerance = snakemake.config["isoform_analysis"]["quantify"][
-    "large_indel_tolerane"
+    "large_indel_tolerance"
 ]
 
 print(f"{isoforms_bed}, {sorted_sam}, {output_file}, {quality_threshold}", flush=True)
