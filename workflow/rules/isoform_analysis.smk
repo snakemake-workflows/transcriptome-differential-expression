@@ -149,7 +149,7 @@ rule splice_quant_map_reads:
         query="filter/{sample}_filtered.fq",
         target="iso_analysis/collapse/flair.isoforms.fa",
     output:
-        sam="iso_analysis/quantify/{sample}.sam",
+        sam=temp("iso_analysis/quantify/{sample}.sam",)
     params:
         extra=f"--MD -N 4",
     log:
@@ -193,14 +193,12 @@ rule merge_splice_counts:
         samples_counts=expand("iso_analysis/quantify/{sample}_counts.tsv", sample=samples["sample"]),
     output:
         counts_matrix="iso_analysis/quantify/flair.counts.tsv",
-    params:
-        "",
     log:
         "logs/flair/merge_splice_counts.log",
     conda:
-        "../envs/base.yml"
+        "../envs/pandas.yml"
     script:
-        "../scripts/quantify_isoforms.py"
+        "../scripts/merge_splice_counts.py"
 
 
 # rule flair_quantify:
