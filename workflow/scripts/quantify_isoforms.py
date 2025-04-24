@@ -7,7 +7,6 @@ import re
 from collections import defaultdict
 
 sys.stderr = sys.stdout = open(snakemake.log[0], "wt")
-print("Script started", flush=True)
 
 isoforms_bed = snakemake.input.isob
 sorted_sam = snakemake.input.ssam
@@ -21,7 +20,6 @@ large_indel_tolerance = snakemake.config["isoform_analysis"]["quantify"][
     "large_indel_tolerance"
 ]
 
-print(f"{isoforms_bed}, {sorted_sam}, {output_file}, {quality_threshold}", flush=True)
 
 
 def getannotinfo(bedfile):
@@ -35,10 +33,6 @@ def getannotinfo(bedfile):
                 transcripttoexons[name] = blocksizes
             else:
                 transcripttoexons[name] = blocksizes[::-1]
-    print(
-        f"Parsing BED file: {bedfile}, found {len(transcripttoexons)} transcripts.",
-        flush=True,
-    )
     return transcripttoexons
 
 
@@ -179,7 +173,6 @@ class IsoAln:
 
 
 def parsesam(samfile, transcripttoexons):
-    print(f"Starting SAM parsing of {samfile}")
     lastread = None
     curr_transcripts = {}
     transcripttoreads = defaultdict(list)
@@ -218,7 +211,6 @@ def parsesam(samfile, transcripttoexons):
             if assignedt:
                 transcripttoreads[assignedt].append(lastread)
     samfile.close()
-    print(f"Completed SAM parsing.", flush=True)
     return transcripttoreads
 
 
@@ -234,4 +226,3 @@ def write_output(transcripttoreads, outfile):
 transcripttoexons = getannotinfo(isoforms_bed)
 transcripttoreads = parsesam(sorted_sam, transcripttoexons)
 write_output(transcripttoreads, output_file)
-print("Script completed.")
