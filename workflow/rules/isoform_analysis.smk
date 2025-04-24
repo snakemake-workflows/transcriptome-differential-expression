@@ -149,7 +149,9 @@ rule splice_quant_map_reads:
         query="filter/{sample}_filtered.fq",
         target="iso_analysis/collapse/flair.isoforms.fa",
     output:
-        sam=temp("iso_analysis/quantify/{sample}.sam",)
+        sam=temp(
+            "iso_analysis/quantify/{sample}.sam",
+        ),
     params:
         extra=f"--MD -N 4",
     log:
@@ -167,7 +169,7 @@ rule splice_quant_sam_sort:
     log:
         "logs/flair/quantify/samsort_{sample}.log",
     params:
-        extra='',
+        extra="",
     wrapper:
         "v5.10.0/bio/samtools/sort"
 
@@ -190,7 +192,9 @@ rule splice_quantify:
 
 rule merge_splice_counts:
     input:
-        samples_counts=expand("iso_analysis/quantify/{sample}_counts.tsv", sample=samples["sample"]),
+        samples_counts=expand(
+            "iso_analysis/quantify/{sample}_counts.tsv", sample=samples["sample"]
+        ),
     output:
         counts_matrix="iso_analysis/quantify/flair.counts.tsv",
     log:
