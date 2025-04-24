@@ -33,7 +33,7 @@ set-resources:
     count_reads:
         runtime: "5h"
     splice_quantify: 
-        runtime: "12h"
+        runtime: "24h"
     de_analysis:
         cpus_per_task: 8
         mem_mb_per_cpu: 5000
