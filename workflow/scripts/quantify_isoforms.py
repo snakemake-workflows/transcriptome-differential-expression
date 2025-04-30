@@ -21,7 +21,6 @@ large_indel_tolerance = snakemake.config["isoform_analysis"]["quantify"][
 ]
 
 
-
 def getannotinfo(bedfile):
     transcripttoexons = {}
     with open(bedfile) as bed:
