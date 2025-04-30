@@ -17,10 +17,9 @@ rule count_reads:
         "../envs/salmon.yml"
     threads: 8
     resources:
-        mem_mb_per_cpu = lambda wildcards, input, threads: max(
-            1800,
-            int((os.path.getsize(input[0]) * 150) / threads)
-        )
+        mem_mb_per_cpu=lambda wildcards, input, threads: max(
+            1800, int((os.path.getsize(input[0]) * 150) / threads)
+        ),
     shell:
         """
         salmon --no-version-check quant --ont -p {threads} \
