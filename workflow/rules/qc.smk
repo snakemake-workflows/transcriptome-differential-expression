@@ -25,6 +25,12 @@ rule plot_samples:
         "logs/NanoPlot/{sample}.log",
     conda:
         "../envs/nanoplot.yml"
+    threads: 4
+    resources:
+        mem_mb_per_cpu = lambda wildcards, input, threads: max(
+            1800,
+            int((os.path.getsize(input[0]) *190) / threads)
+        )
     shell:
         "NanoPlot --threads {threads} --tsv_stats --format svg "
         "--fastq {input.fastq} --outdir {params.outdir} 2> {log}"
@@ -99,5 +105,10 @@ rule bam_stats:
         "logs/samtools/bamstats_{sample}.log",
     params:
         extra=config["samtools"]["bamstats_opts"],
+    resources:
+        mem_mb_per_cpu = lambda wildcards, input, threads: max(
+            1800,
+            int((os.path.getsize(input[0]) *200) / threads)
+        )
     wrapper:
         "v3.13.4/bio/samtools/stats"
