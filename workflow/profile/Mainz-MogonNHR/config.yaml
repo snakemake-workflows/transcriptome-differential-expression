@@ -20,25 +20,20 @@ set-resources:
     map_qc:
         runtime: "1h"
     bam_sort:
-        mem_mb_per_cpu: 7200
         runtime: "2h"
     sam_to_bam:
         runtime: "90m"
     count_reads:
         runtime: "1h"
     de_analysis:
-        cpus_per_task: 8
         mem_mb_per_cpu: 5000
         runtime: "1h"
     build_flair_genome_index:
-        cpus_per_task: 4
         mem_mb_per_cpu: 3600
     flair_align:
-        cpus_per_task: 32
         mem_mb_per_cpu: 2500
         runtime: 300
     flair_correct:
-        cpus_per_task: 8
         runtime: 180
     flair_collapse:
         cpus_per_task: 32
@@ -48,7 +43,6 @@ set-resources:
         cpus_per_task: 32
         runtime: "2h"
     flair_diffexp:
-        cpus_per_task: 8
         mem_mb_per_cpu: 5000
         runtime: "2h"
 
@@ -59,7 +53,7 @@ set-threads:
     plot_samples: 4
     plot_all_samples: 8
     map_qc: 8
-    bam_sort: 4
+    bam_sort: 8
     bam_index: 8
     bam_stats: 8
     count_reads: 8

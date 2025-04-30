@@ -1,5 +1,6 @@
 localrules:
     reads_manifest,
+    gff_to_gtf,
     concatenate_beds,
     plot_isoforms,
     iso_analysis_report,
