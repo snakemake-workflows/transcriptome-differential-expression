@@ -1,0 +1,4 @@
+channels:
+    - conda-forge
+dependencies:
+    - lambda>=3.1.0
