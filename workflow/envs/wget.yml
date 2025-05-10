@@ -1,0 +1,4 @@
+channels:
+    - conda-forge
+dependencies:
+    - wget>=1.25.0
