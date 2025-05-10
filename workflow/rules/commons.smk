@@ -148,4 +148,5 @@ def rule_all_input():
         )
         all_input.append("iso_analysis/report/isoforms")
         all_input.append("iso_analysis/report/usage")
+    all_input.append("gene_annotation/blast_results.m8")
     return all_input
