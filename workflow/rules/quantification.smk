@@ -17,7 +17,7 @@ rule count_reads:
         "../envs/salmon.yml"
     threads: 8
     resources:
-        mem_mb=lambda wildcards, input, threads: max(
+        mem_mb=lambda wildcards, input: max(
             1800, int((os.path.getsize(input[0]) >> 20) * 0.15)
         ),
     shell:
