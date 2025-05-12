@@ -106,6 +106,7 @@ rule bam_stats:
         extra=config["samtools"]["bamstats_opts"],
     resources:
         mem_mb_per_cpu=lambda wildcards, input, threads: max(
+        feat-dynamic_resources
             1800, int(((os.path.getsize(input[0]) >> 20) * 0.2) / threads)
         ),
     wrapper:
