@@ -51,6 +51,8 @@ set-resources:
         cpus_per_task: 8
         mem_mb_per_cpu: 5000
         runtime: "2h"
+    index_protein_db:
+        mem_mb_per_cpu: 3600
 
 
 set-threads:
