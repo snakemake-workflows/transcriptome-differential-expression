@@ -36,11 +36,7 @@ rule generate_gene_query:
 
 rule blast_genes:
     input:
-<<<<<<< HEAD
         indexed_db="protein_annotation/index/UniRef.lba.gz",
-=======
-        indexed_db="protein_annotation/index/Uniref50.lba.gz",
->>>>>>> f985f27 (feat: automated protein annotation for diff exp genes)
         query="protein_annotation/de_genes.fa",
     output:
         "protein_annotation/blast_results.m8",
