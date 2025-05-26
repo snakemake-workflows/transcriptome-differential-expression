@@ -76,10 +76,10 @@ rule blast_genes:
     output:
         "protein_annotation/blast_results.m8",
     params:
-        "",
+        num_matches=f'{config["lambda"]["num_matches"]}',
     log:
         "logs/lambda/blast_genes.log",
     conda:
         "../envs/lambda3.yml"
     shell:
-        "lambda3 searchp -q {input.query} -i {input.indexed_db} -o {output} 2> {log}"
+        "lambda3 searchp -q {input.query} -i {input.indexed_db} -o {output} -n {params.num_matches} 2> {log}"
