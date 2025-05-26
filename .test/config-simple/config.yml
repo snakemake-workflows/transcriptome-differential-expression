@@ -122,3 +122,8 @@ isoform_analysis:
     exp_thresh: 10
     # 'flair_collapse' options. '--stringent' for full-length supporting reads (>=80% coverage)
     col_opts: "--annotation_reliant generate --generate_map --stringent"
+
+# Query genes for protein hits using "lambda"
+lambda:
+    # maximum number of matches per query (default = 3)
+    num_matches: 3
