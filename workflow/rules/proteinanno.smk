@@ -4,38 +4,6 @@ localrules:
     get_indexed_db,
 
 
-# rule get_protein_db:
-#     output:
-#         "protein_annotation/index/Uniref50.fa.gz",
-#     params:
-#         "",
-#     log:
-#         "logs/lambda/get_protein_db.log",
-#     conda:
-#         "../envs/base.yml"
-#     shell:
-#         """
-#         mkdir -p $(dirname {output}) && \
-#         wget -nv -q -O Uniref50.fa.gz  https://ftp.uniprot.org/pub/databases/uniprot/uniref/uniref50/uniref50.fasta.gz && \
-#         mv Uniref50.fa.gz {output} 2> {log}
-#         """
-
-
-# rule index_protein_db:
-#     input:
-#         "protein_annotation/index/Uniref50.fa.gz",
-#     output:
-#         "protein_annotation/index/Uniref50.lba.gz",
-#     params:
-#         "",
-#     log:
-#         "logs/lambda/index_protein_db.log",
-#     conda:
-#         "../envs/lambda3.yml"
-#     shell:
-#         "lambda3 mkindexp -d {input} -i {output} -v 2 &> {log}"
-
-
 rule get_indexed_db:
     output:
         "protein_annotation/index/Uniref50.lba.gz",
