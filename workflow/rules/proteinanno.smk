@@ -1,7 +1,7 @@
 localrules:
     generate_gene_query,
-    get_protein_db,
     get_indexed_db,
+    get_protein_names,
 
 
 rule get_indexed_db:
@@ -51,3 +51,18 @@ rule blast_genes:
         "../envs/lambda3.yml"
     shell:
         "lambda3 searchp -q {input.query} -i {input.indexed_db} -o {output} -n {params.num_matches} 2> {log}"
+
+
+rule get_protein_names:
+    input:
+        "protein_annotation/blast_results.m8",
+    output:
+        "protein_annotation/proteins.csv",
+    params:
+        "",
+    log:
+        "logs/lambda/get_protein_names.log"
+    conda:
+        ""
+    script:
+        "../scripts/query_uniref_ids.py"
