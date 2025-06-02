@@ -6,7 +6,7 @@ localrules:
 
 rule get_indexed_db:
     output:
-        "protein_annotation/index/Uniref50.lba.gz",
+        "protein_annotation/index/UniRef.lba.gz",
     params:
         ref=f'{config["lambda"]["uniref"]}',
     log:
@@ -15,8 +15,8 @@ rule get_indexed_db:
         "../envs/wget.yml"
     shell:
         """
-        wget -nv -q -O Uniref50.lba.gz {params.ref} && \
-        mv Uniref50.lba.gz {output} 2> {log}
+        wget -nv -q -O UniRef.lba.gz {params.ref} && \
+        mv UniRef.lba.gz {output} 2> {log}
         """
 
 
@@ -36,7 +36,7 @@ rule generate_gene_query:
 
 rule blast_genes:
     input:
-        indexed_db="protein_annotation/index/Uniref50.lba.gz",
+        indexed_db="protein_annotation/index/UniRef.lba.gz",
         query="protein_annotation/de_genes.fa",
     output:
         "protein_annotation/blast_results.m8",
