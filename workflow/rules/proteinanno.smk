@@ -8,15 +8,14 @@ rule get_indexed_db:
     output:
         "protein_annotation/index/Uniref50.lba.gz",
     params:
-        "",
+        ref=f'{config["lambda"]["uniref"]}',
     log:
         "logs/lambda/get_indexed_db.log",
     conda:
         "../envs/base.yml"
     shell:
         """
-        mkdir -p $(dirname {output}) && \
-        wget -nv -q -O Uniref50.lba.gz http://ftp.imp.fu-berlin.de/pub/lambda/index/lambda3/gen_0/uniref50_20230713.lba.gz && \
+        wget -nv -q -O Uniref50.lba.gz {params.ref} && \
         mv Uniref50.lba.gz {output} 2> {log}
         """
 
@@ -27,8 +26,6 @@ rule generate_gene_query:
         transcriptome="transcriptome/transcriptome.fa",
     output:
         "protein_annotation/de_genes.fa",
-    params:
-        "",
     log:
         "logs/lambda/generate_gene_query.log",
     conda:
@@ -58,8 +55,6 @@ rule get_protein_names:
         "protein_annotation/blast_results.m8",
     output:
         "protein_annotation/proteins.csv",
-    params:
-        "",
     log:
         "logs/lambda/get_protein_names.log"
     conda:
