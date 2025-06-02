@@ -129,6 +129,6 @@ isoform_analysis:
 # Query genes for protein hits using "lambda"
 lambda:
     # UniProt Reference Cluster (default: UniRef50)
-    uniref: "http://ftp.imp.fu-berlin.de/pub/lambda/index/lambda3/gen_0/uniref50_20230713.lba.gz"
+    uniref: "http://ftp.imp.fu-berlin.de/pub/lambda/index/lambda3/gen_0/uniprot_sprot_20230713.lba.gz"
     # maximum number of matches per query (default: 3)
     num_matches: 3
