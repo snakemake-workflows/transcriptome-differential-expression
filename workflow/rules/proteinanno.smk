@@ -58,6 +58,6 @@ rule get_protein_names:
     log:
         "logs/lambda/get_protein_names.log",
     conda:
-        ""
+        "../envs/base.yml"
     script:
         "../scripts/query_uniref_ids.py"
