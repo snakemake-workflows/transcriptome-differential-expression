@@ -56,7 +56,7 @@ rule get_protein_names:
     output:
         "protein_annotation/proteins.csv",
     log:
-        "logs/lambda/get_protein_names.log"
+        "logs/lambda/get_protein_names.log",
     conda:
         ""
     script:
