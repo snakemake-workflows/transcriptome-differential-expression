@@ -7,8 +7,8 @@ import time
 sys.stderr = sys.stdout = open(snakemake.log[0], "w")
 
 
-input = snakemake.input[0]
-output = snakemake.output[0]
+input_file = snakemake.input[0]
+output_file = snakemake.output[0]
 
 
 # Obtain the protein name from the UniRef databank ID
@@ -16,7 +16,7 @@ def get_protein_name(uniref_id):
     url = f"https://rest.uniprot.org/uniref/{uniref_id}"
     # Check if the url is available
     try:
-        response = requests.get(url)
+        response = requests.get(url, timeout=30)
         # If available get the protein name for the UniRef ID
         if response.status_code == 200:
             data = response.json()
@@ -57,4 +57,4 @@ def process_blast_output(input, output):
 
 
 # Starts the annotation
-process_blast_output(input, output)
+process_blast_output(input_file, output_file)
