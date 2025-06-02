@@ -1,4 +1,8 @@
 channels:
     - conda-forge
 dependencies:
+channels:
+    - conda-forge
+    - bioconda
+dependencies:
     - lambda>=3.1.0
