@@ -12,7 +12,7 @@ rule get_indexed_db:
     log:
         "logs/lambda/get_indexed_db.log",
     conda:
-        "../envs/base.yml"
+        "../envs/wget.yml"
     shell:
         """
         wget -nv -q -O Uniref50.lba.gz {params.ref} && \
@@ -58,6 +58,6 @@ rule get_protein_names:
     log:
         "logs/lambda/get_protein_names.log",
     conda:
-        "../envs/base.yml"
+        "../envs/biopython.yml"
     script:
         "../scripts/query_uniref_ids.py"
