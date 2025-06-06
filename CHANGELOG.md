@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.0](https://github.com/snakemake-workflows/transcriptome-differential-expression/compare/v2.1.0...v2.2.0) (2025-06-05)
+
+
+### Features
+
+* dynamic resources ([#114](https://github.com/snakemake-workflows/transcriptome-differential-expression/issues/114)) ([b6db820](https://github.com/snakemake-workflows/transcriptome-differential-expression/commit/b6db820fd65f218d9a12718bd1817ba995b26dc8))
+
 ## [2.1.0](https://github.com/snakemake-workflows/transcriptome-differential-expression/compare/v2.0.1...v2.1.0) (2025-04-30)
 
 
