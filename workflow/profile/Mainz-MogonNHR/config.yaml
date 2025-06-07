@@ -20,6 +20,7 @@ set-resources:
     map_qc:
         runtime: "1h"
     bam_sort:
+        mem-mb-per-cpu: 4800
         runtime: "2h"
     sam_to_bam:
         runtime: "90m"
