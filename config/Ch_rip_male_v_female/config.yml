@@ -112,4 +112,4 @@ isoform_analysis:
     # min read count expression threshold. Isoforms which contain fewer than 'exp_thresh' (Default=10) reads in both conditions are filtered out.
     exp_thresh: 10
     # 'flair_collapse' options. '--stringent' for full-length supporting reads (>=80% coverage)
-    col_opts: "--annotation_reliant --generate_map --stringent"
+    col_opts: "--annotation_reliant generate --generate_map --stringent"
