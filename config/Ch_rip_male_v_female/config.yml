@@ -118,9 +118,11 @@ isoform_analysis:
     col_opts: "--annotation_reliant --generate_map --stringent"
 
 
-# Query genes for protein hits using "lambda"
-lambda:
-    # UniProt Reference Cluster (default: UniRef50)
+# Query genes to identify similar proteins using "lambda"
+protein_annotation:
+    # Enables lambda sequence alignment if 'true'
+    lambda: true
+    # UniProt Reference Cluster database (default: UniRef50)
     uniref: "http://ftp.imp.fu-berlin.de/pub/lambda/index/lambda3/gen_0/uniref50_20230713.lba.gz"
-    # maximum number of matches per query (default: 3)
+    # maximum number of protein matches returned per sequence (default: 3)
     num_matches: 3
