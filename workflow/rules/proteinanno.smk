@@ -8,7 +8,7 @@ rule get_indexed_db:
     output:
         "protein_annotation/index/UniRef.lba.gz",
     params:
-        ref=f'{config["lambda"]["uniref"]}',
+        ref=f'{config["protein_annotation"]["uniref"]}',
     log:
         "logs/lambda/get_indexed_db.log",
     conda:
@@ -41,7 +41,7 @@ rule blast_genes:
     output:
         "protein_annotation/blast_results.m8",
     params:
-        num_matches=f'{config["lambda"]["num_matches"]}',
+        num_matches=f'{config["protein_annotation"]["num_matches"]}',
     log:
         "logs/lambda/blast_genes.log",
     conda:
