@@ -134,17 +134,6 @@ protein_annotation:
       then:
         required: ["uniref","num_matches"]
 
-protein_annotation:
-  type: object
-  properties:
-    lambda:
-      type: boolean
-    uniref:
-      type: string
-    num_matches:
-      type: integer
-      minimum: 1
-
 required:
   - samples
   - inputdir
