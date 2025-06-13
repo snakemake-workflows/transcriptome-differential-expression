@@ -14,7 +14,7 @@ gene_list = snakemake.output[0]
 # Remove genes with l2fc below lfc threshold from diffexp results
 df = pd.read_csv(sorted_lfc_counts)
 df.drop(
-    df[df["log2FoldChange"] <= snakemake.config["deseq2"]["lfc_null"]].index,
+    df[df["log2FoldChange"].abs() <= snakemake.config["deseq2"]["lfc_null"]].index,
     inplace=True,
 )
 
