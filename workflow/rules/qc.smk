@@ -1,3 +1,4 @@
+import os
 localrules:
     qm_report,
 
@@ -105,8 +106,8 @@ rule bam_stats:
     params:
         extra=config["samtools"]["bamstats_opts"],
     resources:
-        mem_mb_per_cpu=lambda wildcards, input: max(
-            1800, int(((os.path.getsize(input[0]) >> 20) * 0.2))
+        mem_mb_per_cpu=lambda wildcards, input, threads: max(
+            1800, int(((os.path.getsize(input[0]) >> 20) * 0.2) / threads)
         ),
     wrapper:
         "v3.13.4/bio/samtools/stats"
