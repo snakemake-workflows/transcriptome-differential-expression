@@ -1,3 +1,6 @@
+import os
+
+
 localrules:
     merge_counts,
 
@@ -17,8 +20,8 @@ rule count_reads:
         "../envs/salmon.yml"
     threads: 8
     resources:
-        mem_mb=lambda wildcards, input: max(
-            1800, int((os.path.getsize(input[0]) >> 20) * 0.15)
+        mem_mb_per_cpu=lambda wildcards, input, threads: max(
+            1800, int(((os.path.getsize(input[0]) >> 20) * 2) / threads)
         ),
     shell:
         """

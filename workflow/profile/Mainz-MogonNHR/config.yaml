@@ -46,6 +46,8 @@ set-resources:
     flair_diffexp:
         mem_mb_per_cpu: 5000
         runtime: "2h"
+    blast_genes:
+        mem_mb_per_cpu: 7200
 
 
 set-threads:
@@ -65,3 +67,4 @@ set-threads:
     flair_collapse: 32
     flair_quantify: 32
     flair_diffexp: 8
+    blast_genes: 32
