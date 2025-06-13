@@ -115,7 +115,7 @@ isoform_analysis:
     # '--annotation-reliant' makes FLAIR align reads to the annotation before identifying novel transcripts for the remaining reads
     # '--generate-map' to generate a txt file of read-isoform assignments
     # '--stringent' for full-length supporting reads (>=80% coverage)
-    col_opts: "--annotation_reliant --generate_map --stringent"
+    col_opts: "--annotation_reliant generate --generate_map --stringent"
 
 
 # Query genes to identify similar proteins using "lambda"
