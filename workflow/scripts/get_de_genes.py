@@ -28,6 +28,13 @@ for record in SeqIO.parse(transcriptome, "fasta"):
     if record_id in gene_names:
         filtered_records.append(record)
 
+# Error If no matching genes were found
+if not filtered_records:
+    raise ValueError(
+        "No matching gene records found in the transcriptome for differentially expressed genes. "
+        "The output FASTA would be empty, which causes lambda to fail."
+    )
+
 # Write diffexp genes with sequence to new fasta file
 with open(gene_list, "w") as out:
     SeqIO.write(filtered_records, out, "fasta")
